@@ -1,3 +1,10 @@
+/*
+ * Part of NDLA frontpage_api.
+ * Copyright (C) 2018 NDLA
+ *
+ * See LICENSE
+ */
+
 // format: off
 package no.ndla.frontpageapi.controller
 

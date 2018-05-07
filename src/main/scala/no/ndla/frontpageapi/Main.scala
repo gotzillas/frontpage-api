@@ -1,3 +1,10 @@
+/*
+ * Part of NDLA frontpage_api.
+ * Copyright (C) 2018 NDLA
+ *
+ * See LICENSE
+ */
+
 package no.ndla.frontpageapi
 
 import cats.effect.IO
@@ -5,7 +12,11 @@ import cats.implicits._
 import com.typesafe.scalalogging.LazyLogging
 import fs2.StreamApp.ExitCode
 import fs2.{Stream, StreamApp}
-import no.ndla.frontpageapi.FrontpageApiProperties.{ApplicationPort, ContactEmail, ContactName}
+import no.ndla.frontpageapi.FrontpageApiProperties.{
+  ApplicationPort,
+  ContactEmail,
+  ContactName
+}
 import no.ndla.frontpageapi.controller.{FrontPage, NdlaMiddleware, SubjectPage}
 import org.http4s.HttpService
 import org.http4s.rho.RhoService
@@ -18,9 +29,11 @@ import shapeless.HNil
 
 import scala.language.higherKinds
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.io.Source
 
 object Main extends StreamApp[IO] with LazyLogging {
-  private[this] case class ServiceWithMountpoint(service: RhoService[IO], mountPoint: String) {
+  private[this] case class ServiceWithMountpoint(service: RhoService[IO],
+                                                 mountPoint: String) {
     def toService: HttpService[IO] = service.toService()
   }
 
@@ -32,14 +45,16 @@ object Main extends StreamApp[IO] with LazyLogging {
     TypedPath(newPath)
   }
 
-  private def createSwaggerDocService(services: ServiceWithMountpoint*): HttpService[IO] = {
+  private def createSwaggerDocService(
+      services: ServiceWithMountpoint*): HttpService[IO] = {
     val info = Info(
       title = "frontpage-api",
       version = "1.0",
       description = "Service for fetching front page data".some,
       termsOfService = "https://ndla.no".some,
       contact = Contact(ContactName, email = Some(ContactEmail)).some,
-      license = License("GPL v3.0", "http://www.gnu.org/licenses/gpl-3.0.en.html").some
+      license =
+        License("GPL v3.0", "http://www.gnu.org/licenses/gpl-3.0.en.html").some
     )
     val routes =
       services.map(t => t.service./:(toTypedPath(t.mountPoint)).getRoutes)
@@ -48,9 +63,16 @@ object Main extends StreamApp[IO] with LazyLogging {
     createSwaggerRoute(swagger, TypedPath(PathMatch(""))).toService()
   }
 
-  def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, ExitCode] = {
-    val frontPage = ServiceWithMountpoint(new FrontPage[IO](ioSwagger), "/frontpage-api/v1/frontpage")
-    val subjectPage = ServiceWithMountpoint(new SubjectPage[IO](ioSwagger), "/frontpage-api/v1/subjectpage")
+  def stream(args: List[String],
+             requestShutdown: IO[Unit]): Stream[IO, ExitCode] = {
+    logger.info(
+      Source
+        .fromInputStream(getClass.getResourceAsStream("/log-license.txt"))
+        .mkString)
+    val frontPage = ServiceWithMountpoint(new FrontPage[IO](ioSwagger),
+                                          "/frontpage-api/v1/frontpage")
+    val subjectPage = ServiceWithMountpoint(new SubjectPage[IO](ioSwagger),
+                                            "/frontpage-api/v1/subjectpage")
     val swagger = createSwaggerDocService(frontPage, subjectPage)
 
     val port = ApplicationPort
@@ -58,7 +80,8 @@ object Main extends StreamApp[IO] with LazyLogging {
 
     BlazeBuilder[IO]
       .mountService(NdlaMiddleware(frontPage.toService), frontPage.mountPoint)
-      .mountService(NdlaMiddleware(subjectPage.toService), subjectPage.mountPoint)
+      .mountService(NdlaMiddleware(subjectPage.toService),
+                    subjectPage.mountPoint)
       .mountService(swagger, "/frontpage-api/api-docs")
       .bindHttp(port, "0.0.0.0")
       .serve
