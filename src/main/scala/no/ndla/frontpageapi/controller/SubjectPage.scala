@@ -12,10 +12,10 @@ import cats.effect.Effect
 import no.ndla.frontpageapi.model.{ArticleCollection, SubjectFrontPageData}
 import org.http4s.rho.RhoService
 import org.http4s.rho.swagger.SwaggerSyntax
-import org.http4s.circe._
-import io.circe.generic.auto._, io.circe.syntax._
 import scala.language.higherKinds
-
+import org.http4s.circe._
+import io.circe.generic.auto._
+import io.circe._
 
 class SubjectPage[F[_]: Effect](swaggerSyntax: SwaggerSyntax[F])
     extends RhoService[F] {
@@ -33,7 +33,7 @@ class SubjectPage[F[_]: Effect](swaggerSyntax: SwaggerSyntax[F])
         ArticleCollection("top", List(3254, 3501, 7789, 3954)),
         ArticleCollection("top", List(3254, 3501, 7789, 3954)),
         ArticleCollection("top", List(3254, 3501, 7789, 3954))
-      ).asJson
+      )
 
       Ok(mockSubjectPage)
     }

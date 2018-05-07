@@ -22,7 +22,7 @@ class FrontPage[F[_]: Effect](swaggerSyntax: SwaggerSyntax[F]) extends RhoServic
   "Get data to display on the front page" **
     GET |>> {
       val frontPage = FrontPageData(List(3254, 3501, 7789, 3954), List())
-      Ok(frontPage.asJson)
+      Ok(frontPage)
   }
 
 }
