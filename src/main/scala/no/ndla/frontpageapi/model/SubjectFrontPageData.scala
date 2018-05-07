@@ -15,8 +15,3 @@ case class SubjectFrontPageData(twitter: String,
                                 highlights: ArticleCollection,
                                 editorsChoices: ArticleCollection,
                                 latestContent: ArticleCollection)
-
-
-
-
-
