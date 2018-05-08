@@ -13,7 +13,7 @@ import com.typesafe.scalalogging.LazyLogging
 import fs2.StreamApp.ExitCode
 import fs2.{Stream, StreamApp}
 import no.ndla.frontpageapi.FrontpageApiProperties.{ApplicationPort, ContactEmail, ContactName}
-import no.ndla.frontpageapi.controller.{FrontPage, NdlaMiddleware, SubjectPage}
+import no.ndla.frontpageapi.controller.{FrontPageController, NdlaMiddleware, SubjectPageController}
 import org.http4s.HttpService
 import org.http4s.rho.RhoService
 import org.http4s.rho.bits.PathAST._
@@ -61,8 +61,8 @@ object Main extends StreamApp[IO] with LazyLogging {
       Source
         .fromInputStream(getClass.getResourceAsStream("/log-license.txt"))
         .mkString)
-    val frontPage = ServiceWithMountpoint(new FrontPage[IO](ioSwagger), "/frontpage-api/v1/frontpage")
-    val subjectPage = ServiceWithMountpoint(new SubjectPage[IO](ioSwagger), "/frontpage-api/v1/subjectpage")
+    val frontPage = ServiceWithMountpoint(new FrontPageController[IO](ioSwagger), "/frontpage-api/v1/frontpage")
+    val subjectPage = ServiceWithMountpoint(new SubjectPageController[IO](ioSwagger), "/frontpage-api/v1/subjectpage")
     val swagger = createSwaggerDocService(frontPage, subjectPage)
 
     val port = ApplicationPort

@@ -15,12 +15,13 @@ import org.http4s.circe.{jsonEncoderOf, jsonOf}
 import io.circe.generic.auto._
 import io.circe._
 
-case class SubjectFrontPageData(twitter: String,
+case class SubjectFrontPageData(id: Long,
+                                twitter: String,
                                 facebook: String,
                                 banner: String,
+                                topical: SubjectTopical,
                                 subjectListLocation: String,
                                 mostRead: ArticleCollection,
-                                highlights: ArticleCollection,
                                 editorsChoices: ArticleCollection,
                                 latestContent: ArticleCollection)
 

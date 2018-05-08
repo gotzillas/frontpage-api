@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model
 
-case class ArticleCollection(location: String, articleIds: List[String])
+case class SubjectTopical(location: String, id: String)
