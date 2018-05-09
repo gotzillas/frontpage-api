@@ -21,8 +21,8 @@ class SubjectPageController[F[_]: Effect](swaggerSyntax: SwaggerSyntax[F]) exten
     GET / pathVar[Int] |>> { id: Int =>
     val mockSubjectPage = SubjectFrontPageData(
       id,
-      "NDLAsamfunnsfag",
       "@ndla_samfunn",
+      "NDLAsamfunnsfag",
       "https://test.api.ndla.no/image-api/raw/id/29668",
       SubjectTopical("top-left", "urn:resource:1:170252"),
       "top",
