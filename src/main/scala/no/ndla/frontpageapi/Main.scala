@@ -13,7 +13,7 @@ import com.typesafe.scalalogging.LazyLogging
 import fs2.StreamApp.ExitCode
 import fs2.{Stream, StreamApp}
 import no.ndla.frontpageapi.FrontpageApiProperties.{ApplicationPort, ContactEmail, ContactName}
-import no.ndla.frontpageapi.controller.{FrontPageController, NdlaMiddleware, SubjectPageController}
+import no.ndla.frontpageapi.controller.{FrontPageController, HealthController, NdlaMiddleware, SubjectPageController}
 import org.http4s.HttpService
 import org.http4s.rho.RhoService
 import org.http4s.rho.bits.PathAST._
@@ -28,7 +28,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.io.Source
 
 object Main extends StreamApp[IO] with LazyLogging {
-  private[this] case class ServiceWithMountpoint(service: RhoService[IO], mountPoint: String) {
+  private[this] case class ServiceWithMountpoint(service: HttpService[IO], mountPoint: String)
+  private[this] case class SwaggerServiceWithMountpoint(service: RhoService[IO], mountPoint: String) {
     def toService: HttpService[IO] = service.toService()
   }
 
@@ -40,7 +41,7 @@ object Main extends StreamApp[IO] with LazyLogging {
     TypedPath(newPath)
   }
 
-  private def createSwaggerDocService(services: ServiceWithMountpoint*): HttpService[IO] = {
+  private def createSwaggerDocService(services: SwaggerServiceWithMountpoint*): HttpService[IO] = {
     val info = Info(
       title = "frontpage-api",
       version = "1.0",
@@ -61,9 +62,12 @@ object Main extends StreamApp[IO] with LazyLogging {
       Source
         .fromInputStream(getClass.getResourceAsStream("/log-license.txt"))
         .mkString)
-    val frontPage = ServiceWithMountpoint(new FrontPageController[IO](ioSwagger), "/frontpage-api/v1/frontpage")
-    val subjectPage = ServiceWithMountpoint(new SubjectPageController[IO](ioSwagger), "/frontpage-api/v1/subjectpage")
-    val swagger = createSwaggerDocService(frontPage, subjectPage)
+
+    val subjectPage =
+      SwaggerServiceWithMountpoint(new SubjectPageController[IO](ioSwagger), "/frontpage-api/v1/subjectpage")
+    val frontPage = SwaggerServiceWithMountpoint(new FrontPageController[IO](ioSwagger), "/frontpage-api/v1/frontpage")
+    val healthController = ServiceWithMountpoint(HealthController(), "/health")
+    val swagger = ServiceWithMountpoint(createSwaggerDocService(frontPage, subjectPage), "/frontpage-api/api-docs")
 
     val port = ApplicationPort
     logger.info(s"Starting on port $port")
@@ -71,7 +75,8 @@ object Main extends StreamApp[IO] with LazyLogging {
     BlazeBuilder[IO]
       .mountService(NdlaMiddleware(frontPage.toService), frontPage.mountPoint)
       .mountService(NdlaMiddleware(subjectPage.toService), subjectPage.mountPoint)
-      .mountService(swagger, "/frontpage-api/api-docs")
+      .mountService(healthController.service, healthController.mountPoint)
+      .mountService(swagger.service, swagger.mountPoint)
       .bindHttp(port, "0.0.0.0")
       .serve
   }
