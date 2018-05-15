@@ -22,6 +22,7 @@ trait FrontPageRepository {
   val frontPageRepository: FrontPageRepository
 
   class FrontPageRepository extends LazyLogging {
+
     def newFrontPage(page: FrontPageData)(implicit session: DBSession = AutoSession): Try[FrontPageData] = {
       val dataObject = new PGobject()
       dataObject.setType("jsonb")

@@ -27,12 +27,14 @@ trait FrontPageController {
     import swaggerSyntax._
 
     "Get data to display on the front page" **
-      GET |>> { () => {
-      readService.frontPage match {
-        case Some(s) => Ok(s)
-        case None    => NotFound(Error.notFound)
+      GET |>> { () =>
+      {
+        readService.frontPage match {
+          case Some(s) => Ok(s)
+          case None    => NotFound(Error.notFound)
+        }
       }
-    }}
+    }
 
     "Update front page" **
       POST ^ FrontPageData.decoder |>> { frontPage: FrontPageData =>

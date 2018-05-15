@@ -8,10 +8,7 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.model.api
-import no.ndla.frontpageapi.repository.{
-  FrontPageRepository,
-  SubjectPageRepository
-}
+import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
 
 trait ReadService {
   this: SubjectPageRepository with FrontPageRepository =>
