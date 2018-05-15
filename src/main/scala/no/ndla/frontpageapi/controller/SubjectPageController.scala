@@ -22,7 +22,8 @@ trait SubjectPageController {
   this: ReadService with WriteService =>
   val subjectPageController: SubjectPageController[IO]
 
-  class SubjectPageController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(implicit F: Monad[F])
+  class SubjectPageController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(
+      implicit F: Monad[F])
       extends RhoService[F] {
 
     import swaggerSyntax._
@@ -38,13 +39,14 @@ trait SubjectPageController {
     }
 
     "Create new subject page" **
-      POST ^ NewOrUpdateSubjectFrontPageData.decoder |>> { subjectPage: NewOrUpdateSubjectFrontPageData =>
-      {
-        writeService.newSubjectPage(subjectPage) match {
-          case Success(s)  => Ok(s)
-          case Failure(ex) => InternalServerError(Error.generic)
+      POST ^ NewOrUpdateSubjectFrontPageData.decoder |>> {
+      subjectPage: NewOrUpdateSubjectFrontPageData =>
+        {
+          writeService.newSubjectPage(subjectPage) match {
+            case Success(s)  => Ok(s)
+            case Failure(ex) => InternalServerError(Error.generic)
+          }
         }
-      }
     }
 
     "Update subject page" **
@@ -54,9 +56,7 @@ trait SubjectPageController {
           writeService.updateSubjectPage(id, subjectPage) match {
             case Success(s)                    => Ok(s)
             case Failure(_: NotFoundException) => NotFound(Error.notFound)
-            case Failure(ex) =>
-              ex.printStackTrace()
-              InternalServerError(Error.generic)
+            case Failure(ex)                   => InternalServerError(Error.generic)
           }
         }
     }

@@ -8,8 +8,10 @@
 package no.ndla.frontpageapi
 
 import com.typesafe.scalalogging.LazyLogging
+import no.ndla.network.Domains
 import no.ndla.network.secrets.PropertyKeys
 import no.ndla.network.secrets.Secrets.readSecrets
+
 import scala.util.Properties._
 import scala.util.{Failure, Success}
 
@@ -27,6 +29,10 @@ object FrontpageApiProperties extends LazyLogging {
   lazy val MetaPort: Int = prop(PropertyKeys.MetaPortKey).toInt
   lazy val MetaSchema: String = prop(PropertyKeys.MetaSchemaKey)
   val MetaMaxConnections = 20
+
+  val Environment: String = propOrElse("NDLA_ENVIRONMENT", "local")
+  val Domain: String = Domains.get(Environment)
+  val RawImageApiUrl: String = s"$Domain/image-api/raw"
 
   lazy val secrets: Map[String, Option[String]] = readSecrets(SecretsFile) match {
     case Success(values)    => values

@@ -16,9 +16,10 @@ import io.circe.generic.auto._
 
 case class NewOrUpdateSubjectFrontPageData(twitter: String,
                                            facebook: String,
-                                           banner: String,
-                                           topical: SubjectTopical,
+                                           bannerImageId: Long,
                                            subjectListLocation: String,
+                                           about: AboutSubject,
+                                           topical: SubjectTopical,
                                            mostRead: ArticleCollection,
                                            editorsChoices: ArticleCollection,
                                            latestContent: ArticleCollection)

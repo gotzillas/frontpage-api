@@ -17,9 +17,10 @@ object TestData {
     Some(1),
     "@ndla_samfunn",
     "NDLAsamfunnsfag",
-    "https://test.api.ndla.no/image-api/raw/id/29668",
-    domain.SubjectTopical("top-left", "urn:resource:1:170252"),
+    29668,
     "top",
+    domain.AboutSubject("bottom", "Om Samfunnsfag", "Dette er samfunnsfag", """<embed data-resource="image" data-id="123" />"""),
+    domain.SubjectTopical("top-left", "urn:resource:1:170252"),
     domain.ArticleCollection(
       "top",
       List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
