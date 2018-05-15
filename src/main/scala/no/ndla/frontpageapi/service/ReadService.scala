@@ -8,7 +8,10 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.model.api
-import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
+import no.ndla.frontpageapi.repository.{
+  FrontPageRepository,
+  SubjectPageRepository
+}
 
 trait ReadService {
   this: SubjectPageRepository with FrontPageRepository =>
@@ -19,7 +22,7 @@ trait ReadService {
     def subjectPage(id: Long): Option[api.SubjectPageData] =
       subjectPageRepository.withId(id).map(ConverterService.toApiSubjectPage)
 
-    def frontPage: Option[api.FrontPageData] = frontPageRepository.get.map(ConverterService.toApiFrontPage)
-
+    def frontPage: Option[api.FrontPageData] =
+      frontPageRepository.get.map(ConverterService.toApiFrontPage)
   }
 }

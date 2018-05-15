@@ -41,11 +41,7 @@ trait WriteService {
 
     def updateFrontPage(page: api.FrontPageData): Try[api.FrontPageData] = {
       val domainFrontpage = ConverterService.toDomainFrontPage(page)
-      val updateFunc =
-        if (frontPageRepository.exists) frontPageRepository.updateFrontPage _
-        else frontPageRepository.newFrontPage _
-
-      updateFunc(domainFrontpage).map(ConverterService.toApiFrontPage)
+      frontPageRepository.newFrontPage(domainFrontpage).map(ConverterService.toApiFrontPage)
     }
 
   }
