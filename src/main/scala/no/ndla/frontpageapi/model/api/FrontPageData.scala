@@ -16,7 +16,7 @@ import io.circe.generic.semiauto._
 import io.circe.generic.auto._
 import io.circe._
 
-case class FrontPageData(topical: List[String], subjects: List[SubjectCollection])
+case class FrontPageData(topical: List[String], categories: List[SubjectCollection])
 
 object FrontPageData {
   implicit def encoder[F[_]: Applicative]: EntityEncoder[F, FrontPageData] = {

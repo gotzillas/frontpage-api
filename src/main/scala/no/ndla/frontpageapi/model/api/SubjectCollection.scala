@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class SubjectCollection(category: String, subjects: List[String])
+case class SubjectCollection(name: String, subjects: List[String])

@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.domain
 
-case class FrontPageData(topical: List[String], subjects: List[SubjectCollection])
+case class FrontPageData(topical: List[String], categories: List[SubjectCollection])
