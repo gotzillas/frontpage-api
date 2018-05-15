@@ -68,7 +68,7 @@ object Main extends StreamApp[IO] with LazyLogging {
     logger.info("Building swagger service")
     val subjectPage =
       SwaggerServiceWithMountpoint(ComponentRegistry.subjectPageController, "/frontpage-api/v1/subjectpage")
-    val frontPage = SwaggerServiceWithMountpoint(new FrontPageController[IO](ioSwagger), "/frontpage-api/v1/frontpage")
+    val frontPage = SwaggerServiceWithMountpoint(ComponentRegistry.frontPageController, "/frontpage-api/v1/frontpage")
     val healthController = ServiceWithMountpoint(HealthController(), "/health")
     val swagger = ServiceWithMountpoint(createSwaggerDocService(frontPage, subjectPage), "/frontpage-api/api-docs")
 

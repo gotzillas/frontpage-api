@@ -20,7 +20,10 @@ object TestData {
     "NDLAsamfunnsfag",
     29668,
     0,
-    domain.AboutSubject(1, "Om Samfunnsfag", "Dette er samfunnsfag", """<embed data-resource="image" data-id="123" />"""),
+    domain.AboutSubject(1,
+                        "Om Samfunnsfag",
+                        "Dette er samfunnsfag",
+                        """<embed data-resource="image" data-id="123" />"""),
     domain.SubjectTopical(2, "urn:resource:1:170252"),
     domain.ArticleCollection(
       3,

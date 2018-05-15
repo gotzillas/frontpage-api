@@ -12,6 +12,12 @@ import no.ndla.frontpageapi.model.{api, domain}
 
 object ConverterService {
 
+  def toApiFrontPage(page: domain.FrontPageData): api.FrontPageData =
+    api.FrontPageData(page.topical, page.categories.map(toApiSubjectCollection))
+
+  private def toApiSubjectCollection(coll: domain.SubjectCollection): api.SubjectCollection =
+    api.SubjectCollection(coll.name, coll.subjects)
+
   def toApiSubjectPage(sub: domain.SubjectFrontPageData): api.SubjectPageData = {
     api.SubjectPageData(
       sub.id.get,
@@ -64,6 +70,12 @@ object ConverterService {
 
   private def toDomainAboutSubject(about: api.AboutSubject): domain.AboutSubject =
     domain.AboutSubject(about.location, about.title, about.description, about.visualElement)
+
+  def toDomainFrontPage(page: api.FrontPageData): domain.FrontPageData =
+    domain.FrontPageData(page.topical, page.categories.map(toDomainSubjectCollection))
+
+  private def toDomainSubjectCollection(coll: api.SubjectCollection): domain.SubjectCollection =
+    domain.SubjectCollection(coll.name, coll.subjects)
 
   private def createImageUrl(id: Long): String = s"${FrontpageApiProperties.RawImageApiUrl}/id/$id"
 }

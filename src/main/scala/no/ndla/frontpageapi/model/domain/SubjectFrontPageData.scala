@@ -60,19 +60,16 @@ object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
                              editorsChoices,
                              latestContent)
 
-  private[domain] def decodeJson(json: String,
-                                 id: Long): Try[SubjectFrontPageData] = {
+  private[domain] def decodeJson(json: String, id: Long): Try[SubjectFrontPageData] = {
     parse(json).flatMap(_.as[SubjectFrontPageData](getDecoder(id))).toTry
   }
 
   implicit val encoder: Encoder[SubjectFrontPageData] = deriveEncoder
 
-  def fromDb(lp: SyntaxProvider[SubjectFrontPageData])(
-      rs: WrappedResultSet): Try[SubjectFrontPageData] =
+  def fromDb(lp: SyntaxProvider[SubjectFrontPageData])(rs: WrappedResultSet): Try[SubjectFrontPageData] =
     fromDb(lp.resultName)(rs)
 
-  private def fromDb(lp: ResultName[SubjectFrontPageData])(
-      rs: WrappedResultSet): Try[SubjectFrontPageData] = {
+  private def fromDb(lp: ResultName[SubjectFrontPageData])(rs: WrappedResultSet): Try[SubjectFrontPageData] = {
     val id = rs.long(lp.c("id"))
     val document = rs.string(lp.c("document"))
 
