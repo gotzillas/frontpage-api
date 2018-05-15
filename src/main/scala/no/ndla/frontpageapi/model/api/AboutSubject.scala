@@ -5,6 +5,6 @@
  * See LICENSE
  */
 
-package no.ndla.frontpageapi.model
+package no.ndla.frontpageapi.model.api
 
 case class AboutSubject(location: String, title: String, description: String, visualElement: String)

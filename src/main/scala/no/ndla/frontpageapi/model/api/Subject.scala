@@ -5,6 +5,6 @@
  * See LICENSE
  */
 
-package no.ndla.frontpageapi.model
+package no.ndla.frontpageapi.model.api
 
 case class Subject(name: String, url: String)

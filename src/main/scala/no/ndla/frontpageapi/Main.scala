@@ -62,9 +62,12 @@ object Main extends StreamApp[IO] with LazyLogging {
       Source
         .fromInputStream(getClass.getResourceAsStream("/log-license.txt"))
         .mkString)
+    logger.info("Starting database migration")
+    DBMigrator.migrate(ComponentRegistry.dataSource)
 
+    logger.info("Building swagger service")
     val subjectPage =
-      SwaggerServiceWithMountpoint(new SubjectPageController[IO](ioSwagger), "/frontpage-api/v1/subjectpage")
+      SwaggerServiceWithMountpoint(ComponentRegistry.subjectPageController, "/frontpage-api/v1/subjectpage")
     val frontPage = SwaggerServiceWithMountpoint(new FrontPageController[IO](ioSwagger), "/frontpage-api/v1/frontpage")
     val healthController = ServiceWithMountpoint(HealthController(), "/health")
     val swagger = ServiceWithMountpoint(createSwaggerDocService(frontPage, subjectPage), "/frontpage-api/api-docs")

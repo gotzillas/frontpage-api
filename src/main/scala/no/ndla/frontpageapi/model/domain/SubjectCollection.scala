@@ -5,6 +5,6 @@
  * See LICENSE
  */
 
-package no.ndla.frontpageapi.model
+package no.ndla.frontpageapi.model.domain
 
 case class SubjectCollection(category: String, subjects: List[String])

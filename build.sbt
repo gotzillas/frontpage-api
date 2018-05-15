@@ -6,8 +6,13 @@ val Log4JVersion = "2.9.1"
 val ScalaTestVersion = "3.0.1"
 val MockitoVersion = "1.10.19"
 val JacksonVersion = "2.9.4"
-val http4sVersion = "0.18.4"
+val Http4sVersion = "0.18.4"
 val RhoVersion = "0.18.0"
+val CirceVersion = "0.9.3"
+val ScalikeJDBCVersion = "3.2.3"
+val HikariConnectionPoolVersion = "3.1.0"
+val PostgresVersion = "9.4-1201-jdbc4"
+val FlywayVersion = "5.0.7"
 
 val appProperties = settingKey[Properties]("The application properties")
 
@@ -28,20 +33,27 @@ lazy val frontpage_api = (project in file("."))
     scalacOptions := Seq("-target:jvm-1.8", "-unchecked", "-deprecation", "-feature", "-Ypartial-unification"),
     libraryDependencies ++= Seq(
       "ndla" %% "network" % "0.29",
-      "org.http4s" %% "http4s-circe" % http4sVersion,
-      "io.circe" %% "circe-generic" % "0.9.3",
-      "io.circe" %% "circe-literal" % "0.9.3",
+      "org.http4s" %% "http4s-circe" % Http4sVersion,
+      "io.circe" %% "circe-generic" % CirceVersion,
+      "io.circe" %% "circe-java8" % CirceVersion,
+      "io.circe" %% "circe-generic-extras" % CirceVersion,
+      "io.circe" %% "circe-literal" % CirceVersion,
+      "io.circe" %% "circe-parser" % CirceVersion,
+      "org.scalikejdbc" %% "scalikejdbc" % ScalikeJDBCVersion,
+      "org.postgresql" % "postgresql" % PostgresVersion,
+      "com.zaxxer" % "HikariCP" % HikariConnectionPoolVersion,
       "org.http4s" %% "rho-swagger" % RhoVersion,
-      "org.http4s" %% "http4s-server" % http4sVersion,
-      "org.http4s" %% "http4s-dsl" % http4sVersion,
-      "org.http4s" %% "http4s-blaze-server" % http4sVersion,
-      "org.http4s" %% "http4s-json4s-jackson" % http4sVersion,
+      "org.http4s" %% "http4s-server" % Http4sVersion,
+      "org.http4s" %% "http4s-dsl" % Http4sVersion,
+      "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
       "com.typesafe.scala-logging" %% "scala-logging" % ScalaLoggingVersion,
       "org.apache.logging.log4j" % "log4j-api" % Log4JVersion,
       "org.apache.logging.log4j" % "log4j-core" % Log4JVersion,
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % Log4JVersion,
       "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % JacksonVersion,
-      "org.mockito" % "mockito-all" % MockitoVersion % "test"
+      "org.flywaydb" % "flyway-core" % FlywayVersion,
+      "org.mockito" % "mockito-all" % MockitoVersion % "test",
+      "org.scalatest" %% "scalatest" % ScalaTestVersion % "test"
     )
   )
   .enablePlugins(DockerPlugin)

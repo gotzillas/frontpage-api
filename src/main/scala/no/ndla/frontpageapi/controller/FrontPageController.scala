@@ -8,7 +8,7 @@
 package no.ndla.frontpageapi.controller
 
 import cats.effect.Effect
-import no.ndla.frontpageapi.model.{FrontPageData, SubjectCollection}
+import no.ndla.frontpageapi.model.api.{FrontPageData, SubjectCollection}
 import org.http4s.rho.RhoService
 import org.http4s.rho.swagger.SwaggerSyntax
 
