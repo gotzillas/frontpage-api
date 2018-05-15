@@ -17,10 +17,11 @@ import io.circe.generic.auto._
 import io.circe._
 
 case class SubjectPageData(id: Long,
+                           displayInTwoColumns: Boolean,
                            twitter: String,
                            facebook: String,
                            banner: String,
-                           subjectListLocation: String,
+                           subjectListLocation: Int,
                            about: AboutSubject,
                            topical: SubjectTopical,
                            mostRead: ArticleCollection,

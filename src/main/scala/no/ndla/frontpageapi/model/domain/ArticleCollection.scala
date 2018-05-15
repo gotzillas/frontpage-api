@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.domain
 
-case class ArticleCollection(location: String, articleIds: List[String])
+case class ArticleCollection(location: Int, articleIds: List[String])

@@ -15,20 +15,21 @@ object TestData {
 
   val domainSubjectPage = domain.SubjectFrontPageData(
     Some(1),
+    false,
     "@ndla_samfunn",
     "NDLAsamfunnsfag",
     29668,
-    "top",
-    domain.AboutSubject("bottom", "Om Samfunnsfag", "Dette er samfunnsfag", """<embed data-resource="image" data-id="123" />"""),
-    domain.SubjectTopical("top-left", "urn:resource:1:170252"),
+    0,
+    domain.AboutSubject(1, "Om Samfunnsfag", "Dette er samfunnsfag", """<embed data-resource="image" data-id="123" />"""),
+    domain.SubjectTopical(2, "urn:resource:1:170252"),
     domain.ArticleCollection(
-      "top",
+      3,
       List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
     domain.ArticleCollection(
-      "top",
+      4,
       List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
     domain.ArticleCollection(
-      "top",
+      5,
       List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"))
   )
   val domainSubjectJson = domainSubjectPage.asJson.noSpaces

@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.domain
 
-case class SubjectTopical(location: String, id: String)
+case class SubjectTopical(location: Int, id: String)

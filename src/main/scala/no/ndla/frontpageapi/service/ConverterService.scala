@@ -15,6 +15,7 @@ object ConverterService {
   def toApiSubjectPage(sub: domain.SubjectFrontPageData): api.SubjectPageData = {
     api.SubjectPageData(
       sub.id.get,
+      sub.displayInTwoColumns,
       sub.twitter,
       sub.facebook,
       createImageUrl(sub.bannerImageId),
@@ -42,6 +43,7 @@ object ConverterService {
   def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): domain.SubjectFrontPageData = {
     domain.SubjectFrontPageData(
       None,
+      subject.displayInTwoColumns,
       subject.twitter,
       subject.facebook,
       subject.bannerImageId,

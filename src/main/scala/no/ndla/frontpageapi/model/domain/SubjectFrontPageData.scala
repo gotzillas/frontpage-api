@@ -19,10 +19,11 @@ import cats.implicits._
 import scala.util.Try
 
 case class SubjectFrontPageData(id: Option[Long],
+                                displayInTwoColumns: Boolean,
                                 twitter: String,
                                 facebook: String,
                                 bannerImageId: Long,
-                                subjectListLocation: String,
+                                subjectListLocation: Int,
                                 about: AboutSubject,
                                 topical: SubjectTopical,
                                 mostRead: ArticleCollection,
@@ -36,17 +37,19 @@ object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
   private def getDecoder(id: Long): Decoder[SubjectFrontPageData] =
     (c: HCursor) =>
       for {
+        displayInTwoColumns <- c.downField("displayInTwoColumns").as[Boolean]
         twitter <- c.downField("twitter").as[String]
         facebook <- c.downField("facebook").as[String]
         bannerImageId <- c.downField("bannerImageId").as[Long]
         topical <- c.downField("topical").as[SubjectTopical]
         about <- c.downField("about").as[AboutSubject]
-        subjectListLocation <- c.downField("subjectListLocation").as[String]
+        subjectListLocation <- c.downField("subjectListLocation").as[Int]
         mostRead <- c.downField("mostRead").as[ArticleCollection]
         editorsChoices <- c.downField("editorsChoices").as[ArticleCollection]
         latestContent <- c.downField("latestContent").as[ArticleCollection]
       } yield
         SubjectFrontPageData(Some(id),
+                             displayInTwoColumns,
                              twitter,
                              facebook,
                              bannerImageId,

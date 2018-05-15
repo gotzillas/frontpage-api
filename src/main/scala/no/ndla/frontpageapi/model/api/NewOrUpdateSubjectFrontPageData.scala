@@ -14,10 +14,11 @@ import scala.language.higherKinds
 import io.circe.generic.semiauto._
 import io.circe.generic.auto._
 
-case class NewOrUpdateSubjectFrontPageData(twitter: String,
+case class NewOrUpdateSubjectFrontPageData(displayInTwoColumns: Boolean,
+                                           twitter: String,
                                            facebook: String,
                                            bannerImageId: Long,
-                                           subjectListLocation: String,
+                                           subjectListLocation: Int,
                                            about: AboutSubject,
                                            topical: SubjectTopical,
                                            mostRead: ArticleCollection,
