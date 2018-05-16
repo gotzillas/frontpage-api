@@ -13,6 +13,8 @@ import com.typesafe.scalalogging.LazyLogging
 import org.postgresql.util.PGobject
 import scalikejdbc._
 import io.circe.syntax._
+import io.circe.generic.auto._
+import io.circe.parser._
 import SubjectFrontPageData._
 import scala.util.{Failure, Success, Try}
 
@@ -26,7 +28,7 @@ trait SubjectPageRepository {
         implicit session: DBSession = AutoSession): Try[SubjectFrontPageData] = {
       val dataObject = new PGobject()
       dataObject.setType("jsonb")
-      dataObject.setValue(subj.asJson.noSpacesDropNull)
+      dataObject.setValue(subj.copy(id = None).asJson.noSpacesDropNull)
 
       Try(
         sql"insert into ${SubjectFrontPageData.table} (document) values (${dataObject})"
@@ -41,7 +43,7 @@ trait SubjectPageRepository {
         implicit session: DBSession = AutoSession): Try[SubjectFrontPageData] = {
       val dataObject = new PGobject()
       dataObject.setType("jsonb")
-      dataObject.setValue(subj.asJson.noSpacesDropNull)
+      dataObject.setValue(subj.copy(id = None).asJson.noSpacesDropNull)
 
       Try(sql"update ${SubjectFrontPageData.table} set document=${dataObject} where id=${subj.id}".update.apply)
         .map(_ => subj)

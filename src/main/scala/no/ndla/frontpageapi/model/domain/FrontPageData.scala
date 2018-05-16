@@ -24,7 +24,7 @@ object FrontPageData extends SQLSyntaxSupport[FrontPageData] {
   override val tableName = "mainfrontpage"
   override val schemaName = FrontpageApiProperties.MetaSchema.some
 
-  private[domain] def decodeJson(json: String, id: Long): Try[FrontPageData] = {
+  private[domain] def decodeJson(json: String): Try[FrontPageData] = {
     parse(json).flatMap(_.as[FrontPageData]).toTry
   }
 
@@ -34,10 +34,8 @@ object FrontPageData extends SQLSyntaxSupport[FrontPageData] {
     fromDb(lp.resultName)(rs)
 
   private def fromDb(lp: ResultName[FrontPageData])(rs: WrappedResultSet): Try[FrontPageData] = {
-    val id = rs.long(lp.c("id"))
     val document = rs.string(lp.c("document"))
-
-    decodeJson(document, id)
+    decodeJson(document)
   }
 
 }

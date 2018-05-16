@@ -39,8 +39,6 @@ object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
     parse(json).flatMap(_.as[SubjectFrontPageData]).map(_.copy(id = id.some)).toTry
   }
 
-  implicit val encoder: Encoder[SubjectFrontPageData] = deriveEncoder
-
   def fromDb(lp: SyntaxProvider[SubjectFrontPageData])(rs: WrappedResultSet): Try[SubjectFrontPageData] =
     fromDb(lp.resultName)(rs)
 
