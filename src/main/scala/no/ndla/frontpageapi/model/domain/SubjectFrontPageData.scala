@@ -15,6 +15,7 @@ import no.ndla.frontpageapi.FrontpageApiProperties
 import scalikejdbc.WrappedResultSet
 import scalikejdbc._
 import cats.implicits._
+import io.circe.generic.extras.Configuration
 
 import scala.util.Try
 
@@ -34,34 +35,8 @@ object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
   override val tableName = "subjectpage"
   override val schemaName = FrontpageApiProperties.MetaSchema.some
 
-  private def getDecoder(id: Long): Decoder[SubjectFrontPageData] =
-    (c: HCursor) =>
-      for {
-        displayInTwoColumns <- c.downField("displayInTwoColumns").as[Boolean]
-        twitter <- c.downField("twitter").as[String]
-        facebook <- c.downField("facebook").as[String]
-        bannerImageId <- c.downField("bannerImageId").as[Long]
-        topical <- c.downField("topical").as[SubjectTopical]
-        about <- c.downField("about").as[AboutSubject]
-        subjectListLocation <- c.downField("subjectListLocation").as[Int]
-        mostRead <- c.downField("mostRead").as[ArticleCollection]
-        editorsChoices <- c.downField("editorsChoices").as[ArticleCollection]
-        latestContent <- c.downField("latestContent").as[ArticleCollection]
-      } yield
-        SubjectFrontPageData(Some(id),
-                             displayInTwoColumns,
-                             twitter,
-                             facebook,
-                             bannerImageId,
-                             subjectListLocation,
-                             about,
-                             topical,
-                             mostRead,
-                             editorsChoices,
-                             latestContent)
-
   private[domain] def decodeJson(json: String, id: Long): Try[SubjectFrontPageData] = {
-    parse(json).flatMap(_.as[SubjectFrontPageData](getDecoder(id))).toTry
+    parse(json).flatMap(_.as[SubjectFrontPageData]).map(_.copy(id = id.some)).toTry
   }
 
   implicit val encoder: Encoder[SubjectFrontPageData] = deriveEncoder

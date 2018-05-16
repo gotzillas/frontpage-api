@@ -19,7 +19,8 @@ trait ReadService {
     def subjectPage(id: Long): Option[api.SubjectPageData] =
       subjectPageRepository.withId(id).map(ConverterService.toApiSubjectPage)
 
-    def frontPage: Option[api.FrontPageData] =
+    def frontPage: Option[api.FrontPageData] = {
       frontPageRepository.get.map(ConverterService.toApiFrontPage)
+    }
   }
 }

@@ -7,10 +7,7 @@
 
 package no.ndla.frontpageapi.model.domain
 
-import no.ndla.frontpageapi.FrontpageApiProperties
 import io.circe.generic.semiauto._
-import io.circe.generic.auto._
-import io.circe.parser._
 import io.circe.generic.auto._
 import io.circe.parser._
 import no.ndla.frontpageapi.FrontpageApiProperties
