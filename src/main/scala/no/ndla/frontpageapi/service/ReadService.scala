@@ -8,6 +8,7 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.model.api
+import no.ndla.frontpageapi.model.api.SubjectPageId
 import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
 
 trait ReadService {
@@ -15,6 +16,9 @@ trait ReadService {
   val readService: ReadService
 
   class ReadService {
+
+    def getIdFromExternalId(nid: String): Option[SubjectPageId] =
+      subjectPageRepository.getIdFromExternalId(nid).map(id => SubjectPageId(id))
 
     def subjectPage(id: Long): Option[api.SubjectPageData] =
       subjectPageRepository.withId(id).map(ConverterService.toApiSubjectPage)

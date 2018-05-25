@@ -14,7 +14,9 @@ import scala.language.higherKinds
 import io.circe.generic.semiauto._
 import io.circe.generic.auto._
 
-case class NewOrUpdateSubjectFrontPageData(displayInTwoColumns: Boolean,
+case class NewOrUpdateSubjectFrontPageData(name: String,
+                                           externalId: String,
+                                           displayInTwoColumns: Boolean,
                                            twitter: String,
                                            facebook: String,
                                            bannerImageId: Long,

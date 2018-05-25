@@ -23,7 +23,7 @@ trait WriteService {
     def newSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[api.SubjectPageData] = {
       val domainSubjectPage = ConverterService.toDomainSubjectPage(subject)
       subjectPageRepository
-        .newSubjectPage(domainSubjectPage)
+        .newSubjectPage(domainSubjectPage, subject.externalId)
         .map(ConverterService.toApiSubjectPage)
     }
 

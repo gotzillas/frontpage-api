@@ -36,16 +36,6 @@ trait FrontPageController {
       }
     }
 
-    "Update front page" **
-      POST ^ FrontPageData.decoder |>> { frontPage: FrontPageData =>
-      {
-        writeService.updateFrontPage(frontPage) match {
-          case Success(s) => Ok(s)
-          case Failure(_) => InternalServerError(Error.generic)
-        }
-      }
-    }
-
   }
 
 }

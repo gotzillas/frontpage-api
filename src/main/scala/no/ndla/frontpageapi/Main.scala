@@ -69,8 +69,10 @@ object Main extends StreamApp[IO] with LazyLogging {
     val subjectPage =
       SwaggerServiceWithMountpoint(ComponentRegistry.subjectPageController, "/frontpage-api/v1/subjectpage")
     val frontPage = SwaggerServiceWithMountpoint(ComponentRegistry.frontPageController, "/frontpage-api/v1/frontpage")
+    val internController = SwaggerServiceWithMountpoint(ComponentRegistry.internController, "/intern")
     val healthController = ServiceWithMountpoint(HealthController(), "/health")
-    val swagger = ServiceWithMountpoint(createSwaggerDocService(frontPage, subjectPage), "/frontpage-api/api-docs")
+    val swagger = ServiceWithMountpoint(createSwaggerDocService(frontPage, subjectPage, internController),
+                                        "/frontpage-api/api-docs")
 
     val port = ApplicationPort
     logger.info(s"Starting on port $port")
@@ -78,6 +80,7 @@ object Main extends StreamApp[IO] with LazyLogging {
     BlazeBuilder[IO]
       .mountService(NdlaMiddleware(frontPage.toService), frontPage.mountPoint)
       .mountService(NdlaMiddleware(subjectPage.toService), subjectPage.mountPoint)
+      .mountService(NdlaMiddleware(internController.toService), internController.mountPoint)
       .mountService(healthController.service, healthController.mountPoint)
       .mountService(swagger.service, swagger.mountPoint)
       .bindHttp(port, "0.0.0.0")
