@@ -46,15 +46,19 @@ trait FrontPageRepository {
     def get(implicit session: DBSession = ReadOnlyAutoSession): Option[FrontPageData] = {
       val fr = FrontPageData.syntax("fr")
 
-      sql"select ${fr.result.*} from ${FrontPageData.as(fr)} order by fr.id desc limit 1"
-        .map(FrontPageData.fromDb(fr))
-        .single
-        .apply() match {
-        case Some(Success(s)) => Some(s)
-        case Some(Failure(ex)) =>
+      Try(
+        sql"select ${fr.result.*} from ${FrontPageData.as(fr)} order by fr.id desc limit 1"
+          .map(FrontPageData.fromDb(fr))
+          .single
+          .apply()) match {
+        case Success(Some(Success(s))) => Some(s)
+        case Success(Some(Failure(ex))) =>
           ex.printStackTrace()
           None
-        case None => None
+        case Success(None) => None
+        case Failure(ex) =>
+          ex.printStackTrace()
+          None
       }
     }
 

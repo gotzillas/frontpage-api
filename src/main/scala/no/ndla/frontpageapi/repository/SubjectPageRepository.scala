@@ -52,32 +52,40 @@ trait SubjectPageRepository {
     def withId(subjectId: Long): Option[SubjectFrontPageData] =
       subjectPageWhere(sqls"su.id=${subjectId.toInt}")
 
-    def getIdFromExternalId(externalId: String)(implicit sesstion: DBSession = AutoSession): Option[Long] = {
-      sql"select id from ${SubjectFrontPageData.table} where external_id=${externalId}"
-        .map(rs => rs.long("id"))
-        .single
-        .apply()
+    def getIdFromExternalId(externalId: String)(implicit sesstion: DBSession = AutoSession): Try[Option[Long]] = {
+      Try(
+        sql"select id from ${SubjectFrontPageData.table} where external_id=${externalId}"
+          .map(rs => rs.long("id"))
+          .single
+          .apply())
     }
 
-    def exists(subjectId: Long)(implicit sesstion: DBSession = AutoSession): Boolean = {
-      val result =
-        sql"select id from ${SubjectFrontPageData.table} where id=${subjectId}".map(rs => rs.long("id")).single.apply()
-      result.isDefined
+    def exists(subjectId: Long)(implicit sesstion: DBSession = AutoSession): Try[Boolean] = {
+      Try(
+        sql"select id from ${SubjectFrontPageData.table} where id=${subjectId}"
+          .map(rs => rs.long("id"))
+          .single
+          .apply())
+        .map(_.isDefined)
     }
 
     private def subjectPageWhere(whereClause: SQLSyntax)(
         implicit session: DBSession = ReadOnlyAutoSession): Option[SubjectFrontPageData] = {
       val su = SubjectFrontPageData.syntax("su")
 
-      sql"select ${su.result.*} from ${SubjectFrontPageData.as(su)} where su.document is not NULL and $whereClause"
-        .map(SubjectFrontPageData.fromDb(su))
-        .single
-        .apply() match {
-        case Some(Success(s)) => Some(s)
-        case Some(Failure(ex)) =>
+      Try(
+        sql"select ${su.result.*} from ${SubjectFrontPageData.as(su)} where su.document is not NULL and $whereClause"
+          .map(SubjectFrontPageData.fromDb(su))
+          .single
+          .apply()) match {
+        case Success(Some(Success(s))) => Some(s)
+        case Success(Some(Failure(ex))) =>
           ex.printStackTrace()
           None
-        case None => None
+        case Failure(ex) =>
+          ex.printStackTrace()
+          None
+        case _ => None
       }
     }
 

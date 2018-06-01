@@ -12,7 +12,7 @@ import no.ndla.frontpageapi.model.domain.Errors.NotFoundException
 import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.model.{api, domain}
 
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 trait WriteService {
   this: SubjectPageRepository with FrontPageRepository =>
@@ -28,20 +28,24 @@ trait WriteService {
     }
 
     def updateSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): Try[api.SubjectPageData] = {
-      if (subjectPageRepository.exists(id)) {
-        val domainSubjectPage =
-          ConverterService.toDomainSubjectPage(id, subject)
-        subjectPageRepository
-          .updateSubjectPage(domainSubjectPage)
-          .map(ConverterService.toApiSubjectPage)
-      } else {
-        Failure(NotFoundException(id))
+      subjectPageRepository.exists(id) match {
+        case Success(exists) if exists =>
+          val domainSubjectPage =
+            ConverterService.toDomainSubjectPage(id, subject)
+          subjectPageRepository
+            .updateSubjectPage(domainSubjectPage)
+            .map(ConverterService.toApiSubjectPage)
+        case Success(_) =>
+          Failure(NotFoundException(id))
+        case Failure(ex) => Failure(ex)
       }
     }
 
     def updateFrontPage(page: api.FrontPageData): Try[api.FrontPageData] = {
       val domainFrontpage = ConverterService.toDomainFrontPage(page)
-      frontPageRepository.newFrontPage(domainFrontpage).map(ConverterService.toApiFrontPage)
+      frontPageRepository
+        .newFrontPage(domainFrontpage)
+        .map(ConverterService.toApiFrontPage)
     }
 
   }

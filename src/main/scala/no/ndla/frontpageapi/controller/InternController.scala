@@ -29,8 +29,9 @@ trait InternController {
       GET / "subjectpage" / "external" / pathVar[String]("externalId", "old NDLA node id") |>> { nid: String =>
       {
         readService.getIdFromExternalId(nid) match {
-          case Some(id) => Ok(id)
-          case None     => NotFound(Error.notFound)
+          case Success(Some(id)) => Ok(id)
+          case Success(None)     => NotFound(Error.notFound)
+          case Failure(_)        => InternalServerError(Error.generic)
         }
       }
     }
