@@ -34,7 +34,11 @@ object TestData {
       List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
     domain.ArticleCollection(
       5,
-      List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"))
+      List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
+    domain.GoToCollection(
+      6,
+      List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation")
+    )
   )
   val domainSubjectJson = domainSubjectPage.asJson.noSpaces
 }
