@@ -23,6 +23,7 @@ case class Error(code: String, description: String, occuredAt: LocalDateTime)
 object Error {
   val GENERIC = "GENERIC"
   val NOT_FOUND = "NOT_FOUND"
+  val BAD_REQUEST = "BAD_REQUEST"
 
   val GENERIC_DESCRIPTION =
     s"Ooops. Something we didn't anticipate occured. We have logged the error, and will look into it. But feel free to contact ${FrontpageApiProperties.ContactEmail} if the error persists."
@@ -30,6 +31,7 @@ object Error {
 
   def generic: Error = Error(GENERIC, GENERIC_DESCRIPTION, LocalDateTime.now)
   def notFound: Error = Error(NOT_FOUND, NOT_FOUND_DEACRIPTION, LocalDateTime.now)
+  def badRequest(msg: String): Error = Error(BAD_REQUEST, msg, LocalDateTime.now)
 
   implicit def encoder[F[_]: Applicative]: EntityEncoder[F, Error] =
     jsonEncoderOf[F, Error](EntityEncoder[F, String], Applicative[F], deriveEncoder[Error])

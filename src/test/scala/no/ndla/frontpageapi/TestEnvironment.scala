@@ -7,6 +7,7 @@
 
 package no.ndla.frontpageapi
 
+import no.ndla.frontpageapi.controller.InternController
 import no.ndla.frontpageapi.integration.DataSource
 import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}

@@ -15,6 +15,7 @@ object TestData {
 
   val domainSubjectPage = domain.SubjectFrontPageData(
     Some(1),
+    "Samfunnsfag",
     false,
     "@ndla_samfunn",
     "NDLAsamfunnsfag",

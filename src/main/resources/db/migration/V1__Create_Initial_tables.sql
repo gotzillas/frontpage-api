@@ -1,5 +1,6 @@
 CREATE TABLE subjectpage (
   id BIGSERIAL PRIMARY KEY,
+  external_id TEXT,
   document JSONB
 );
 

@@ -49,6 +49,7 @@ object ConverterService {
   def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): domain.SubjectFrontPageData = {
     domain.SubjectFrontPageData(
       None,
+      subject.name,
       subject.displayInTwoColumns,
       subject.twitter,
       subject.facebook,

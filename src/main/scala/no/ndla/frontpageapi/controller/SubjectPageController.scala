@@ -10,13 +10,11 @@ package no.ndla.frontpageapi.controller
 import cats.Monad
 import cats.effect.{Effect, IO}
 import no.ndla.frontpageapi.model.api._
-import no.ndla.frontpageapi.model.domain.Errors.NotFoundException
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
 import org.http4s.rho.RhoService
 import org.http4s.rho.swagger.SwaggerSyntax
 
 import scala.language.higherKinds
-import scala.util.{Failure, Success}
 
 trait SubjectPageController {
   this: ReadService with WriteService =>
@@ -37,28 +35,5 @@ trait SubjectPageController {
       }
     }
 
-    "Create new subject page" **
-      POST ^ NewOrUpdateSubjectFrontPageData.decoder |>> { subjectPage: NewOrUpdateSubjectFrontPageData =>
-      {
-        writeService.newSubjectPage(subjectPage) match {
-          case Success(s)  => Ok(s)
-          case Failure(ex) => InternalServerError(Error.generic)
-        }
-      }
-    }
-
-    "Update subject page" **
-      PUT / pathVar[Long]("subject-id", "The subject id") ^ NewOrUpdateSubjectFrontPageData.decoder |>> {
-      (id: Long, subjectPage: NewOrUpdateSubjectFrontPageData) =>
-        {
-          writeService.updateSubjectPage(id, subjectPage) match {
-            case Success(s)                    => Ok(s)
-            case Failure(_: NotFoundException) => NotFound(Error.notFound)
-            case Failure(ex)                   => InternalServerError(Error.generic)
-          }
-        }
-    }
-
   }
-
 }

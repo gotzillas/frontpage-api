@@ -13,7 +13,7 @@ import no.ndla.frontpageapi.integration.DataSource
 import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
 import no.ndla.frontpageapi.FrontpageApiProperties._
-import no.ndla.frontpageapi.controller.{FrontPageController, SubjectPageController}
+import no.ndla.frontpageapi.controller.{FrontPageController, InternController, SubjectPageController}
 import scalikejdbc.{ConnectionPool, DataSourceConnectionPool}
 import org.http4s.rho.swagger.syntax.{io => ioSwagger}
 
@@ -21,6 +21,7 @@ object ComponentRegistry
     extends DataSource
     with SubjectPageRepository
     with FrontPageRepository
+    with InternController
     with ReadService
     with WriteService
     with SubjectPageController
@@ -43,4 +44,5 @@ object ComponentRegistry
 
   override val subjectPageController = new SubjectPageController[IO](ioSwagger)
   override val frontPageController = new FrontPageController[IO](ioSwagger)
+  override val internController = new InternController[IO](ioSwagger)
 }

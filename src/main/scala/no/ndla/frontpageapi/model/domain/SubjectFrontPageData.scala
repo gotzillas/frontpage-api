@@ -20,6 +20,7 @@ import io.circe.generic.extras.Configuration
 import scala.util.Try
 
 case class SubjectFrontPageData(id: Option[Long],
+                                name: String,
                                 displayInTwoColumns: Boolean,
                                 twitter: String,
                                 facebook: String,
