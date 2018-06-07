@@ -26,7 +26,8 @@ case class SubjectPageData(id: Long,
                            topical: SubjectTopical,
                            mostRead: ArticleCollection,
                            editorsChoices: ArticleCollection,
-                           latestContent: ArticleCollection)
+                           latestContent: ArticleCollection,
+                           goTo: GoToCollection)
 
 object SubjectPageData {
   implicit def encoder[F[_]: Applicative]: EntityEncoder[F, SubjectPageData] =

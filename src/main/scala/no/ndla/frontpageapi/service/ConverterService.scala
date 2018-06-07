@@ -18,6 +18,9 @@ object ConverterService {
   private def toApiSubjectCollection(coll: domain.SubjectCollection): api.SubjectCollection =
     api.SubjectCollection(coll.name, coll.subjects)
 
+  def toApiGoToCollection(goTo: domain.GoToCollection): api.GoToCollection =
+    api.GoToCollection(goTo.location, goTo.resourceTypeIds)
+
   def toApiSubjectPage(sub: domain.SubjectFrontPageData): api.SubjectPageData = {
     api.SubjectPageData(
       sub.id.get,
@@ -30,7 +33,8 @@ object ConverterService {
       toApiSubjectTopical(sub.topical),
       toApiArticleCollection(sub.mostRead),
       toApiArticleCollection(sub.editorsChoices),
-      toApiArticleCollection(sub.latestContent)
+      toApiArticleCollection(sub.latestContent),
+      toApiGoToCollection(sub.goTo)
     )
   }
 
@@ -46,6 +50,9 @@ object ConverterService {
   def toDomainSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): domain.SubjectFrontPageData =
     toDomainSubjectPage(subject).copy(id = Some(id))
 
+  def toDomainGoToCollection(goTo: api.GoToCollection): domain.GoToCollection =
+    domain.GoToCollection(goTo.location, goTo.resourceTypeIds)
+
   def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): domain.SubjectFrontPageData = {
     domain.SubjectFrontPageData(
       None,
@@ -59,7 +66,8 @@ object ConverterService {
       toDomainSubjectTopical(subject.topical),
       toDomainArticleCollection(subject.mostRead),
       toDomainArticleCollection(subject.editorsChoices),
-      toDomainArticleCollection(subject.latestContent)
+      toDomainArticleCollection(subject.latestContent),
+      toDomainGoToCollection(subject.goTo)
     )
   }
 

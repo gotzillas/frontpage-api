@@ -25,7 +25,8 @@ case class NewOrUpdateSubjectFrontPageData(name: String,
                                            topical: SubjectTopical,
                                            mostRead: ArticleCollection,
                                            editorsChoices: ArticleCollection,
-                                           latestContent: ArticleCollection)
+                                           latestContent: ArticleCollection,
+                                           goTo: GoToCollection)
 
 object NewOrUpdateSubjectFrontPageData {
   implicit def decoder[F[_]: Sync]: EntityDecoder[F, NewOrUpdateSubjectFrontPageData] =

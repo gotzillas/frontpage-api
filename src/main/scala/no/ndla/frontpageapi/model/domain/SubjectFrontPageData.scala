@@ -30,7 +30,8 @@ case class SubjectFrontPageData(id: Option[Long],
                                 topical: SubjectTopical,
                                 mostRead: ArticleCollection,
                                 editorsChoices: ArticleCollection,
-                                latestContent: ArticleCollection)
+                                latestContent: ArticleCollection,
+                                goTo: GoToCollection)
 
 object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
   override val tableName = "subjectpage"
