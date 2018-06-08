@@ -10,6 +10,8 @@ package no.ndla.frontpageapi
 import no.ndla.frontpageapi.model.domain
 import io.circe.syntax._
 import io.circe.generic.auto._
+import no.ndla.frontpageapi.model.domain.SubjectFrontPageData._
+import no.ndla.frontpageapi.model.domain.VisualElementType
 
 object TestData {
 
@@ -24,7 +26,7 @@ object TestData {
     domain.AboutSubject(1,
                         "Om Samfunnsfag",
                         "Dette er samfunnsfag",
-                        """<embed data-resource="image" data-id="123" />"""),
+                        domain.VisualElement(VisualElementType.Image, "123", "alt text")),
     domain.SubjectTopical(2, "urn:resource:1:170252"),
     domain.ArticleCollection(
       3,

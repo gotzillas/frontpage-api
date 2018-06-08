@@ -37,6 +37,9 @@ object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
   override val tableName = "subjectpage"
   override val schemaName = FrontpageApiProperties.MetaSchema.some
 
+  implicit val enumDecoder = Decoder.enumDecoder(VisualElementType)
+  implicit val enumEncoder = Encoder.enumEncoder(VisualElementType)
+
   private[domain] def decodeJson(json: String, id: Long): Try[SubjectFrontPageData] = {
     parse(json).flatMap(_.as[SubjectFrontPageData]).map(_.copy(id = id.some)).toTry
   }

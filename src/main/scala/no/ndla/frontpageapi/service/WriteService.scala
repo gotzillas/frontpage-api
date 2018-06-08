@@ -21,20 +21,19 @@ trait WriteService {
   class WriteService extends LazyLogging {
 
     def newSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[api.SubjectPageData] = {
-      val domainSubjectPage = ConverterService.toDomainSubjectPage(subject)
-      subjectPageRepository
-        .newSubjectPage(domainSubjectPage, subject.externalId)
-        .map(ConverterService.toApiSubjectPage)
+      for {
+        convertedSubject <- ConverterService.toDomainSubjectPage(subject)
+        subjectPage <- subjectPageRepository.newSubjectPage(convertedSubject, subject.externalId)
+      } yield ConverterService.toApiSubjectPage(subjectPage)
     }
 
     def updateSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): Try[api.SubjectPageData] = {
       subjectPageRepository.exists(id) match {
         case Success(exists) if exists =>
-          val domainSubjectPage =
-            ConverterService.toDomainSubjectPage(id, subject)
-          subjectPageRepository
-            .updateSubjectPage(domainSubjectPage)
-            .map(ConverterService.toApiSubjectPage)
+          for {
+            domainSubject <- ConverterService.toDomainSubjectPage(id, subject)
+            subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
+          } yield ConverterService.toApiSubjectPage(subjectPage)
         case Success(_) =>
           Failure(NotFoundException(id))
         case Failure(ex) => Failure(ex)
