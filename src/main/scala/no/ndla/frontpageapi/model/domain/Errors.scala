@@ -9,5 +9,5 @@ package no.ndla.frontpageapi.model.domain
 
 object Errors {
   case class NotFoundException(id: Long) extends RuntimeException(s"The page with id $id was not found")
-  case class ValidationError(message: String) extends RuntimeException(message)
+  case class ValidationException(message: String) extends RuntimeException(message)
 }
