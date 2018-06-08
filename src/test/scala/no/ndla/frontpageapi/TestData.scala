@@ -53,9 +53,9 @@ object TestData {
     29668,
     0,
     api.NewOrUpdateAboutSubject(1,
-                        "Om Samfunnsfag",
-                        "Dette er samfunnsfag",
-                        api.NewOrUpdatedVisualElement("image", "123", "alt text")),
+                                "Om Samfunnsfag",
+                                "Dette er samfunnsfag",
+                                api.NewOrUpdatedVisualElement("image", "123", "alt text")),
     api.SubjectTopical(2, "urn:resource:1:170252"),
     api.ArticleCollection(
       3,

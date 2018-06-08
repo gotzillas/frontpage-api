@@ -41,9 +41,9 @@ trait InternController {
       subjectPage: NewOrUpdateSubjectFrontPageData =>
         {
           writeService.newSubjectPage(subjectPage) match {
-            case Success(s)                   => Ok(s)
+            case Success(s)                       => Ok(s)
             case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
-            case Failure(_)                   => InternalServerError(Error.generic)
+            case Failure(_)                       => InternalServerError(Error.generic)
           }
         }
     }
@@ -53,10 +53,10 @@ trait InternController {
       (id: Long, subjectPage: NewOrUpdateSubjectFrontPageData) =>
         {
           writeService.updateSubjectPage(id, subjectPage) match {
-            case Success(s)                    => Ok(s)
-            case Failure(_: NotFoundException) => NotFound(Error.notFound)
-            case Failure(ex: ValidationException)  => BadRequest(Error.badRequest(ex.getMessage))
-            case Failure(_)                    => InternalServerError(Error.generic)
+            case Success(s)                       => Ok(s)
+            case Failure(_: NotFoundException)    => NotFound(Error.notFound)
+            case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
+            case Failure(_)                       => InternalServerError(Error.generic)
           }
         }
     }
