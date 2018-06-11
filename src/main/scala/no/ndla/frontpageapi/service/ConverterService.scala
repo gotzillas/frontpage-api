@@ -48,9 +48,9 @@ object ConverterService {
     api.ArticleCollection(coll.location, coll.articleIds)
 
   private def toApiAboutSubject(about: domain.AboutSubject): api.AboutSubject =
-    api.AboutSubject(about.location, about.title, about.description, toApiVisualSubject(about.visualElement))
+    api.AboutSubject(about.location, about.title, about.description, toApiVisualElement(about.visualElement))
 
-  private def toApiVisualSubject(visual: domain.VisualElement): api.VisualElement = {
+  private def toApiVisualElement(visual: domain.VisualElement): api.VisualElement = {
     val url = visual.`type` match {
       case VisualElementType.Image => createImageUrl(visual.id.toLong)
       case VisualElementType.Brightcove =>
