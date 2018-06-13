@@ -27,6 +27,7 @@ object ConverterService {
   def toApiSubjectPage(sub: domain.SubjectFrontPageData): api.SubjectPageData = {
     api.SubjectPageData(
       sub.id.get,
+      sub.name,
       sub.displayInTwoColumns,
       sub.twitter,
       sub.facebook,
@@ -59,22 +60,22 @@ object ConverterService {
     domain.BannerImage(banner.mobileImageId, banner.desktopImageId)
 
   def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
-    toDomainAboutSubject(subject.about).map(about =>
-      domain.SubjectFrontPageData(
-        None,
-        subject.name,
-        subject.displayInTwoColumns,
-        subject.twitter,
-        subject.facebook,
-        toDomainBannerImage(subject.bannerImage),
-        about,
-        subject.topical,
-        subject.mostRead,
-        subject.editorsChoices,
-        subject.latestContent,
-        subject.goTo
-      )
-    )
+    toDomainAboutSubject(subject.about).map(
+      about =>
+        domain.SubjectFrontPageData(
+          None,
+          subject.name,
+          subject.displayInTwoColumns,
+          subject.twitter,
+          subject.facebook,
+          toDomainBannerImage(subject.bannerImage),
+          about,
+          subject.topical,
+          subject.mostRead,
+          subject.editorsChoices,
+          subject.latestContent,
+          subject.goTo
+      ))
   }
 
   private def toDomainAboutSubject(about: api.NewOrUpdateAboutSubject): Try[domain.AboutSubject] = {

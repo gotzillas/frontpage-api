@@ -17,6 +17,7 @@ import io.circe.generic.auto._
 import io.circe._
 
 case class SubjectPageData(id: Long,
+                           name: String,
                            displayInTwoColumns: Boolean,
                            twitter: String,
                            facebook: String,

@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class NewOrUpdatedVisualElement(`type`: String, id: String, alt: String)
+case class NewOrUpdatedVisualElement(`type`: String, id: String, alt: Option[String])

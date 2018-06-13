@@ -11,7 +11,7 @@ import no.ndla.frontpageapi.model.domain.Errors.ValidationException
 
 import scala.util.{Failure, Success, Try}
 
-case class VisualElement(`type`: VisualElementType.Value, id: String, alt: String)
+case class VisualElement(`type`: VisualElementType.Value, id: String, alt: Option[String])
 
 object VisualElementType extends Enumeration {
   val Image: VisualElementType.Value = Value("image")
