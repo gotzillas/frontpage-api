@@ -11,7 +11,7 @@ import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, RawImag
 import no.ndla.frontpageapi.model.domain.VisualElementType
 import no.ndla.frontpageapi.model.{api, domain}
 
-import scala.util.{Success, Try}
+import scala.util.Try
 
 object ConverterService {
 
@@ -21,8 +21,8 @@ object ConverterService {
   private def toApiSubjectCollection(coll: domain.SubjectCollection): api.SubjectCollection =
     api.SubjectCollection(coll.name, coll.subjects)
 
-  def toApiGoToCollection(goTo: domain.GoToCollection): api.GoToCollection =
-    api.GoToCollection(goTo.location, goTo.resourceTypeIds)
+  private def toApiBannerImage(banner: domain.BannerImage): api.BannerImage =
+    api.BannerImage(createImageUrl(banner.mobileImageId), createImageUrl(banner.desktopImageId))
 
   def toApiSubjectPage(sub: domain.SubjectFrontPageData): api.SubjectPageData = {
     api.SubjectPageData(
@@ -30,25 +30,18 @@ object ConverterService {
       sub.displayInTwoColumns,
       sub.twitter,
       sub.facebook,
-      createImageUrl(sub.bannerImageId),
-      sub.subjectListLocation,
+      toApiBannerImage(sub.bannerImage),
       toApiAboutSubject(sub.about),
-      toApiSubjectTopical(sub.topical),
-      toApiArticleCollection(sub.mostRead),
-      toApiArticleCollection(sub.editorsChoices),
-      toApiArticleCollection(sub.latestContent),
-      toApiGoToCollection(sub.goTo)
+      sub.topical,
+      sub.mostRead,
+      sub.editorsChoices,
+      sub.latestContent,
+      sub.goTo
     )
   }
 
-  private def toApiSubjectTopical(topical: domain.SubjectTopical): api.SubjectTopical =
-    api.SubjectTopical(topical.location, topical.id)
-
-  private def toApiArticleCollection(coll: domain.ArticleCollection): api.ArticleCollection =
-    api.ArticleCollection(coll.location, coll.articleIds)
-
   private def toApiAboutSubject(about: domain.AboutSubject): api.AboutSubject =
-    api.AboutSubject(about.location, about.title, about.description, toApiVisualElement(about.visualElement))
+    api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement))
 
   private def toApiVisualElement(visual: domain.VisualElement): api.VisualElement = {
     val url = visual.`type` match {
@@ -62,38 +55,32 @@ object ConverterService {
   def toDomainSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] =
     toDomainSubjectPage(subject).map(_.copy(id = Some(id)))
 
-  private def toDomainGoToCollection(goTo: api.GoToCollection): domain.GoToCollection =
-    domain.GoToCollection(goTo.location, goTo.resourceTypeIds)
+  private def toDomainBannerImage(banner: api.NewOrUpdateBannerImage): domain.BannerImage =
+    domain.BannerImage(banner.mobileImageId, banner.desktopImageId)
 
   def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
-    toDomainAboutSubject(subject.about).map(
-      aboutSubject =>
-        domain.SubjectFrontPageData(
-          None,
-          subject.name,
-          subject.displayInTwoColumns,
-          subject.twitter,
-          subject.facebook,
-          subject.bannerImageId,
-          subject.subjectListLocation,
-          aboutSubject,
-          toDomainSubjectTopical(subject.topical),
-          toDomainArticleCollection(subject.mostRead),
-          toDomainArticleCollection(subject.editorsChoices),
-          toDomainArticleCollection(subject.latestContent),
-          toDomainGoToCollection(subject.goTo)
-      ))
+    toDomainAboutSubject(subject.about).map(about =>
+      domain.SubjectFrontPageData(
+        None,
+        subject.name,
+        subject.displayInTwoColumns,
+        subject.twitter,
+        subject.facebook,
+        toDomainBannerImage(subject.bannerImage),
+        about,
+        subject.topical,
+        subject.mostRead,
+        subject.editorsChoices,
+        subject.latestContent,
+        subject.goTo
+      )
+    )
   }
 
-  private def toDomainSubjectTopical(topical: api.SubjectTopical): domain.SubjectTopical =
-    domain.SubjectTopical(topical.location, topical.id)
-
-  private def toDomainArticleCollection(coll: api.ArticleCollection): domain.ArticleCollection =
-    domain.ArticleCollection(coll.location, coll.articleIds)
-
-  private def toDomainAboutSubject(about: api.NewOrUpdateAboutSubject): Try[domain.AboutSubject] =
+  private def toDomainAboutSubject(about: api.NewOrUpdateAboutSubject): Try[domain.AboutSubject] = {
     toDomainVisualElement(about.visualElement)
-      .map(domain.AboutSubject(about.location, about.title, about.description, _))
+      .map(domain.AboutSubject(about.title, about.description, _))
+  }
 
   private def toDomainVisualElement(visual: api.NewOrUpdatedVisualElement): Try[domain.VisualElement] =
     VisualElementType.fromString(visual.`type`).map(domain.VisualElement(_, visual.id, visual.alt))

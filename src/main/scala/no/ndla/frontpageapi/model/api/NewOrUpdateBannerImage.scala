@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class ArticleCollection(location: Int, articleIds: List[String])
+case class NewOrUpdateBannerImage(mobileImageId: Long, desktopImageId: Long)
