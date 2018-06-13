@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class AboutSubject(location: Int, title: String, description: String, visualElement: VisualElement)
+case class VisualElement(`type`: String, url: String, alt: String)

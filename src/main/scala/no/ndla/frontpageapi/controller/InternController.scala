@@ -10,7 +10,7 @@ package no.ndla.frontpageapi.controller
 import cats.Monad
 import cats.effect.{Effect, IO}
 import no.ndla.frontpageapi.model.api._
-import no.ndla.frontpageapi.model.domain.Errors.NotFoundException
+import no.ndla.frontpageapi.model.domain.Errors.{NotFoundException, ValidationException}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
 import org.http4s.rho.RhoService
 import org.http4s.rho.swagger.SwaggerSyntax
@@ -41,8 +41,9 @@ trait InternController {
       subjectPage: NewOrUpdateSubjectFrontPageData =>
         {
           writeService.newSubjectPage(subjectPage) match {
-            case Success(s) => Ok(s)
-            case Failure(_) => InternalServerError(Error.generic)
+            case Success(s)                       => Ok(s)
+            case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
+            case Failure(_)                       => InternalServerError(Error.generic)
           }
         }
     }
@@ -52,9 +53,10 @@ trait InternController {
       (id: Long, subjectPage: NewOrUpdateSubjectFrontPageData) =>
         {
           writeService.updateSubjectPage(id, subjectPage) match {
-            case Success(s)                    => Ok(s)
-            case Failure(_: NotFoundException) => NotFound(Error.notFound)
-            case Failure(_)                    => InternalServerError(Error.generic)
+            case Success(s)                       => Ok(s)
+            case Failure(_: NotFoundException)    => NotFound(Error.notFound)
+            case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
+            case Failure(_)                       => InternalServerError(Error.generic)
           }
         }
     }

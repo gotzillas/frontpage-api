@@ -34,6 +34,8 @@ object FrontpageApiProperties extends LazyLogging {
   val Domain: String = Domains.get(Environment)
   val RawImageApiUrl: String = s"$Domain/image-api/raw"
 
+  val BrightcoveAccountId: String = prop("BRIGHTCOVE_ACCOUNT")
+
   lazy val secrets: Map[String, Option[String]] = readSecrets(SecretsFile) match {
     case Success(values)    => values
     case Failure(exception) => throw new RuntimeException(s"Unable to load remote secrets from $SecretsFile", exception)

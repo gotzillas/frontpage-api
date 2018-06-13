@@ -7,8 +7,11 @@
 
 package no.ndla.frontpageapi.service
 
-import no.ndla.frontpageapi.FrontpageApiProperties
+import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, RawImageApiUrl}
+import no.ndla.frontpageapi.model.domain.VisualElementType
 import no.ndla.frontpageapi.model.{api, domain}
+
+import scala.util.{Success, Try}
 
 object ConverterService {
 
@@ -45,30 +48,41 @@ object ConverterService {
     api.ArticleCollection(coll.location, coll.articleIds)
 
   private def toApiAboutSubject(about: domain.AboutSubject): api.AboutSubject =
-    api.AboutSubject(about.location, about.title, about.description, about.visualElement)
+    api.AboutSubject(about.location, about.title, about.description, toApiVisualElement(about.visualElement))
 
-  def toDomainSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): domain.SubjectFrontPageData =
-    toDomainSubjectPage(subject).copy(id = Some(id))
+  private def toApiVisualElement(visual: domain.VisualElement): api.VisualElement = {
+    val url = visual.`type` match {
+      case VisualElementType.Image => createImageUrl(visual.id.toLong)
+      case VisualElementType.Brightcove =>
+        s"https://players.brightcove.net/$BrightcoveAccountId/default_default/index.html?videoId=${visual.id}"
+    }
+    api.VisualElement(visual.`type`.toString, url, visual.alt)
+  }
 
-  def toDomainGoToCollection(goTo: api.GoToCollection): domain.GoToCollection =
+  def toDomainSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] =
+    toDomainSubjectPage(subject).map(_.copy(id = Some(id)))
+
+  private def toDomainGoToCollection(goTo: api.GoToCollection): domain.GoToCollection =
     domain.GoToCollection(goTo.location, goTo.resourceTypeIds)
 
-  def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): domain.SubjectFrontPageData = {
-    domain.SubjectFrontPageData(
-      None,
-      subject.name,
-      subject.displayInTwoColumns,
-      subject.twitter,
-      subject.facebook,
-      subject.bannerImageId,
-      subject.subjectListLocation,
-      toDomainAboutSubject(subject.about),
-      toDomainSubjectTopical(subject.topical),
-      toDomainArticleCollection(subject.mostRead),
-      toDomainArticleCollection(subject.editorsChoices),
-      toDomainArticleCollection(subject.latestContent),
-      toDomainGoToCollection(subject.goTo)
-    )
+  def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
+    toDomainAboutSubject(subject.about).map(
+      aboutSubject =>
+        domain.SubjectFrontPageData(
+          None,
+          subject.name,
+          subject.displayInTwoColumns,
+          subject.twitter,
+          subject.facebook,
+          subject.bannerImageId,
+          subject.subjectListLocation,
+          aboutSubject,
+          toDomainSubjectTopical(subject.topical),
+          toDomainArticleCollection(subject.mostRead),
+          toDomainArticleCollection(subject.editorsChoices),
+          toDomainArticleCollection(subject.latestContent),
+          toDomainGoToCollection(subject.goTo)
+      ))
   }
 
   private def toDomainSubjectTopical(topical: api.SubjectTopical): domain.SubjectTopical =
@@ -77,8 +91,12 @@ object ConverterService {
   private def toDomainArticleCollection(coll: api.ArticleCollection): domain.ArticleCollection =
     domain.ArticleCollection(coll.location, coll.articleIds)
 
-  private def toDomainAboutSubject(about: api.AboutSubject): domain.AboutSubject =
-    domain.AboutSubject(about.location, about.title, about.description, about.visualElement)
+  private def toDomainAboutSubject(about: api.NewOrUpdateAboutSubject): Try[domain.AboutSubject] =
+    toDomainVisualElement(about.visualElement)
+      .map(domain.AboutSubject(about.location, about.title, about.description, _))
+
+  private def toDomainVisualElement(visual: api.NewOrUpdatedVisualElement): Try[domain.VisualElement] =
+    VisualElementType.fromString(visual.`type`).map(domain.VisualElement(_, visual.id, visual.alt))
 
   def toDomainFrontPage(page: api.FrontPageData): domain.FrontPageData =
     domain.FrontPageData(page.topical, page.categories.map(toDomainSubjectCollection))
@@ -86,5 +104,6 @@ object ConverterService {
   private def toDomainSubjectCollection(coll: api.SubjectCollection): domain.SubjectCollection =
     domain.SubjectCollection(coll.name, coll.subjects)
 
-  private def createImageUrl(id: Long): String = s"${FrontpageApiProperties.RawImageApiUrl}/id/$id"
+  private def createImageUrl(id: Long): String = createImageUrl(id.toString)
+  private def createImageUrl(id: String): String = s"$RawImageApiUrl/id/$id"
 }
