@@ -24,7 +24,7 @@ object TestData {
     domain.BannerImage(29668, 29668),
     domain.AboutSubject("Om Samfunnsfag",
                         "Dette er samfunnsfag",
-                        domain.VisualElement(VisualElementType.Image, "123", "alt text")),
+                        domain.VisualElement(VisualElementType.Image,"123" ,"alt text")),
       "urn:resource:1:170252",
       List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
       List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
