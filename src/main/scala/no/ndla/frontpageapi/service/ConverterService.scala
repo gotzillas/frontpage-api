@@ -22,7 +22,10 @@ object ConverterService {
     api.SubjectCollection(coll.name, coll.subjects)
 
   private def toApiBannerImage(banner: domain.BannerImage): api.BannerImage =
-    api.BannerImage(createImageUrl(banner.mobileImageId), createImageUrl(banner.desktopImageId))
+    api.BannerImage(createImageUrl(banner.mobileImageId),
+                    banner.mobileImageId,
+                    createImageUrl(banner.desktopImageId),
+                    banner.desktopImageId)
 
   def toApiSubjectPage(sub: domain.SubjectFrontPageData): api.SubjectPageData = {
     api.SubjectPageData(
