@@ -24,14 +24,13 @@ case class SubjectFrontPageData(id: Option[Long],
                                 displayInTwoColumns: Boolean,
                                 twitter: String,
                                 facebook: String,
-                                bannerImageId: Long,
-                                subjectListLocation: Int,
+                                bannerImage: BannerImage,
                                 about: AboutSubject,
-                                topical: SubjectTopical,
-                                mostRead: ArticleCollection,
-                                editorsChoices: ArticleCollection,
-                                latestContent: ArticleCollection,
-                                goTo: GoToCollection)
+                                topical: String,
+                                mostRead: List[String],
+                                editorsChoices: List[String],
+                                latestContent: List[String],
+                                goTo: List[String])
 
 object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
   override val tableName = "subjectpage"

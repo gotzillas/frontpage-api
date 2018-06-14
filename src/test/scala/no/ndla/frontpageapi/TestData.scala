@@ -21,26 +21,15 @@ object TestData {
     false,
     "@ndla_samfunn",
     "NDLAsamfunnsfag",
-    29668,
-    0,
-    domain.AboutSubject(1,
-                        "Om Samfunnsfag",
+    domain.BannerImage(29668, 29668),
+    domain.AboutSubject("Om Samfunnsfag",
                         "Dette er samfunnsfag",
-                        domain.VisualElement(VisualElementType.Image, "123", "alt text")),
-    domain.SubjectTopical(2, "urn:resource:1:170252"),
-    domain.ArticleCollection(
-      3,
-      List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
-    domain.ArticleCollection(
-      4,
-      List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
-    domain.ArticleCollection(
-      5,
-      List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
-    domain.GoToCollection(
-      6,
-      List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation")
-    )
+                        domain.VisualElement(VisualElementType.Image, "123", Some("alt text"))),
+    "urn:resource:1:170252",
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation")
   )
   val domainSubjectJson = domainSubjectPage.asJson.noSpaces
 
@@ -50,25 +39,14 @@ object TestData {
     false,
     "ndla_samfunn",
     "NDLAsamfunnsfag",
-    29668,
-    0,
-    api.NewOrUpdateAboutSubject(1,
-                                "Om Samfunnsfag",
+    api.NewOrUpdateBannerImage(29668, 29668),
+    api.NewOrUpdateAboutSubject("Om Samfunnsfag",
                                 "Dette er samfunnsfag",
-                                api.NewOrUpdatedVisualElement("image", "123", "alt text")),
-    api.SubjectTopical(2, "urn:resource:1:170252"),
-    api.ArticleCollection(
-      3,
-      List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
-    api.ArticleCollection(
-      4,
-      List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
-    api.ArticleCollection(
-      5,
-      List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
-    api.GoToCollection(
-      6,
-      List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation")
-    )
+                                api.NewOrUpdatedVisualElement("image", "123", Some("alt text"))),
+    "urn:resource:1:170252",
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation")
   )
 }

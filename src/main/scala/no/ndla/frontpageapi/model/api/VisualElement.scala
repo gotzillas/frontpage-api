@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class VisualElement(`type`: String, url: String, alt: String)
+case class VisualElement(`type`: String, url: String, alt: Option[String])

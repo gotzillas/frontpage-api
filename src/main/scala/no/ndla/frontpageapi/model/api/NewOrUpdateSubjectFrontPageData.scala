@@ -19,14 +19,13 @@ case class NewOrUpdateSubjectFrontPageData(name: String,
                                            displayInTwoColumns: Boolean,
                                            twitter: String,
                                            facebook: String,
-                                           bannerImageId: Long,
-                                           subjectListLocation: Int,
+                                           bannerImage: NewOrUpdateBannerImage,
                                            about: NewOrUpdateAboutSubject,
-                                           topical: SubjectTopical,
-                                           mostRead: ArticleCollection,
-                                           editorsChoices: ArticleCollection,
-                                           latestContent: ArticleCollection,
-                                           goTo: GoToCollection)
+                                           topical: String,
+                                           mostRead: List[String],
+                                           editorsChoices: List[String],
+                                           latestContent: List[String],
+                                           goTo: List[String])
 
 object NewOrUpdateSubjectFrontPageData {
   implicit def decoder[F[_]: Sync]: EntityDecoder[F, NewOrUpdateSubjectFrontPageData] =

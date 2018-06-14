@@ -17,17 +17,17 @@ import io.circe.generic.auto._
 import io.circe._
 
 case class SubjectPageData(id: Long,
+                           name: String,
                            displayInTwoColumns: Boolean,
                            twitter: String,
                            facebook: String,
-                           banner: String,
-                           subjectListLocation: Int,
+                           banner: BannerImage,
                            about: AboutSubject,
-                           topical: SubjectTopical,
-                           mostRead: ArticleCollection,
-                           editorsChoices: ArticleCollection,
-                           latestContent: ArticleCollection,
-                           goTo: GoToCollection)
+                           topical: String,
+                           mostRead: List[String],
+                           editorsChoices: List[String],
+                           latestContent: List[String],
+                           goTo: List[String])
 
 object SubjectPageData {
   implicit def encoder[F[_]: Applicative]: EntityEncoder[F, SubjectPageData] =

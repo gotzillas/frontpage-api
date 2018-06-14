@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class GoToCollection(location: Int, resourceTypeIds: List[String])
+case class BannerImage(mobileUrl: String, mobileId: Long, desktopUrl: String, desktopId: Long)
