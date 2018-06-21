@@ -22,7 +22,6 @@ appProperties := {
   prop
 }
 
-lazy val specs2Version = "4.0.3"
 lazy val frontpage_api = (project in file("."))
   .settings(
     name := "frontpage-api",
@@ -32,7 +31,7 @@ lazy val frontpage_api = (project in file("."))
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     scalacOptions := Seq("-target:jvm-1.8", "-unchecked", "-deprecation", "-feature", "-Ypartial-unification"),
     libraryDependencies ++= Seq(
-      "ndla" %% "network" % "0.29",
+      "ndla" %% "network" % "0.31",
       "org.http4s" %% "http4s-circe" % Http4sVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
       "io.circe" %% "circe-java8" % CirceVersion,
@@ -46,14 +45,14 @@ lazy val frontpage_api = (project in file("."))
       "org.http4s" %% "http4s-server" % Http4sVersion,
       "org.http4s" %% "http4s-dsl" % Http4sVersion,
       "org.http4s" %% "http4s-blaze-server" % Http4sVersion,
-      "com.typesafe.scala-logging" %% "scala-logging" % ScalaLoggingVersion,
       "org.apache.logging.log4j" % "log4j-api" % Log4JVersion,
       "org.apache.logging.log4j" % "log4j-core" % Log4JVersion,
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % Log4JVersion,
       "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % JacksonVersion,
       "org.flywaydb" % "flyway-core" % FlywayVersion,
       "org.mockito" % "mockito-all" % MockitoVersion % "test",
-      "org.scalatest" %% "scalatest" % ScalaTestVersion % "test"
+      "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
+      "javax.servlet" % "javax.servlet-api" % "3.1.0"
     )
   )
   .enablePlugins(DockerPlugin)
