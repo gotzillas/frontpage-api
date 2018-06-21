@@ -7,7 +7,6 @@
 
 package no.ndla.frontpageapi.service
 
-import com.typesafe.scalalogging.LazyLogging
 import no.ndla.frontpageapi.model.domain.Errors.NotFoundException
 import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.model.{api, domain}
@@ -18,7 +17,7 @@ trait WriteService {
   this: SubjectPageRepository with FrontPageRepository =>
   val writeService: WriteService
 
-  class WriteService extends LazyLogging {
+  class WriteService {
 
     def newSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[api.SubjectPageData] = {
       for {

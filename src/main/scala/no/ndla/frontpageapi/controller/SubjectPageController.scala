@@ -9,6 +9,7 @@ package no.ndla.frontpageapi.controller
 
 import cats.Monad
 import cats.effect.{Effect, IO}
+import org.log4s.getLogger
 import no.ndla.frontpageapi.model.api._
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
 import org.http4s.rho.RhoService

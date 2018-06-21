@@ -22,14 +22,14 @@ import scala.util.Try
 case class SubjectFrontPageData(id: Option[Long],
                                 name: String,
                                 displayInTwoColumns: Boolean,
-                                twitter: String,
-                                facebook: String,
+                                twitter: Option[String],
+                                facebook: Option[String],
                                 bannerImage: BannerImage,
-                                about: AboutSubject,
-                                topical: String,
+                                about: Option[AboutSubject],
+                                topical: Option[String],
                                 mostRead: List[String],
                                 editorsChoices: List[String],
-                                latestContent: List[String],
+                                latestContent: Option[List[String]],
                                 goTo: List[String])
 
 object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {

@@ -17,14 +17,14 @@ import io.circe.generic.auto._
 case class NewOrUpdateSubjectFrontPageData(name: String,
                                            externalId: String,
                                            displayInTwoColumns: Boolean,
-                                           twitter: String,
-                                           facebook: String,
+                                           twitter: Option[String],
+                                           facebook: Option[String],
                                            bannerImage: NewOrUpdateBannerImage,
-                                           about: NewOrUpdateAboutSubject,
-                                           topical: String,
+                                           about: Option[NewOrUpdateAboutSubject],
+                                           topical: Option[String],
                                            mostRead: List[String],
                                            editorsChoices: List[String],
-                                           latestContent: List[String],
+                                           latestContent: Option[List[String]],
                                            goTo: List[String])
 
 object NewOrUpdateSubjectFrontPageData {

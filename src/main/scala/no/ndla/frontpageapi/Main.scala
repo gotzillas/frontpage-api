@@ -9,7 +9,7 @@ package no.ndla.frontpageapi
 
 import cats.effect.IO
 import cats.implicits._
-import com.typesafe.scalalogging.LazyLogging
+import org.log4s.getLogger
 import fs2.StreamApp.ExitCode
 import fs2.{Stream, StreamApp}
 import no.ndla.frontpageapi.FrontpageApiProperties.{ApplicationPort, ContactEmail, ContactName}
@@ -27,11 +27,12 @@ import scala.language.higherKinds
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.io.Source
 
-object Main extends StreamApp[IO] with LazyLogging {
+object Main extends StreamApp[IO] {
   private[this] case class ServiceWithMountpoint(service: HttpService[IO], mountPoint: String)
   private[this] case class SwaggerServiceWithMountpoint(service: RhoService[IO], mountPoint: String) {
     def toService: HttpService[IO] = service.toService()
   }
+  val logger = getLogger
 
   private def toTypedPath[F[_]](prefix: String): TypedPath[F, HNil] = {
     val start: PathRule = PathMatch("")
@@ -73,8 +74,7 @@ object Main extends StreamApp[IO] with LazyLogging {
     val healthController = ServiceWithMountpoint(HealthController(), "/health")
     val swagger = ServiceWithMountpoint(createSwaggerDocService(frontPage, subjectPage), "/frontpage-api/api-docs")
 
-    val port = ApplicationPort
-    logger.info(s"Starting on port $port")
+    logger.info(s"Starting on port $ApplicationPort")
 
     BlazeBuilder[IO]
       .mountService(NdlaMiddleware(frontPage.toService), frontPage.mountPoint)
@@ -82,7 +82,7 @@ object Main extends StreamApp[IO] with LazyLogging {
       .mountService(NdlaMiddleware(internController.toService), internController.mountPoint)
       .mountService(healthController.service, healthController.mountPoint)
       .mountService(swagger.service, swagger.mountPoint)
-      .bindHttp(port, "0.0.0.0")
+      .bindHttp(ApplicationPort, "0.0.0.0")
       .serve
   }
 }
