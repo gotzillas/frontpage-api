@@ -9,7 +9,7 @@ package no.ndla.frontpageapi.model.api
 
 import cats.Applicative
 import cats.effect.Sync
-import org.http4s.circe.{jsonEncoderOf, jsonOf}
+import org.http4s.circe.{jsonEncoderOf, jsonOf, jsonEncoderWithPrinterOf}
 import org.http4s.{EntityDecoder, EntityEncoder}
 import scala.language.higherKinds
 import io.circe.generic.semiauto._
@@ -30,8 +30,13 @@ case class SubjectPageData(id: Long,
                            goTo: List[String])
 
 object SubjectPageData {
+  val indentDropNull = Printer.spaces2.copy(dropNullValues = true)
+
   implicit def encoder[F[_]: Applicative]: EntityEncoder[F, SubjectPageData] =
-    jsonEncoderOf[F, SubjectPageData](EntityEncoder[F, String], Applicative[F], deriveEncoder[SubjectPageData])
+    jsonEncoderWithPrinterOf[F, SubjectPageData](indentDropNull)(EntityEncoder[F, String],
+                                                                 Applicative[F],
+                                                                 deriveEncoder[SubjectPageData])
+
   implicit def decoder[F[_]: Sync]: EntityDecoder[F, SubjectPageData] =
     jsonOf[F, SubjectPageData](Sync[F], deriveDecoder[SubjectPageData])
 }

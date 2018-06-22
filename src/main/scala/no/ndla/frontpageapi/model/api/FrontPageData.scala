@@ -23,6 +23,7 @@ object FrontPageData {
     val encoder = deriveEncoder[FrontPageData]
     jsonEncoderOf[F, FrontPageData](EntityEncoder[F, String], Applicative[F], encoder)
   }
+
   implicit def decoder[F[_]: Sync]: EntityDecoder[F, FrontPageData] = {
     val decoder = deriveDecoder[no.ndla.frontpageapi.model.api.FrontPageData]
     jsonOf[F, FrontPageData](Sync[F], decoder)
