@@ -7,7 +7,6 @@
 
 package no.ndla.frontpageapi.repository
 
-import com.typesafe.scalalogging.LazyLogging
 import io.circe.syntax._
 import no.ndla.frontpageapi.integration.DataSource
 import no.ndla.frontpageapi.model.domain.FrontPageData
@@ -21,7 +20,7 @@ trait FrontPageRepository {
   this: DataSource =>
   val frontPageRepository: FrontPageRepository
 
-  class FrontPageRepository extends LazyLogging {
+  class FrontPageRepository {
 
     def newFrontPage(page: FrontPageData)(implicit session: DBSession = AutoSession): Try[FrontPageData] = {
       val dataObject = new PGobject()

@@ -19,14 +19,14 @@ import io.circe._
 case class SubjectPageData(id: Long,
                            name: String,
                            displayInTwoColumns: Boolean,
-                           twitter: String,
-                           facebook: String,
+                           twitter: Option[String],
+                           facebook: Option[String],
                            banner: BannerImage,
-                           about: AboutSubject,
-                           topical: String,
+                           about: Option[AboutSubject],
+                           topical: Option[String],
                            mostRead: List[String],
                            editorsChoices: List[String],
-                           latestContent: List[String],
+                           latestContent: Option[List[String]],
                            goTo: List[String])
 
 object SubjectPageData {

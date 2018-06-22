@@ -7,7 +7,6 @@
 
 package no.ndla.frontpageapi
 
-import com.typesafe.scalalogging.LazyLogging
 import no.ndla.network.Domains
 import no.ndla.network.secrets.PropertyKeys
 import no.ndla.network.secrets.Secrets.readSecrets
@@ -15,7 +14,7 @@ import no.ndla.network.secrets.Secrets.readSecrets
 import scala.util.Properties._
 import scala.util.{Failure, Success}
 
-object FrontpageApiProperties extends LazyLogging {
+object FrontpageApiProperties {
   val ApplicationPort: Int = envOrElse("APPLICATION_PORT", "80").toInt
   val ContactName = "Christer Gundersen"
   val ContactEmail = "christergundersen@ndla.no"

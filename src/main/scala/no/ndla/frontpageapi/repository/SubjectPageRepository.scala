@@ -9,7 +9,7 @@ package no.ndla.frontpageapi.repository
 
 import no.ndla.frontpageapi.integration.DataSource
 import no.ndla.frontpageapi.model.domain.SubjectFrontPageData
-import com.typesafe.scalalogging.LazyLogging
+import org.log4s.getLogger
 import org.postgresql.util.PGobject
 import scalikejdbc._
 import io.circe.syntax._
@@ -22,7 +22,8 @@ trait SubjectPageRepository {
   this: DataSource =>
   val subjectPageRepository: SubjectPageRepository
 
-  class SubjectPageRepository extends LazyLogging {
+  class SubjectPageRepository {
+    val logger = getLogger
 
     def newSubjectPage(subj: SubjectFrontPageData, externalId: String)(
         implicit session: DBSession = AutoSession): Try[SubjectFrontPageData] = {

@@ -11,7 +11,7 @@ import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, RawImag
 import no.ndla.frontpageapi.model.domain.VisualElementType
 import no.ndla.frontpageapi.model.{api, domain}
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 object ConverterService {
 
@@ -35,7 +35,7 @@ object ConverterService {
       sub.twitter,
       sub.facebook,
       toApiBannerImage(sub.bannerImage),
-      toApiAboutSubject(sub.about),
+      sub.about.map(toApiAboutSubject),
       sub.topical,
       sub.mostRead,
       sub.editorsChoices,
@@ -63,22 +63,26 @@ object ConverterService {
     domain.BannerImage(banner.mobileImageId, banner.desktopImageId)
 
   def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
-    toDomainAboutSubject(subject.about).map(
-      about =>
-        domain.SubjectFrontPageData(
-          None,
-          subject.name,
-          subject.displayInTwoColumns,
-          subject.twitter,
-          subject.facebook,
-          toDomainBannerImage(subject.bannerImage),
-          about,
-          subject.topical,
-          subject.mostRead,
-          subject.editorsChoices,
-          subject.latestContent,
-          subject.goTo
-      ))
+    val withoutAboutSubject = domain.SubjectFrontPageData(
+      None,
+      subject.name,
+      subject.displayInTwoColumns,
+      subject.twitter,
+      subject.facebook,
+      toDomainBannerImage(subject.bannerImage),
+      None,
+      subject.topical,
+      subject.mostRead,
+      subject.editorsChoices,
+      subject.latestContent,
+      subject.goTo
+    )
+
+    subject.about.map(toDomainAboutSubject) match {
+      case Some(Failure(ex))    => Failure(ex)
+      case Some(Success(about)) => Success(withoutAboutSubject.copy(about = Some(about)))
+      case None                 => Success(withoutAboutSubject)
+    }
   }
 
   private def toDomainAboutSubject(about: api.NewOrUpdateAboutSubject): Try[domain.AboutSubject] = {
