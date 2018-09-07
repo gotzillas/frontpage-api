@@ -66,6 +66,7 @@ object ConverterService {
     val withoutAboutSubject = domain.SubjectFrontPageData(
       None,
       subject.name,
+      subject.filters,
       subject.displayInTwoColumns,
       subject.twitter,
       subject.facebook,

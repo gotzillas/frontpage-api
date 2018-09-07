@@ -18,6 +18,7 @@ object TestData {
   val domainSubjectPage = domain.SubjectFrontPageData(
     Some(1),
     "Samfunnsfag",
+    None,
     false,
     Some("@ndla_samfunn"),
     Some("NDLAsamfunnsfag"),
@@ -36,6 +37,7 @@ object TestData {
 
   val apiSubjectPage = api.NewOrUpdateSubjectFrontPageData(
     "Samfunnsfag",
+    None,
     "14112",
     false,
     Some("ndla_samfunn"),

@@ -21,6 +21,7 @@ import scala.util.Try
 
 case class SubjectFrontPageData(id: Option[Long],
                                 name: String,
+                                filters: Option[List[String]],
                                 displayInTwoColumns: Boolean,
                                 twitter: Option[String],
                                 facebook: Option[String],
