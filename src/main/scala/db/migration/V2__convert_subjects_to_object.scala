@@ -13,17 +13,17 @@ import org.postgresql.util.PGobject
 import scalikejdbc._
 
 /**
- * Part of GDL frontpage-api.
- * Copyright (C) 2018 GDL
- *
- * See LICENSE
- */
+  * Part of GDL frontpage-api.
+  * Copyright (C) 2018 GDL
+  *
+  * See LICENSE
+  */
 class V2__convert_subjects_to_object extends JdbcMigration {
 
   implicit val decoder: Decoder[V2_DBFrontPageData] = deriveDecoder
   implicit val encoder: Encoder[V2_DBFrontPageData] = deriveEncoder
 
-  override def migrate(connection: Connection) : Unit = {
+  override def migrate(connection: Connection): Unit = {
     val db = DB(connection)
     db.autoClose(false)
     db.withinTx { implicit session =>
@@ -31,7 +31,7 @@ class V2__convert_subjects_to_object extends JdbcMigration {
     }
   }
 
-  def frontPageData(implicit session: DBSession) : Option[V2_DBFrontPage] = {
+  def frontPageData(implicit session: DBSession): Option[V2_DBFrontPage] = {
     sql"select id, document from mainfrontpage"
       .map(rs => V2_DBFrontPage(rs.long("id"), rs.string("document")))
       .single
@@ -46,7 +46,7 @@ class V2__convert_subjects_to_object extends JdbcMigration {
     }
   }
 
-  private def toDomainCategories(dbCategories: List[V2_DBSubjectCollection]) : List[SubjectCollection] = {
+  private def toDomainCategories(dbCategories: List[V2_DBSubjectCollection]): List[SubjectCollection] = {
     dbCategories.map(sc => SubjectCollection(sc.name, sc.subjects.map(s => SubjectFilters(s, List()))))
   }
 
