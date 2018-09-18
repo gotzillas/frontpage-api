@@ -19,7 +19,7 @@ object ConverterService {
     api.FrontPageData(page.topical, page.categories.map(toApiSubjectCollection))
 
   private def toApiSubjectCollection(coll: domain.SubjectCollection): api.SubjectCollection =
-    api.SubjectCollection(coll.name, coll.subjects)
+    api.SubjectCollection(coll.name, coll.subjects.map(sf => api.SubjectFilters(sf.id, sf.filters)))
 
   private def toApiBannerImage(banner: domain.BannerImage): api.BannerImage =
     api.BannerImage(createImageUrl(banner.mobileImageId),
@@ -31,6 +31,7 @@ object ConverterService {
     api.SubjectPageData(
       sub.id.get,
       sub.name,
+      sub.filters,
       sub.displayInTwoColumns,
       sub.twitter,
       sub.facebook,
@@ -98,7 +99,7 @@ object ConverterService {
     domain.FrontPageData(page.topical, page.categories.map(toDomainSubjectCollection))
 
   private def toDomainSubjectCollection(coll: api.SubjectCollection): domain.SubjectCollection =
-    domain.SubjectCollection(coll.name, coll.subjects)
+    domain.SubjectCollection(coll.name, coll.subjects.map(sf => domain.SubjectFilters(sf.id, sf.filters)))
 
   private def createImageUrl(id: Long): String = createImageUrl(id.toString)
   private def createImageUrl(id: String): String = s"$RawImageApiUrl/id/$id"
