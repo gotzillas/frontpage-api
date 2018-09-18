@@ -1,18 +1,17 @@
 package db.migration
 import java.sql.Connection
 
-import io.circe.generic.semiauto._
 import io.circe.generic.auto._
+import io.circe.generic.semiauto._
 import io.circe.parser._
 import io.circe.syntax._
 import io.circe.{Decoder, Encoder}
-import no.ndla.frontpageapi.model.domain.{FrontPageData, SubjectCollection, SubjectFilters}
 import no.ndla.frontpageapi.repository._
 import org.flywaydb.core.api.migration.jdbc.JdbcMigration
 import org.postgresql.util.PGobject
 import scalikejdbc._
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 /**
   * Part of GDL frontpage-api.
@@ -22,8 +21,8 @@ import scala.util.{Failure, Success, Try}
   */
 class V2__convert_subjects_to_object extends JdbcMigration {
 
-  implicit val decoder: Decoder[V2_DBFrontPageData] = deriveDecoder
-  implicit val encoder: Encoder[V2_DBFrontPageData] = deriveEncoder
+  implicit val decoder: Decoder[V1_DBFrontPageData] = deriveDecoder
+  implicit val encoder: Encoder[V1_DBFrontPageData] = deriveEncoder
 
   override def migrate(connection: Connection): Unit = {
     val db = DB(connection)
@@ -33,26 +32,26 @@ class V2__convert_subjects_to_object extends JdbcMigration {
     }
   }
 
-  def frontPageData(implicit session: DBSession): Option[V2_DBFrontPage] = {
+  def frontPageData(implicit session: DBSession): Option[DBFrontPage] = {
     sql"select id, document from mainfrontpage"
-      .map(rs => V2_DBFrontPage(rs.long("id"), rs.string("document")))
+      .map(rs => DBFrontPage(rs.long("id"), rs.string("document")))
       .single
       .apply
   }
 
-  def convertSubjects(frontPage: V2_DBFrontPage): Option[FrontPageData] = {
-    parse(frontPage.document).flatMap(_.as[V2_DBFrontPageData]).toTry match {
+  def convertSubjects(frontPage: DBFrontPage): Option[V2_FrontPageData] = {
+    parse(frontPage.document).flatMap(_.as[V1_DBFrontPageData]).toTry match {
       case Success(value) =>
-        Some(new FrontPageData(value.topical, toDomainCategories(value.categories)))
+        Some(V2_FrontPageData(value.topical, toDomainCategories(value.categories)))
       case Failure(_) => None
     }
   }
 
-  private def toDomainCategories(dbCategories: List[V2_DBSubjectCollection]): List[SubjectCollection] = {
-    dbCategories.map(sc => SubjectCollection(sc.name, sc.subjects.map(s => SubjectFilters(s, List()))))
+  private def toDomainCategories(dbCategories: List[V1_DBSubjectCollection]): List[V2_SubjectCollection] = {
+    dbCategories.map(sc => V2_SubjectCollection(sc.name, sc.subjects.map(s => V2_SubjectFilters(s, List()))))
   }
 
-  def update(frontPageData: FrontPageData)(implicit session: DBSession) = {
+  private def update(frontPageData: V2_FrontPageData)(implicit session: DBSession) = {
     val dataObject = new PGobject()
     dataObject.setType("jsonb")
     dataObject.setValue(frontPageData.asJson.noSpacesDropNull)
@@ -63,6 +62,10 @@ class V2__convert_subjects_to_object extends JdbcMigration {
   }
 }
 
-case class V2_DBFrontPage(id: Long, document: String)
-case class V2_DBFrontPageData(topical: List[String], categories: List[V2_DBSubjectCollection])
-case class V2_DBSubjectCollection(name: String, subjects: List[String])
+case class V2_FrontPageData(topical: List[String], categories: List[V2_SubjectCollection])
+case class V2_SubjectCollection(name: String, subjects: List[V2_SubjectFilters])
+case class V2_SubjectFilters(id: String, filters: List[String])
+
+case class DBFrontPage(id: Long, document: String)
+case class V1_DBFrontPageData(topical: List[String], categories: List[V1_DBSubjectCollection])
+case class V1_DBSubjectCollection(name: String, subjects: List[String])
