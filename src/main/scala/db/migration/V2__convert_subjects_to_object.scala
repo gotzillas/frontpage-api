@@ -12,6 +12,8 @@ import org.flywaydb.core.api.migration.jdbc.JdbcMigration
 import org.postgresql.util.PGobject
 import scalikejdbc._
 
+import scala.util.{Failure, Success, Try}
+
 /**
   * Part of GDL frontpage-api.
   * Copyright (C) 2018 GDL
@@ -27,7 +29,7 @@ class V2__convert_subjects_to_object extends JdbcMigration {
     val db = DB(connection)
     db.autoClose(false)
     db.withinTx { implicit session =>
-      frontPageData.map(convertSubjects).foreach(update)
+      frontPageData.flatMap(convertSubjects).map(update)
     }
   }
 
@@ -38,11 +40,11 @@ class V2__convert_subjects_to_object extends JdbcMigration {
       .apply
   }
 
-  def convertSubjects(frontPage: V2_DBFrontPage): FrontPageData = {
+  def convertSubjects(frontPage: V2_DBFrontPage): Option[FrontPageData] = {
     parse(frontPage.document).flatMap(_.as[V2_DBFrontPageData]).toTry match {
-      case scala.util.Success(frontPage) => {
-        new FrontPageData(frontPage.topical, toDomainCategories(frontPage.categories))
-      }
+      case Success(value) =>
+        Some(new FrontPageData(value.topical, toDomainCategories(value.categories)))
+      case Failure(_) => None
     }
   }
 
