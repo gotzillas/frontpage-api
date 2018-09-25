@@ -22,7 +22,7 @@ import scala.util.Try
 case class SubjectFrontPageData(id: Option[Long],
                                 name: String,
                                 filters: Option[List[String]],
-                                layout: String,
+                                layout: LayoutType.Value,
                                 twitter: Option[String],
                                 facebook: Option[String],
                                 bannerImage: BannerImage,
@@ -37,8 +37,10 @@ object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
   override val tableName = "subjectpage"
   override val schemaName = FrontpageApiProperties.MetaSchema.some
 
-  implicit val enumDecoder = Decoder.enumDecoder(VisualElementType)
-  implicit val enumEncoder = Encoder.enumEncoder(VisualElementType)
+  implicit val elementDecoder = Decoder.enumDecoder(VisualElementType)
+  implicit val elementEncoder = Encoder.enumEncoder(VisualElementType)
+  implicit val layoutDecoder = Decoder.enumDecoder(LayoutType)
+  implicit val layoutEncoder = Encoder.enumEncoder(LayoutType)
 
   private[domain] def decodeJson(json: String, id: Long): Try[SubjectFrontPageData] = {
     parse(json).flatMap(_.as[SubjectFrontPageData]).map(_.copy(id = id.some)).toTry

@@ -7,11 +7,11 @@
 
 package no.ndla.frontpageapi
 
-import no.ndla.frontpageapi.model.{domain, api}
+import no.ndla.frontpageapi.model.{api, domain}
 import io.circe.syntax._
 import io.circe.generic.auto._
 import no.ndla.frontpageapi.model.domain.SubjectFrontPageData._
-import no.ndla.frontpageapi.model.domain.VisualElementType
+import no.ndla.frontpageapi.model.domain.{Layout, LayoutType, VisualElementType}
 
 object TestData {
 
@@ -19,7 +19,7 @@ object TestData {
     Some(1),
     "Samfunnsfag",
     None,
-    "single",
+    LayoutType.Single,
     Some("@ndla_samfunn"),
     Some("NDLAsamfunnsfag"),
     domain.BannerImage(29668, 29668),
