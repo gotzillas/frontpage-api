@@ -19,6 +19,6 @@ object LayoutType extends Enumeration {
   def fromString(string: String): Try[LayoutType.Value] =
     LayoutType.values.find(_.toString == string) match {
       case Some(v) => Success(v)
-      case None    => Failure(ValidationException(s"'$string' is an invalid visual element type"))
+      case None    => Failure(ValidationException(s"'$string' is an invalid layout"))
     }
 }
