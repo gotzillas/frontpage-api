@@ -17,7 +17,7 @@ import io.circe.generic.auto._
 case class NewOrUpdateSubjectFrontPageData(name: String,
                                            filters: Option[List[String]],
                                            externalId: String,
-                                           displayInTwoColumns: Boolean,
+                                           layout: String,
                                            twitter: Option[String],
                                            facebook: Option[String],
                                            bannerImage: NewOrUpdateBannerImage,

@@ -15,6 +15,7 @@ import scala.util.Properties._
 import scala.util.{Failure, Success}
 
 object FrontpageApiProperties {
+  val ApplicationName = "frontpage-api"
   val ApplicationPort: Int = envOrElse("APPLICATION_PORT", "80").toInt
   val ContactName = "Christer Gundersen"
   val ContactEmail = "christergundersen@ndla.no"

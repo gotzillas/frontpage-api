@@ -8,7 +8,7 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, RawImageApiUrl}
-import no.ndla.frontpageapi.model.domain.VisualElementType
+import no.ndla.frontpageapi.model.domain.{LayoutType, VisualElementType}
 import no.ndla.frontpageapi.model.{api, domain}
 
 import scala.util.{Failure, Success, Try}
@@ -32,7 +32,7 @@ object ConverterService {
       sub.id.get,
       sub.name,
       sub.filters,
-      sub.displayInTwoColumns,
+      sub.layout.toString,
       sub.twitter,
       sub.facebook,
       toApiBannerImage(sub.bannerImage),
@@ -68,7 +68,7 @@ object ConverterService {
       None,
       subject.name,
       subject.filters,
-      subject.displayInTwoColumns,
+      toDomainLayout(subject.layout.toString),
       subject.twitter,
       subject.facebook,
       toDomainBannerImage(subject.bannerImage),
@@ -85,6 +85,10 @@ object ConverterService {
       case Some(Success(about)) => Success(withoutAboutSubject.copy(about = Some(about)))
       case None                 => Success(withoutAboutSubject)
     }
+  }
+
+  private def toDomainLayout(layout: String): domain.LayoutType.Value = {
+    LayoutType.fromString(layout).get
   }
 
   private def toDomainAboutSubject(about: api.NewOrUpdateAboutSubject): Try[domain.AboutSubject] = {
