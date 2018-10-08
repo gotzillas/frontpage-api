@@ -1,3 +1,10 @@
+/**
+  * Part of NDLA frontpage-api.
+  * Copyright (C) 2018 NDLA
+  *
+  * See LICENSE
+  */
+
 package db.migration
 import java.sql.Connection
 
@@ -13,12 +20,6 @@ import scalikejdbc._
 
 import scala.util.{Failure, Success}
 
-/**
-  * Part of GDL frontpage-api.
-  * Copyright (C) 2018 GDL
-  *
-  * See LICENSE
-  */
 class V2__convert_subjects_to_object extends JdbcMigration {
 
   implicit val decoder: Decoder[V1_DBFrontPageData] = deriveDecoder

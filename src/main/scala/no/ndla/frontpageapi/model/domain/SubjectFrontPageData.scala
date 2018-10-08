@@ -7,15 +7,12 @@
 
 package no.ndla.frontpageapi.model.domain
 
-import io.circe.generic.semiauto._
-import io.circe.{Decoder, Encoder, HCursor}
+import cats.implicits._
 import io.circe.generic.auto._
 import io.circe.parser._
+import io.circe.{Decoder, Encoder}
 import no.ndla.frontpageapi.FrontpageApiProperties
-import scalikejdbc.WrappedResultSet
-import scalikejdbc._
-import cats.implicits._
-import io.circe.generic.extras.Configuration
+import scalikejdbc.{WrappedResultSet, _}
 
 import scala.util.Try
 
@@ -26,7 +23,7 @@ case class SubjectFrontPageData(id: Option[Long],
                                 twitter: Option[String],
                                 facebook: Option[String],
                                 bannerImage: BannerImage,
-                                about: Option[AboutSubject],
+                                about: Seq[AboutSubject],
                                 topical: Option[String],
                                 mostRead: List[String],
                                 editorsChoices: List[String],

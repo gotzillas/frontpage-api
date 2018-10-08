@@ -27,13 +27,14 @@ trait SubjectPageController {
     import swaggerSyntax._
 
     "Get data to display on a subject page" **
-      GET / pathVar[Long]("subject-id", "The subject id") |>> { id: Long =>
-      {
-        readService.subjectPage(id) match {
-          case Some(s) => Ok(s)
-          case None    => NotFound(Error.notFound)
+      GET / pathVar[Long]("subject-id", "The subject id") +? param[String]("language", "nb") |>> {
+      (id: Long, language: String) =>
+        {
+          readService.subjectPage(id, language) match {
+            case Some(s) => Ok(s)
+            case None    => NotFound(Error.notFound)
+          }
         }
-      }
     }
 
   }

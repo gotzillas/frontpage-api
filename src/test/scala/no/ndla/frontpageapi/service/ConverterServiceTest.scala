@@ -15,24 +15,24 @@ import scala.util.Failure
 class ConverterServiceTest extends UnitSuite with TestEnvironment {
 
   test("toApiSubjectPage should convert visual element id to url") {
-    val visualElement = TestData.domainSubjectPage.about.get.visualElement.copy(`type` = VisualElementType.Image)
+    val visualElement = TestData.domainSubjectPage.about.head.visualElement.copy(`type` = VisualElementType.Image)
     val about = TestData.domainSubjectPage.about.map(_.copy(visualElement = visualElement))
     val page = TestData.domainSubjectPage.copy(about = about)
 
-    ConverterService.toApiSubjectPage(page).about.get.visualElement.url should equal(
+    ConverterService.toApiSubjectPage(page, "nb").about.get.visualElement.url should equal(
       s"http://api-gateway.ndla-local/image-api/raw/id/${visualElement.id}")
 
-    val visualElement2 = TestData.domainSubjectPage.about.get.visualElement.copy(`type` = VisualElementType.Brightcove)
+    val visualElement2 = TestData.domainSubjectPage.about.head.visualElement.copy(`type` = VisualElementType.Brightcove)
     val about2 = TestData.domainSubjectPage.about.map(_.copy(visualElement = visualElement2))
     val page2 = TestData.domainSubjectPage.copy(about = about2)
 
     val expected =
       s"https://players.brightcove.net/${FrontpageApiProperties.BrightcoveAccountId}/default_default/index.html?videoId=${visualElement2.id}"
-    ConverterService.toApiSubjectPage(page2).about.get.visualElement.url should equal(expected)
+    ConverterService.toApiSubjectPage(page2, "nb").about.get.visualElement.url should equal(expected)
   }
 
   test("toDomainSubjectPage should return a failure if visual element type is invalid") {
-    val visualElement = TestData.apiSubjectPage.about.get.visualElement.copy(`type` = "not an image")
+    val visualElement = TestData.apiSubjectPage.about.head.visualElement.copy(`type` = "not an image")
     val about = TestData.apiSubjectPage.about.map(_.copy(visualElement = visualElement))
     val page = TestData.apiSubjectPage.copy(about = about)
 
@@ -41,7 +41,7 @@ class ConverterServiceTest extends UnitSuite with TestEnvironment {
   }
 
   test("toDomainSubjectPage should return a success if visual element type is valid") {
-    val visualElement = TestData.apiSubjectPage.about.get.visualElement.copy(`type` = "image")
+    val visualElement = TestData.apiSubjectPage.about.head.visualElement.copy(`type` = "image")
     val about = TestData.apiSubjectPage.about.map(_.copy(visualElement = visualElement))
     val page = TestData.apiSubjectPage.copy(about = about)
 

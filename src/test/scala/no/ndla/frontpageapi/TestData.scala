@@ -7,11 +7,11 @@
 
 package no.ndla.frontpageapi
 
-import no.ndla.frontpageapi.model.{api, domain}
-import io.circe.syntax._
 import io.circe.generic.auto._
+import io.circe.syntax._
+import no.ndla.frontpageapi.model.domain.{LayoutType, VisualElementType}
+import no.ndla.frontpageapi.model.{api, domain}
 import no.ndla.frontpageapi.model.domain.SubjectFrontPageData._
-import no.ndla.frontpageapi.model.domain.{Layout, LayoutType, VisualElementType}
 
 object TestData {
 
@@ -23,9 +23,10 @@ object TestData {
     Some("@ndla_samfunn"),
     Some("NDLAsamfunnsfag"),
     domain.BannerImage(29668, 29668),
-    Some(
+    Seq(
       domain.AboutSubject("Om Samfunnsfag",
                           "Dette er samfunnsfag",
+                          "nb",
                           domain.VisualElement(VisualElementType.Image, "123", Some("alt text")))),
     Some("urn:resource:1:170252"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
@@ -43,9 +44,10 @@ object TestData {
     Some("ndla_samfunn"),
     Some("NDLAsamfunnsfag"),
     api.NewOrUpdateBannerImage(29668, 29668),
-    Some(
+    Seq(
       api.NewOrUpdateAboutSubject("Om Samfunnsfag",
                                   "Dette er samfunnsfag",
+                                  "nb",
                                   api.NewOrUpdatedVisualElement("image", "123", Some("alt text")))),
     Some("urn:resource:1:170252"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
