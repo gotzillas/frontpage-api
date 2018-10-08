@@ -67,7 +67,7 @@ class V4__add_language_to_about extends JdbcMigration {
   private def toNewAboutSubjectFormat(aboutSubject: Option[V2_AboutSubject]): Seq[V4_AboutSubject] = {
     aboutSubject match {
       case Some(about) => Seq(V4_AboutSubject(about.title, about.description, "nb", about.visualElement))
-      case None => Seq()
+      case None        => Seq()
     }
   }
 
