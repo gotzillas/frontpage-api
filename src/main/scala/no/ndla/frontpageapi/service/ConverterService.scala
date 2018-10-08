@@ -46,8 +46,9 @@ object ConverterService {
   }
 
   private def toApiAboutSubject(aboutSeq: Seq[domain.AboutSubject], language: String): Option[api.AboutSubject] = {
-    val about = aboutSeq.find(about => about.language == language).getOrElse(aboutSeq.head)
-    Some(api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement)))
+    aboutSeq
+      .find(about => about.language == language)
+      .map(about => api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement)))
   }
 
   private def toApiVisualElement(visual: domain.VisualElement): api.VisualElement = {
