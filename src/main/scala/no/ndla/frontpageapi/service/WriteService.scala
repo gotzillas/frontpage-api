@@ -23,7 +23,7 @@ trait WriteService {
       for {
         convertedSubject <- ConverterService.toDomainSubjectPage(subject)
         subjectPage <- subjectPageRepository.newSubjectPage(convertedSubject, subject.externalId)
-      } yield ConverterService.toApiSubjectPage(subjectPage)
+      } yield ConverterService.toApiSubjectPage(subjectPage, "nb")
     }
 
     def updateSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): Try[api.SubjectPageData] = {
@@ -32,7 +32,7 @@ trait WriteService {
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(id, subject)
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-          } yield ConverterService.toApiSubjectPage(subjectPage)
+          } yield ConverterService.toApiSubjectPage(subjectPage, "nb")
         case Success(_) =>
           Failure(NotFoundException(id))
         case Failure(ex) => Failure(ex)
