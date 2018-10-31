@@ -1,18 +1,17 @@
 import java.util.Properties
 
-val Scalaversion = "2.12.2"
-val ScalaLoggingVersion = "3.5.0"
-val Log4JVersion = "2.9.1"
-val ScalaTestVersion = "3.0.1"
-val MockitoVersion = "1.10.19"
-val JacksonVersion = "2.9.4"
-val Http4sVersion = "0.18.4"
+val Scalaversion = "2.12.7"
+val Log4JVersion = "2.11.1"
+val ScalaTestVersion = "3.0.5"
+val MockitoVersion = "2.23.0"
+val Http4sVersion = "0.18.20"
+val JacksonVersion = "2.9.7"
 val RhoVersion = "0.18.0"
-val CirceVersion = "0.9.3"
-val ScalikeJDBCVersion = "3.2.3"
-val HikariConnectionPoolVersion = "3.1.0"
-val PostgresVersion = "9.4-1201-jdbc4"
-val FlywayVersion = "5.0.7"
+val CirceVersion = "0.10.0"
+val ScalikeJDBCVersion = "3.3.1"
+val HikariConnectionPoolVersion = "3.2.0"
+val PostgresVersion = "42.2.5"
+val FlywayVersion = "5.2.0"
 
 val appProperties = settingKey[Properties]("The application properties")
 
@@ -50,9 +49,9 @@ lazy val frontpage_api = (project in file("."))
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % Log4JVersion,
       "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % JacksonVersion,
       "org.flywaydb" % "flyway-core" % FlywayVersion,
-      "org.mockito" % "mockito-all" % MockitoVersion % "test",
+      "org.mockito" % "mockito-core" % MockitoVersion % "test",
       "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
-      "javax.servlet" % "javax.servlet-api" % "3.1.0"
+      "javax.servlet" % "javax.servlet-api" % "4.0.1"
     )
   )
   .enablePlugins(DockerPlugin)
