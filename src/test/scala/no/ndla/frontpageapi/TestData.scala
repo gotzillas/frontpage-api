@@ -9,6 +9,7 @@ package no.ndla.frontpageapi
 
 import io.circe.generic.auto._
 import io.circe.syntax._
+import no.ndla.frontpageapi.model.api.MetaDescription
 import no.ndla.frontpageapi.model.domain.{LayoutType, VisualElementType}
 import no.ndla.frontpageapi.model.{api, domain}
 import no.ndla.frontpageapi.model.domain.SubjectFrontPageData._
@@ -28,6 +29,7 @@ object TestData {
                           "Dette er samfunnsfag",
                           "nb",
                           domain.VisualElement(VisualElementType.Image, "123", Some("alt text")))),
+    Seq(),
     Some("urn:resource:1:170252"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
@@ -49,6 +51,7 @@ object TestData {
                                   "Dette er samfunnsfag",
                                   "nb",
                                   api.NewOrUpdatedVisualElement("image", "123", Some("alt text")))),
+    Seq(api.NewOrUpdatedMetaDescription("meta", "nb")),
     Some("urn:resource:1:170252"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),

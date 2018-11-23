@@ -9,7 +9,7 @@ package no.ndla.frontpageapi.model.api
 
 import cats.Applicative
 import cats.effect.Sync
-import org.http4s.circe.{jsonEncoderOf, jsonOf, jsonEncoderWithPrinterOf}
+import org.http4s.circe.{jsonOf, jsonEncoderWithPrinterOf}
 import org.http4s.{EntityDecoder, EntityEncoder}
 import scala.language.higherKinds
 import io.circe.generic.semiauto._
@@ -24,6 +24,7 @@ case class SubjectPageData(id: Long,
                            facebook: Option[String],
                            banner: BannerImage,
                            about: Option[AboutSubject],
+                           metaDescription: Option[MetaDescription],
                            topical: Option[String],
                            mostRead: List[String],
                            editorsChoices: List[String],

@@ -37,6 +37,7 @@ object ConverterService {
       sub.facebook,
       toApiBannerImage(sub.bannerImage),
       toApiAboutSubject(sub.about, language),
+      toApiMetaDescription(sub.metaDescription, language),
       sub.topical,
       sub.mostRead,
       sub.editorsChoices,
@@ -49,6 +50,13 @@ object ConverterService {
     aboutSeq
       .find(about => about.language == language)
       .map(about => api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement)))
+  }
+
+  private def toApiMetaDescription(metaSeq: Seq[domain.MetaDescription],
+                                   language: String): Option[api.MetaDescription] = {
+    metaSeq
+      .find(meta => meta.language == language)
+      .map(meta => api.MetaDescription(meta.metaDescription))
   }
 
   private def toApiVisualElement(visual: domain.VisualElement): api.VisualElement = {
@@ -76,6 +84,7 @@ object ConverterService {
       subject.facebook,
       toDomainBannerImage(subject.bannerImage),
       Seq(),
+      toDomainMetaDescription(subject.metaDescription),
       subject.topical,
       subject.mostRead,
       subject.editorsChoices,
@@ -99,6 +108,10 @@ object ConverterService {
         toDomainVisualElement(about.visualElement)
           .map(domain.AboutSubject(about.title, about.description, about.language, _)))
     Try(seq.map(_.get))
+  }
+
+  private def toDomainMetaDescription(metaSeq: Seq[api.NewOrUpdatedMetaDescription]): Seq[domain.MetaDescription] = {
+    metaSeq.map(meta => domain.MetaDescription(meta.metaDescription, meta.language))
   }
 
   private def toDomainVisualElement(visual: api.NewOrUpdatedVisualElement): Try[domain.VisualElement] =
