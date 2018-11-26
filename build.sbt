@@ -30,7 +30,7 @@ lazy val frontpage_api = (project in file("."))
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     scalacOptions := Seq("-target:jvm-1.8", "-unchecked", "-deprecation", "-feature", "-Ypartial-unification"),
     libraryDependencies ++= Seq(
-      "ndla" %% "network" % "0.31",
+      "ndla" %% "network" % "0.36",
       "org.http4s" %% "http4s-circe" % Http4sVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
       "io.circe" %% "circe-java8" % CirceVersion,
