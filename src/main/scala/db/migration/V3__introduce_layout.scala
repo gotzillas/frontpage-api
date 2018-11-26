@@ -14,19 +14,19 @@ import io.circe.parser._
 import io.circe.syntax._
 import io.circe.{Decoder, Encoder}
 import no.ndla.frontpageapi.repository._
-import org.flywaydb.core.api.migration.jdbc.JdbcMigration
+import org.flywaydb.core.api.migration.{BaseJavaMigration, Context}
 import org.postgresql.util.PGobject
 import scalikejdbc._
 
 import scala.util.{Failure, Success}
 
-class V3__introduce_layout extends JdbcMigration {
+class V3__introduce_layout extends BaseJavaMigration {
 
   implicit val decoder: Decoder[V1_DBFrontPageData] = deriveDecoder
   implicit val encoder: Encoder[V1_DBFrontPageData] = deriveEncoder
 
-  override def migrate(connection: Connection): Unit = {
-    val db = DB(connection)
+  override def migrate(context: Context): Unit = {
+    val db = DB(context.getConnection)
     db.autoClose(false)
     db.withinTx { implicit session =>
       subjectPageData.flatMap(convertSubjectpage).map(update)
