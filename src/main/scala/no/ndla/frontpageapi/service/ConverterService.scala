@@ -52,11 +52,10 @@ object ConverterService {
       .map(about => api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement)))
   }
 
-  private def toApiMetaDescription(metaSeq: Seq[domain.MetaDescription],
-                                   language: String): Option[api.MetaDescription] = {
+  private def toApiMetaDescription(metaSeq: Seq[domain.MetaDescription], language: String): Option[String] = {
     metaSeq
       .find(meta => meta.language == language)
-      .map(meta => api.MetaDescription(meta.metaDescription))
+      .map(_.metaDescription)
   }
 
   private def toApiVisualElement(visual: domain.VisualElement): api.VisualElement = {
