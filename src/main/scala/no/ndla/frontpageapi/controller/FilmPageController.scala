@@ -7,6 +7,8 @@
 
 package no.ndla.frontpageapi.controller
 import cats.Monad
+import io.circe.generic.auto._
+import io.circe.syntax._
 import cats.effect.{Effect, IO}
 import no.ndla.frontpageapi.model.api._
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
@@ -29,7 +31,7 @@ trait FilmPageController {
       GET +? param[String]("language", "nb") |>> { language: String =>
       {
         readService.filmFrontPage(language) match {
-          case Some(s) => Ok(s)
+          case Some(s) => Ok(s.asJson.toString)
           case None    => NotFound(Error.notFound)
         }
       }
@@ -39,7 +41,7 @@ trait FilmPageController {
       POST ^ NewOrUpdatedFilmFrontPageData.decoder |>> { filmFrontPage: NewOrUpdatedFilmFrontPageData =>
       {
         writeService.updateFilmFrontPage(filmFrontPage) match {
-          case Success(s) => Ok(s)
+          case Success(s) => Ok(s.asJson.toString)
           case Failure(_) => InternalServerError(Error.generic)
         }
       }
