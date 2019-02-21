@@ -8,13 +8,13 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.model.domain.Errors.NotFoundException
-import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
+import no.ndla.frontpageapi.repository.{FilmFrontPageRepository, FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.model.{api, domain}
 
 import scala.util.{Failure, Success, Try}
 
 trait WriteService {
-  this: SubjectPageRepository with FrontPageRepository =>
+  this: SubjectPageRepository with FrontPageRepository with FilmFrontPageRepository =>
   val writeService: WriteService
 
   class WriteService {
@@ -46,6 +46,13 @@ trait WriteService {
         .map(ConverterService.toApiFrontPage)
     }
 
+    def updateFilmFrontPage(page: api.NewOrUpdatedFilmFrontPageData): Try[api.FilmFrontPageData] = {
+      val domainFilmFrontPageT = ConverterService.toDomainFilmFrontPage(page)
+      for {
+        domainFilmFrontPage <- domainFilmFrontPageT
+        filmFrontPage <- filmFrontPageRepository.newFilmFrontPage(domainFilmFrontPage)
+      } yield ConverterService.toApiFilmFrontPage(filmFrontPage, "nb")
+    }
   }
 
 }

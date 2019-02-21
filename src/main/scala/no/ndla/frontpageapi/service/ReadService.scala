@@ -10,12 +10,12 @@ package no.ndla.frontpageapi.service
 import org.log4s.getLogger
 import no.ndla.frontpageapi.model.api
 import no.ndla.frontpageapi.model.api.SubjectPageId
-import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
+import no.ndla.frontpageapi.repository.{FilmFrontPageRepository, FrontPageRepository, SubjectPageRepository}
 
 import scala.util.{Failure, Success, Try}
 
 trait ReadService {
-  this: SubjectPageRepository with FrontPageRepository =>
+  this: SubjectPageRepository with FrontPageRepository with FilmFrontPageRepository =>
   val readService: ReadService
 
   class ReadService {
@@ -32,6 +32,10 @@ trait ReadService {
 
     def frontPage: Option[api.FrontPageData] = {
       frontPageRepository.get.map(ConverterService.toApiFrontPage)
+    }
+
+    def filmFrontPage(language: String): Option[api.FilmFrontPageData] = {
+      filmFrontPageRepository.get.map(page => ConverterService.toApiFilmFrontPage(page, language))
     }
   }
 }

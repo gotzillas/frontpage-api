@@ -9,7 +9,7 @@ package no.ndla.frontpageapi
 
 import no.ndla.frontpageapi.controller.InternController
 import no.ndla.frontpageapi.integration.DataSource
-import no.ndla.frontpageapi.repository.{FrontPageRepository, SubjectPageRepository}
+import no.ndla.frontpageapi.repository.{FilmFrontPageRepository, FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
 import org.scalatest.mockito.MockitoSugar
 
@@ -18,6 +18,7 @@ trait TestEnvironment
     with DataSource
     with SubjectPageRepository
     with FrontPageRepository
+    with FilmFrontPageRepository
     with ReadService
     with WriteService {
 
@@ -25,6 +26,7 @@ trait TestEnvironment
 
   override val subjectPageRepository = mock[SubjectPageRepository]
   override val frontPageRepository = mock[FrontPageRepository]
+  override val filmFrontPageRepository = mock[FilmFrontPageRepository]
   override val readService = mock[ReadService]
   override val writeService = mock[WriteService]
 }

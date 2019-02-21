@@ -27,6 +27,21 @@ object ConverterService {
                     createImageUrl(banner.desktopImageId),
                     banner.desktopImageId)
 
+  def toApiFilmFrontPage(page: domain.FilmFrontPageData, language: String): api.FilmFrontPageData = {
+    api.FilmFrontPageData(page.name,
+                          toApiAboutSubject(page.about, language),
+                          toApiMovieThemes(page.movieThemes, language),
+                          page.slideShow)
+  }
+
+  private def toApiMovieThemes(themes: Seq[domain.MovieTheme], language: String): Seq[api.MovieTheme] = {
+    themes.map(theme => api.MovieTheme(theme.id, toApiMovieName(theme.name, language), theme.movies))
+  }
+
+  private def toApiMovieName(names: Seq[domain.MovieName], language: String): Option[String] = {
+    names.find(name => name.language == language).map(_.name)
+  }
+
   def toApiSubjectPage(sub: domain.SubjectFrontPageData, language: String): api.SubjectPageData = {
     api.SubjectPageData(
       sub.id.get,
@@ -121,6 +136,24 @@ object ConverterService {
 
   private def toDomainSubjectCollection(coll: api.SubjectCollection): domain.SubjectCollection =
     domain.SubjectCollection(coll.name, coll.subjects.map(sf => domain.SubjectFilters(sf.id, sf.filters)))
+
+  def toDomainFilmFrontPage(page: api.NewOrUpdatedFilmFrontPageData): Try[domain.FilmFrontPageData] = {
+    val withoutAboutSubject =
+      domain.FilmFrontPageData(page.name, Seq(), toDomainMovieThemes(page.movieThemes), page.slideShow)
+
+    toDomainAboutSubject(page.about) match {
+      case Failure(ex)    => Failure(ex)
+      case Success(about) => Success(withoutAboutSubject.copy(about = about))
+    }
+  }
+
+  private def toDomainMovieThemes(themes: Seq[api.NewOrUpdatedMovieTheme]): Seq[domain.MovieTheme] = {
+    themes.map(theme => domain.MovieTheme(theme.id, toDomainMovieNames(theme.name), theme.movies))
+  }
+
+  private def toDomainMovieNames(names: Seq[api.NewOrUpdatedMovieName]): Seq[domain.MovieName] = {
+    names.map(name => domain.MovieName(name.name, name.language))
+  }
 
   private def createImageUrl(id: Long): String = createImageUrl(id.toString)
   private def createImageUrl(id: String): String = s"$RawImageApiUrl/id/$id"
