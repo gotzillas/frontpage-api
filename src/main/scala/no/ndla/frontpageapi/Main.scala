@@ -70,6 +70,8 @@ object Main extends StreamApp[IO] {
     val subjectPage =
       SwaggerServiceWithMountpoint(ComponentRegistry.subjectPageController, "/frontpage-api/v1/subjectpage")
     val frontPage = SwaggerServiceWithMountpoint(ComponentRegistry.frontPageController, "/frontpage-api/v1/frontpage")
+    val filmfrontPage =
+      SwaggerServiceWithMountpoint(ComponentRegistry.filmPageController, "/frontpage-api/v1/filmfrontpage")
     val internController = SwaggerServiceWithMountpoint(ComponentRegistry.internController, "/intern")
     val healthController = ServiceWithMountpoint(HealthController(), "/health")
     val swagger = ServiceWithMountpoint(createSwaggerDocService(frontPage, subjectPage), "/frontpage-api/api-docs")
@@ -79,6 +81,7 @@ object Main extends StreamApp[IO] {
     BlazeBuilder[IO]
       .mountService(NdlaMiddleware(frontPage.toService), frontPage.mountPoint)
       .mountService(NdlaMiddleware(subjectPage.toService), subjectPage.mountPoint)
+      .mountService(NdlaMiddleware(filmfrontPage.toService), filmfrontPage.mountPoint)
       .mountService(NdlaMiddleware(internController.toService), internController.mountPoint)
       .mountService(healthController.service, healthController.mountPoint)
       .mountService(swagger.service, swagger.mountPoint)
