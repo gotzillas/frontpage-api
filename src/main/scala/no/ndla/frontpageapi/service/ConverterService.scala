@@ -27,19 +27,34 @@ object ConverterService {
                     createImageUrl(banner.desktopImageId),
                     banner.desktopImageId)
 
-  def toApiFilmFrontPage(page: domain.FilmFrontPageData, language: String): api.FilmFrontPageData = {
+  def toApiFilmFrontPage(page: domain.FilmFrontPageData, language: Option[String]): api.FilmFrontPageData = {
     api.FilmFrontPageData(page.name,
-                          toApiAboutSubject(page.about, language),
+                          toApiAboutFilmSubject(page.about, language),
                           toApiMovieThemes(page.movieThemes, language),
                           page.slideShow)
   }
 
-  private def toApiMovieThemes(themes: Seq[domain.MovieTheme], language: String): Seq[api.MovieTheme] = {
+  private def toApiAboutFilmSubject(aboutSeq: Seq[domain.AboutSubject],
+                                    language: Option[String]): Seq[api.AboutFilmSubject] = {
+    val filteredAboutSeq = language match {
+      case Some(lang) => aboutSeq.filter(about => about.language == lang)
+      case None       => aboutSeq
+    }
+    filteredAboutSeq.map(about =>
+      api.AboutFilmSubject(about.title, about.description, toApiVisualElement(about.visualElement), about.language))
+  }
+
+  private def toApiMovieThemes(themes: Seq[domain.MovieTheme], language: Option[String]): Seq[api.MovieTheme] = {
     themes.map(theme => api.MovieTheme(theme.id, toApiMovieName(theme.name, language), theme.movies))
   }
 
-  private def toApiMovieName(names: Seq[domain.MovieName], language: String): Option[String] = {
-    names.find(name => name.language == language).map(_.name)
+  private def toApiMovieName(names: Seq[domain.MovieName], language: Option[String]): Seq[api.MovieName] = {
+    val filteredNames = language match {
+      case Some(lang) => names.filter(name => name.language == lang)
+      case None       => names
+    }
+
+    filteredNames.map(name => api.MovieName(name.name, name.language))
   }
 
   def toApiSubjectPage(sub: domain.SubjectFrontPageData, language: String): api.SubjectPageData = {

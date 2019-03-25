@@ -34,7 +34,7 @@ trait ReadService {
       frontPageRepository.get.map(ConverterService.toApiFrontPage)
     }
 
-    def filmFrontPage(language: String): Option[api.FilmFrontPageData] = {
+    def filmFrontPage(language: Option[String]): Option[api.FilmFrontPageData] = {
       filmFrontPageRepository.get.map(page => ConverterService.toApiFilmFrontPage(page, language))
     }
   }

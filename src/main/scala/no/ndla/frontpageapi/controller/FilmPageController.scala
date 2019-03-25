@@ -28,7 +28,7 @@ trait FilmPageController {
     import swaggerSyntax._
 
     "Get data to display on the film front page" **
-      GET +? param[String]("language", "nb") |>> { language: String =>
+      GET +? param[Option[String]]("language") |>> { language: Option[String] =>
       {
         readService.filmFrontPage(language) match {
           case Some(s) => Ok(s.asJson.toString)
