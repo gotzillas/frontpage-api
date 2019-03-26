@@ -45,16 +45,16 @@ object ConverterService {
   }
 
   private def toApiMovieThemes(themes: Seq[domain.MovieTheme], language: Option[String]): Seq[api.MovieTheme] = {
-    themes.map(theme => api.MovieTheme(theme.id, toApiMovieName(theme.name, language), theme.movies))
+    themes.map(theme => api.MovieTheme(toApiMovieName(theme.name, language), theme.movies))
   }
 
-  private def toApiMovieName(names: Seq[domain.MovieName], language: Option[String]): Seq[api.MovieName] = {
+  private def toApiMovieName(names: Seq[domain.MovieThemeName], language: Option[String]): Seq[api.MovieThemeName] = {
     val filteredNames = language match {
       case Some(lang) => names.filter(name => name.language == lang)
       case None       => names
     }
 
-    filteredNames.map(name => api.MovieName(name.name, name.language))
+    filteredNames.map(name => api.MovieThemeName(name.name, name.language))
   }
 
   def toApiSubjectPage(sub: domain.SubjectFrontPageData, language: String): api.SubjectPageData = {
@@ -163,11 +163,11 @@ object ConverterService {
   }
 
   private def toDomainMovieThemes(themes: Seq[api.NewOrUpdatedMovieTheme]): Seq[domain.MovieTheme] = {
-    themes.map(theme => domain.MovieTheme(theme.id, toDomainMovieNames(theme.name), theme.movies))
+    themes.map(theme => domain.MovieTheme(toDomainMovieNames(theme.name), theme.movies))
   }
 
-  private def toDomainMovieNames(names: Seq[api.NewOrUpdatedMovieName]): Seq[domain.MovieName] = {
-    names.map(name => domain.MovieName(name.name, name.language))
+  private def toDomainMovieNames(names: Seq[api.NewOrUpdatedMovieName]): Seq[domain.MovieThemeName] = {
+    names.map(name => domain.MovieThemeName(name.name, name.language))
   }
 
   private def createImageUrl(id: Long): String = createImageUrl(id.toString)

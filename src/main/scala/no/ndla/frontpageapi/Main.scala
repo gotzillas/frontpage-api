@@ -74,7 +74,8 @@ object Main extends StreamApp[IO] {
       SwaggerServiceWithMountpoint(ComponentRegistry.filmPageController, "/frontpage-api/v1/filmfrontpage")
     val internController = SwaggerServiceWithMountpoint(ComponentRegistry.internController, "/intern")
     val healthController = ServiceWithMountpoint(HealthController(), "/health")
-    val swagger = ServiceWithMountpoint(createSwaggerDocService(frontPage, subjectPage), "/frontpage-api/api-docs")
+    val swagger =
+      ServiceWithMountpoint(createSwaggerDocService(frontPage, subjectPage, filmfrontPage), "/frontpage-api/api-docs")
 
     logger.info(s"Starting on port $ApplicationPort")
 
