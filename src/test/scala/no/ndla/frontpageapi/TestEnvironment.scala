@@ -7,7 +7,8 @@
 
 package no.ndla.frontpageapi
 
-import no.ndla.frontpageapi.controller.InternController
+import cats.effect.IO
+import no.ndla.frontpageapi.controller.{FilmPageController, InternController}
 import no.ndla.frontpageapi.integration.DataSource
 import no.ndla.frontpageapi.repository.{FilmFrontPageRepository, FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
@@ -19,11 +20,13 @@ trait TestEnvironment
     with SubjectPageRepository
     with FrontPageRepository
     with FilmFrontPageRepository
+    with FilmPageController
     with ReadService
     with WriteService {
 
   override val dataSource = mock[javax.sql.DataSource]
 
+  override val filmPageController = mock[FilmPageController[IO]]
   override val subjectPageRepository = mock[SubjectPageRepository]
   override val frontPageRepository = mock[FrontPageRepository]
   override val filmFrontPageRepository = mock[FilmFrontPageRepository]

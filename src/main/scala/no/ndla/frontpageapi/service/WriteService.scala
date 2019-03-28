@@ -51,7 +51,7 @@ trait WriteService {
       for {
         domainFilmFrontPage <- domainFilmFrontPageT
         filmFrontPage <- filmFrontPageRepository.newFilmFrontPage(domainFilmFrontPage)
-      } yield ConverterService.toApiFilmFrontPage(filmFrontPage, "nb")
+      } yield ConverterService.toApiFilmFrontPage(filmFrontPage, None)
     }
   }
 

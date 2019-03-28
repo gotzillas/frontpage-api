@@ -7,6 +7,7 @@
 
 package no.ndla.frontpageapi.service
 
+import no.ndla.frontpageapi.model.api.FilmFrontPageData
 import no.ndla.frontpageapi.model.domain.{Errors, VisualElementType}
 import no.ndla.frontpageapi.{FrontpageApiProperties, TestData, TestEnvironment, UnitSuite}
 
@@ -46,5 +47,18 @@ class ConverterServiceTest extends UnitSuite with TestEnvironment {
     val page = TestData.apiSubjectPage.copy(about = about)
 
     ConverterService.toDomainSubjectPage(page).isSuccess should be(true)
+  }
+
+  test("Should get all languages if nothing is specified") {
+    val apiFilmFrontPage = ConverterService.toApiFilmFrontPage(TestData.domainFilmFrontPage, None)
+    apiFilmFrontPage.about.length should equal(2)
+    apiFilmFrontPage.about.map(_.language) should equal(Seq("nb", "en"))
+  }
+
+  test("Should get only specified language") {
+    val apiFilmFrontPage = ConverterService.toApiFilmFrontPage(TestData.domainFilmFrontPage, Some("nb"))
+    apiFilmFrontPage.about.length should equal(1)
+    apiFilmFrontPage.about.map(_.language) should equal(Seq("nb"))
+
   }
 }

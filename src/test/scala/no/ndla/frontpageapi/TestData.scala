@@ -58,4 +58,34 @@ object TestData {
     Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
     List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation")
   )
+
+  val domainFilmFrontPage = domain.FilmFrontPageData(
+    "Film",
+    Seq(
+      domain.AboutSubject(
+        "Film",
+        "Film faget",
+        "nb",
+        domain.VisualElement(VisualElementType.Image, "123", Some("alt text"))
+      ),
+      domain.AboutSubject(
+        "Film",
+        "Subject film",
+        "en",
+        domain.VisualElement(VisualElementType.Image, "123", Some("alt text"))
+      )
+    ),
+    Seq(
+      domain.MovieTheme(
+        Seq(
+          domain.MovieThemeName("Første filmtema", "nb"),
+          domain.MovieThemeName("First movie theme", "en")
+        ),
+        Seq("movieref1", "movieref2")
+      )
+    ),
+    Seq()
+  )
+
+  val apiFilmFrontPage = api.FilmFrontPageData("", Seq(), Seq(), Seq())
 }
