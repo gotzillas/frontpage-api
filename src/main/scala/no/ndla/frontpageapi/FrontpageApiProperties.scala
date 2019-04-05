@@ -30,7 +30,7 @@ object FrontpageApiProperties {
   lazy val MetaServer: String = prop(PropertyKeys.MetaServerKey)
   lazy val MetaPort: Int = prop(PropertyKeys.MetaPortKey).toInt
   lazy val MetaSchema: String = prop(PropertyKeys.MetaSchemaKey)
-  val MetaMaxConnections = 20
+  val MetaMaxConnections = 10
 
   val Environment: String = propOrElse("NDLA_ENVIRONMENT", "local")
   val Domain: String = Domains.get(Environment)
