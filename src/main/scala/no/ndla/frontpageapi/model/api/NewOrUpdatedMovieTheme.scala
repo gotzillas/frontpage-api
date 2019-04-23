@@ -7,6 +7,6 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class NewOrUpdatedMovieTheme(id: Long, name: Seq[NewOrUpdatedMovieName], movies: Seq[String])
+case class NewOrUpdatedMovieTheme(name: Seq[NewOrUpdatedMovieName], movies: Seq[String])
 
 case class NewOrUpdatedMovieName(name: String, language: String)
