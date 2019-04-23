@@ -19,8 +19,8 @@ object FrontpageApiProperties {
 
   val ApplicationName = "frontpage-api"
   val ApplicationPort: Int = envOrElse("APPLICATION_PORT", "80").toInt
-  val ContactName = "Christer Gundersen"
-  val ContactEmail = "christergundersen@ndla.no"
+  val ContactName = "Sigurd Trageton"
+  val ContactEmail = "support+api@ndla.no"
 
   val SecretsFile = "frontpage-api.secrets"
 
