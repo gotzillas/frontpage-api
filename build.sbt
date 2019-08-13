@@ -5,7 +5,7 @@ val Log4JVersion = "2.11.1"
 val ScalaTestVersion = "3.0.5"
 val MockitoVersion = "2.23.0"
 val Http4sVersion = "0.18.20"
-val JacksonVersion = "2.9.7"
+val JacksonVersion = "2.9.9.3"
 val RhoVersion = "0.18.0"
 val CirceVersion = "0.10.0"
 val ScalikeJDBCVersion = "3.3.1"
@@ -47,7 +47,7 @@ lazy val frontpage_api = (project in file("."))
       "org.apache.logging.log4j" % "log4j-api" % Log4JVersion,
       "org.apache.logging.log4j" % "log4j-core" % Log4JVersion,
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % Log4JVersion,
-      "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % JacksonVersion,
+      "com.fasterxml.jackson.core" % "jackson-databind" % JacksonVersion,
       "org.flywaydb" % "flyway-core" % FlywayVersion,
       "org.mockito" % "mockito-core" % MockitoVersion % "test",
       "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
