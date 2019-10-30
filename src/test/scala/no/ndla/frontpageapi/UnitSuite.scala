@@ -23,6 +23,7 @@ abstract class UnitSuite
   setEnv("NDLA_ENVIRONMENT", "local")
   setEnv("META_SCHEMA", "test")
   setEnv("BRIGHTCOVE_ACCOUNT", "123")
+  setEnv("BRIGHTCOVE_PLAYER", "player")
 
   def setEnv(key: String, value: String) = env.put(key, value)
 

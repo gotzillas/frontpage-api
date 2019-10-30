@@ -7,7 +7,7 @@
 
 package no.ndla.frontpageapi.service
 
-import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, RawImageApiUrl}
+import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, BrightcovePlayer, RawImageApiUrl}
 import no.ndla.frontpageapi.model.domain.{LayoutType, VisualElementType}
 import no.ndla.frontpageapi.model.{api, domain}
 
@@ -92,7 +92,7 @@ object ConverterService {
     val url = visual.`type` match {
       case VisualElementType.Image => createImageUrl(visual.id.toLong)
       case VisualElementType.Brightcove =>
-        s"https://players.brightcove.net/$BrightcoveAccountId/default_default/index.html?videoId=${visual.id}"
+        s"https://players.brightcove.net/$BrightcoveAccountId/${BrightcovePlayer}_default/index.html?videoId=${visual.id}"
     }
     api.VisualElement(visual.`type`.toString, url, visual.alt)
   }
@@ -135,7 +135,8 @@ object ConverterService {
     val seq = aboutSeq.map(
       about =>
         toDomainVisualElement(about.visualElement)
-          .map(domain.AboutSubject(about.title, about.description, about.language, _)))
+          .map(domain
+            .AboutSubject(about.title, about.description, about.language, _)))
     Try(seq.map(_.get))
   }
 
@@ -144,7 +145,9 @@ object ConverterService {
   }
 
   private def toDomainVisualElement(visual: api.NewOrUpdatedVisualElement): Try[domain.VisualElement] =
-    VisualElementType.fromString(visual.`type`).map(domain.VisualElement(_, visual.id, visual.alt))
+    VisualElementType
+      .fromString(visual.`type`)
+      .map(domain.VisualElement(_, visual.id, visual.alt))
 
   def toDomainFrontPage(page: api.FrontPageData): domain.FrontPageData =
     domain.FrontPageData(page.topical, page.categories.map(toDomainSubjectCollection))
