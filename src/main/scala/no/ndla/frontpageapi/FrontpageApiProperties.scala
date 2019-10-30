@@ -37,10 +37,12 @@ object FrontpageApiProperties {
   val RawImageApiUrl: String = s"$Domain/image-api/raw"
 
   val BrightcoveAccountId: String = prop("BRIGHTCOVE_ACCOUNT")
+  val BrightcovePlayer: String = prop("BRIGHTCOVE_PLAYER")
 
   lazy val secrets: Map[String, Option[String]] = readSecrets(SecretsFile) match {
-    case Success(values)    => values
-    case Failure(exception) => throw new RuntimeException(s"Unable to load remote secrets from $SecretsFile", exception)
+    case Success(values) => values
+    case Failure(exception) =>
+      throw new RuntimeException(s"Unable to load remote secrets from $SecretsFile", exception)
   }
 
   def prop(key: String): String = {
