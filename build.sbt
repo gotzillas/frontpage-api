@@ -77,7 +77,8 @@ fmt := {
 assembly / assemblyJarName := "frontpage-api.jar"
 assembly / mainClass := Some("no.ndla.frontpageapi.Main")
 assembly / assemblyMergeStrategy := {
-  case "mime.types" => MergeStrategy.filterDistinctLines
+  case "module-info.class" => MergeStrategy.discard
+  case "mime.types"        => MergeStrategy.filterDistinctLines
   case PathList("org", "joda", "convert", "ToString.class") =>
     MergeStrategy.first
   case PathList("org", "joda", "convert", "FromString.class") =>
