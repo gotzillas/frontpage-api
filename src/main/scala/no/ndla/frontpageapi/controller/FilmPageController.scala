@@ -12,7 +12,7 @@ import io.circe.syntax._
 import cats.effect.{Effect, IO}
 import no.ndla.frontpageapi.model.api._
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
-import org.http4s.rho.RhoService
+import org.http4s.rho.RhoRoutes
 import org.http4s.rho.swagger.SwaggerSyntax
 
 import scala.language.higherKinds
@@ -22,8 +22,7 @@ trait FilmPageController {
   this: ReadService with WriteService =>
   val filmPageController: FilmPageController[IO]
 
-  class FilmPageController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(implicit F: Monad[F])
-      extends RhoService[F] {
+  class FilmPageController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(implicit F: Monad[F]) extends RhoRoutes[F] {
 
     import swaggerSyntax._
 

@@ -1,14 +1,14 @@
 import java.util.Properties
 
-val Scalaversion = "2.12.7"
+val Scalaversion = "2.12.10"
 val Log4JVersion = "2.11.1"
 val ScalaTestVersion = "3.0.5"
 val MockitoVersion = "2.23.0"
-val Http4sVersion = "0.18.20"
+val Http4sVersion = "0.21.1"
 val JacksonVersion = "2.10.2"
-val RhoVersion = "0.18.0"
-val CirceVersion = "0.10.0"
-val ScalikeJDBCVersion = "3.3.1"
+val RhoVersion = "0.20.0"
+val CirceVersion = "0.13.0"
+val ScalikeJDBCVersion = "3.4.0"
 val HikariConnectionPoolVersion = "3.2.0"
 val PostgresVersion = "42.2.5"
 val FlywayVersion = "5.2.0"
@@ -33,7 +33,6 @@ lazy val frontpage_api = (project in file("."))
       "ndla" %% "network" % "0.42",
       "org.http4s" %% "http4s-circe" % Http4sVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
-      "io.circe" %% "circe-java8" % CirceVersion,
       "io.circe" %% "circe-generic-extras" % CirceVersion,
       "io.circe" %% "circe-literal" % CirceVersion,
       "io.circe" %% "circe-parser" % CirceVersion,

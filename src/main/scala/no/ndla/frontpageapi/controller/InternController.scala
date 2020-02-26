@@ -12,7 +12,7 @@ import cats.effect.{Effect, IO}
 import no.ndla.frontpageapi.model.api._
 import no.ndla.frontpageapi.model.domain.Errors.{NotFoundException, ValidationException}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
-import org.http4s.rho.RhoService
+import org.http4s.rho.RhoRoutes
 import org.http4s.rho.swagger.SwaggerSyntax
 
 import scala.language.higherKinds
@@ -22,7 +22,7 @@ trait InternController {
   this: ReadService with WriteService =>
   val internController: InternController[IO]
 
-  class InternController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(implicit F: Monad[F]) extends RhoService[F] {
+  class InternController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(implicit F: Monad[F]) extends RhoRoutes[F] {
     import swaggerSyntax._
 
     "Get subject page id from external id" **

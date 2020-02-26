@@ -11,7 +11,7 @@ import cats.Monad
 import cats.effect.{Effect, IO}
 import no.ndla.frontpageapi.model.api._
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
-import org.http4s.rho.RhoService
+import org.http4s.rho.RhoRoutes
 import org.http4s.rho.swagger.SwaggerSyntax
 
 import scala.language.higherKinds
@@ -22,7 +22,7 @@ trait FrontPageController {
   val frontPageController: FrontPageController[IO]
 
   class FrontPageController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(implicit F: Monad[F])
-      extends RhoService[F] {
+      extends RhoRoutes[F] {
 
     import swaggerSyntax._
 

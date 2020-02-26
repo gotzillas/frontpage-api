@@ -7,30 +7,29 @@
 
 package no.ndla.frontpageapi
 
-import cats.effect.IO
+import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
 import org.log4s.getLogger
-import fs2.StreamApp.ExitCode
-import fs2.{Stream, StreamApp}
 import no.ndla.frontpageapi.FrontpageApiProperties.{ApplicationPort, ContactEmail, ContactName}
 import no.ndla.frontpageapi.controller.{FrontPageController, HealthController, NdlaMiddleware, SubjectPageController}
-import org.http4s.HttpService
-import org.http4s.rho.RhoService
+import org.http4s.{HttpApp, HttpRoutes}
+import org.http4s.implicits._
+import org.http4s.rho.{RhoRoute, RhoRoutes}
 import org.http4s.rho.bits.PathAST._
 import org.http4s.rho.swagger.models.{Contact, Info, License}
 import org.http4s.rho.swagger.syntax.io._
 import org.http4s.rho.swagger.syntax.{io => ioSwagger}
-import org.http4s.server.blaze.BlazeBuilder
 import shapeless.HNil
 
 import scala.language.higherKinds
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.io.Source
+import org.http4s.server.blaze.BlazeServerBuilder
 
-object Main extends StreamApp[IO] {
-  private[this] case class ServiceWithMountpoint(service: HttpService[IO], mountPoint: String)
-  private[this] case class SwaggerServiceWithMountpoint(service: RhoService[IO], mountPoint: String) {
-    def toService: HttpService[IO] = service.toService()
+object Main extends IOApp {
+  private[this] case class ServiceWithMountpoint(service: HttpRoutes[IO], mountPoint: String)
+  private[this] case class SwaggerServiceWithMountpoint(service: RhoRoutes[IO], mountPoint: String) {
+    def toRoutes: HttpRoutes[IO] = service.toRoutes()
   }
   val logger = getLogger
 
@@ -42,7 +41,7 @@ object Main extends StreamApp[IO] {
     TypedPath(newPath)
   }
 
-  private def createSwaggerDocService(services: SwaggerServiceWithMountpoint*): HttpService[IO] = {
+  private def createSwaggerDocService(services: SwaggerServiceWithMountpoint*): HttpRoutes[IO] = {
     val info = Info(
       title = "frontpage-api",
       version = "1.0",
@@ -51,14 +50,17 @@ object Main extends StreamApp[IO] {
       contact = Contact(ContactName, email = Some(ContactEmail)).some,
       license = License("GPL v3.0", "http://www.gnu.org/licenses/gpl-3.0.en.html").some
     )
-    val routes =
-      services.map(t => t.service./:(toTypedPath(t.mountPoint)).getRoutes)
-    val swagger = createSwagger(apiInfo = info)(routes.flatten)
+    val routes = services.map(t => {
+      t.service./:(toTypedPath(t.mountPoint)).getRoutes
+    })
 
-    createSwaggerRoute(swagger, TypedPath(PathMatch(""))).toService()
+    val swagRoutes: scala.collection.immutable.Seq[RhoRoute[IO, _]] = routes.flatten.to[scala.collection.immutable.Seq]
+    val swagger = createSwagger(apiInfo = info)(swagRoutes)
+
+    createSwaggerRoute(swagger, TypedPath(PathMatch(""))).toRoutes()
   }
 
-  def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, ExitCode] = {
+  override def run(args: List[String]): IO[ExitCode] = {
     logger.info(
       Source
         .fromInputStream(getClass.getResourceAsStream("/log-license.txt"))
@@ -79,14 +81,23 @@ object Main extends StreamApp[IO] {
 
     logger.info(s"Starting on port $ApplicationPort")
 
-    BlazeBuilder[IO]
-      .mountService(NdlaMiddleware(frontPage.toService), frontPage.mountPoint)
-      .mountService(NdlaMiddleware(subjectPage.toService), subjectPage.mountPoint)
-      .mountService(NdlaMiddleware(filmfrontPage.toService), filmfrontPage.mountPoint)
-      .mountService(NdlaMiddleware(internController.toService), internController.mountPoint)
-      .mountService(healthController.service, healthController.mountPoint)
-      .mountService(swagger.service, swagger.mountPoint)
+    // TODO: Mountpoints needs to be specified somewhere right?
+    val httpApp =
+      NdlaMiddleware(frontPage.toRoutes) <+>
+        NdlaMiddleware(subjectPage.toRoutes) <+>
+        NdlaMiddleware(filmfrontPage.toRoutes) <+>
+        NdlaMiddleware(internController.toRoutes) <+>
+        healthController.service <+>
+        swagger.service
+
+    val x = httpApp.orNotFound
+
+    BlazeServerBuilder[IO]
+      .withHttpApp(x)
       .bindHttp(ApplicationPort, "0.0.0.0")
       .serve
+      .compile
+      .drain
+      .as(ExitCode.Success)
   }
 }

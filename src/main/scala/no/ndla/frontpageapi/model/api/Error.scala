@@ -16,7 +16,6 @@ import org.http4s.{EntityDecoder, EntityEncoder}
 
 import scala.language.higherKinds
 import io.circe.generic.semiauto._
-import io.circe.java8.time._
 
 case class Error(code: String, description: String, occuredAt: LocalDateTime)
 
@@ -34,7 +33,7 @@ object Error {
   def badRequest(msg: String): Error = Error(BAD_REQUEST, msg, LocalDateTime.now)
 
   implicit def encoder[F[_]: Applicative]: EntityEncoder[F, Error] =
-    jsonEncoderOf[F, Error](EntityEncoder[F, String], Applicative[F], deriveEncoder[Error])
+    jsonEncoderOf[F, Error](deriveEncoder[Error])
 
   implicit def decoder[F[_]: Sync]: EntityDecoder[F, Error] =
     jsonOf[F, Error](Sync[F], deriveDecoder[Error])
