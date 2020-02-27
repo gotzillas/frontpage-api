@@ -20,7 +20,7 @@ case class SubjectPageId(id: Long)
 
 object SubjectPageId {
   implicit def encoder[F[_]: Applicative]: EntityEncoder[F, SubjectPageId] =
-    jsonEncoderOf[F, SubjectPageId](EntityEncoder[F, String], Applicative[F], deriveEncoder[SubjectPageId])
+    jsonEncoderOf[F, SubjectPageId](deriveEncoder[SubjectPageId])
 
   implicit def decoder[F[_]: Sync]: EntityDecoder[F, SubjectPageId] =
     jsonOf[F, SubjectPageId](Sync[F], deriveDecoder[SubjectPageId])

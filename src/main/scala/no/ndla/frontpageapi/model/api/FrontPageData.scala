@@ -21,7 +21,7 @@ case class FrontPageData(topical: List[String], categories: List[SubjectCollecti
 object FrontPageData {
   implicit def encoder[F[_]: Applicative]: EntityEncoder[F, FrontPageData] = {
     val encoder = deriveEncoder[FrontPageData]
-    jsonEncoderOf[F, FrontPageData](EntityEncoder[F, String], Applicative[F], encoder)
+    jsonEncoderOf[F, FrontPageData](encoder)
   }
 
   implicit def decoder[F[_]: Sync]: EntityDecoder[F, FrontPageData] = {

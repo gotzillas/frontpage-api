@@ -11,6 +11,6 @@ import io.circe.{Json, Printer}
 
 package object repository {
   implicit class JsonPrinter(json: Json) {
-    val noSpacesDropNull = Printer.noSpaces.copy(dropNullValues = true).pretty(json)
+    val noSpacesDropNull = Printer.noSpaces.copy(dropNullValues = true).print(json)
   }
 }
