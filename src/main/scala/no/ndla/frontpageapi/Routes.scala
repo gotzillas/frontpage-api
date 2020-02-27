@@ -29,8 +29,8 @@ case class SwaggerService(service: RhoRoutes[IO], override val mountPoint: Strin
 object Routes {
 
   def buildRoutes(): List[ServiceWithMountPoint] = {
-    val frontPage = SwaggerService(ComponentRegistry.subjectPageController, "/frontpage-api/v1/subjectpage")
-    val subjectPage = SwaggerService(ComponentRegistry.frontPageController, "/frontpage-api/v1/frontpage")
+    val frontPage = SwaggerService(ComponentRegistry.frontPageController, "/frontpage-api/v1/frontpage")
+    val subjectPage = SwaggerService(ComponentRegistry.subjectPageController, "/frontpage-api/v1/subjectpage")
     val filmFrontPage = SwaggerService(ComponentRegistry.filmPageController, "/frontpage-api/v1/filmfrontpage")
 
     List(
