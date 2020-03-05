@@ -64,7 +64,7 @@ object Routes {
       t.service./:(toTypedPath(t.mountPoint)).getRoutes
     })
 
-    val swagRoutes: scala.collection.immutable.Seq[RhoRoute[IO, _]] = routes.flatten.to[scala.collection.immutable.Seq]
+    val swagRoutes = routes.flatten.toSeq
     val swagger = createSwagger(apiInfo = info)(swagRoutes)
 
     createSwaggerRoute(swagger, TypedPath(PathMatch(""))).toRoutes()
