@@ -1,9 +1,9 @@
 import java.util.Properties
 
-val Scalaversion = "2.12.10"
+val Scalaversion = "2.13.1"
 val Log4JVersion = "2.11.1"
-val ScalaTestVersion = "3.0.5"
-val MockitoVersion = "2.23.0"
+val ScalaTestVersion = "3.1.1"
+val MockitoVersion = "1.11.4"
 val Http4sVersion = "0.21.1"
 val JacksonVersion = "2.10.2"
 val RhoVersion = "0.20.0"
@@ -28,9 +28,9 @@ lazy val frontpage_api = (project in file("."))
     version := appProperties.value.getProperty("NDLAComponentVersion"),
     scalaVersion := Scalaversion,
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
-    scalacOptions := Seq("-target:jvm-1.8", "-unchecked", "-deprecation", "-feature", "-Ypartial-unification"),
+    scalacOptions := Seq("-target:jvm-1.8", "-unchecked", "-deprecation", "-feature"),
     libraryDependencies ++= Seq(
-      "ndla" %% "network" % "0.42",
+      "ndla" %% "network" % "0.43",
       "org.http4s" %% "http4s-circe" % Http4sVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
       "io.circe" %% "circe-generic-extras" % CirceVersion,
@@ -48,7 +48,8 @@ lazy val frontpage_api = (project in file("."))
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % Log4JVersion,
       "com.fasterxml.jackson.core" % "jackson-databind" % JacksonVersion,
       "org.flywaydb" % "flyway-core" % FlywayVersion,
-      "org.mockito" % "mockito-core" % MockitoVersion % "test",
+      "org.mockito" %% "mockito-scala" % MockitoVersion % "test",
+      "org.mockito" %% "mockito-scala-scalatest" % MockitoVersion % "test",
       "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
       "javax.servlet" % "javax.servlet-api" % "4.0.1"
     )

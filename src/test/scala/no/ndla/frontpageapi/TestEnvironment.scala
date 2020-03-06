@@ -12,7 +12,7 @@ import no.ndla.frontpageapi.controller.{FilmPageController, InternController}
 import no.ndla.frontpageapi.integration.DataSource
 import no.ndla.frontpageapi.repository.{FilmFrontPageRepository, FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
-import org.scalatest.mockito.MockitoSugar
+import org.mockito.scalatest.MockitoSugar
 
 trait TestEnvironment
     extends MockitoSugar
