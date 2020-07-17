@@ -37,8 +37,8 @@ trait InternController {
     }
 
     "Create new subject page" **
-      POST / "subjectpage" ^ NewOrUpdateSubjectFrontPageData.decoder |>> {
-      subjectPage: NewOrUpdateSubjectFrontPageData =>
+      POST / "subjectpage" ^ NewSubjectFrontPageData.decoder |>> {
+      subjectPage: NewSubjectFrontPageData =>
         {
           writeService.newSubjectPage(subjectPage) match {
             case Success(s)                       => Ok(s)
@@ -49,8 +49,8 @@ trait InternController {
     }
 
     "Update subject page" **
-      PUT / "subjectpage" / pathVar[Long]("subject-id", "The subject id") ^ NewOrUpdateSubjectFrontPageData.decoder |>> {
-      (id: Long, subjectPage: NewOrUpdateSubjectFrontPageData) =>
+      PUT / "subjectpage" / pathVar[Long]("subject-id", "The subject id") ^ NewSubjectFrontPageData.decoder |>> {
+      (id: Long, subjectPage: NewSubjectFrontPageData) =>
         {
           writeService.updateSubjectPage(id, subjectPage) match {
             case Success(s)                       => Ok(s)

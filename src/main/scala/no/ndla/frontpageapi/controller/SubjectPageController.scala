@@ -42,8 +42,8 @@ trait SubjectPageController {
     }
 
     "Create new subject page" **
-      POST ^ NewOrUpdateSubjectFrontPageData.decoder |>> {
-      subjectPage: NewOrUpdateSubjectFrontPageData =>
+      POST ^ NewSubjectFrontPageData.decoder |>> {
+      subjectPage: NewSubjectFrontPageData =>
       {
         writeService.newSubjectPage(subjectPage) match {
           case Success(s)                       => Ok(s)
@@ -54,8 +54,8 @@ trait SubjectPageController {
     }
 
     "Update subject page" **
-      PATCH / pathVar[Long]("subject-id", "The subject id") ^ NewOrUpdateSubjectFrontPageData.decoder |>> {
-      (id: Long, subjectPage: NewOrUpdateSubjectFrontPageData) =>
+      PATCH / pathVar[Long]("subject-id", "The subject id") ^ UpdatedSubjectFrontPageData.decoder |>> {
+      (id: Long, subjectPage: UpdatedSubjectFrontPageData) =>
     {
       writeService.updateSubjectPage(id, subjectPage) match {
         case Success(s) => Ok(s.asJson.toString)
