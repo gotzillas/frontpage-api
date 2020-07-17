@@ -8,7 +8,7 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, BrightcovePlayer, RawImageApiUrl}
-import no.ndla.frontpageapi.model.domain.{LayoutType, VisualElementType}
+import no.ndla.frontpageapi.model.domain.{LanguageField, LayoutType, VisualElement, VisualElementType}
 import no.ndla.frontpageapi.model.{api, domain}
 
 import scala.util.{Failure, Success, Try}
@@ -97,13 +97,13 @@ object ConverterService {
     api.VisualElement(visual.`type`.toString, url, visual.alt)
   }
 
-  def toDomainSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] =
+  def toDomainSubjectPage(id: Long, subject: api.NewSubjectFrontPageData): Try[domain.SubjectFrontPageData] =
     toDomainSubjectPage(subject).map(_.copy(id = Some(id)))
 
   private def toDomainBannerImage(banner: api.NewOrUpdateBannerImage): domain.BannerImage =
     domain.BannerImage(banner.mobileImageId, banner.desktopImageId)
 
-  def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
+  def toDomainSubjectPage(subject: api.NewSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
     val withoutAboutSubject = domain.SubjectFrontPageData(
       None,
       subject.name,
@@ -127,11 +127,51 @@ object ConverterService {
     }
   }
 
+  def toDomainSubjectPage(toMergeInto: domain.SubjectFrontPageData,
+                          subject: api.UpdatedSubjectFrontPageData) : Try[domain.SubjectFrontPageData] = {
+
+    val domainLayout = subject.layout
+      .map(toDomainLayout)
+
+    val domainBannerImage = subject.bannerImage
+      .map(toDomainBannerImage)
+
+    val domainMetaDescription = subject.metaDescription
+      .map(meta => toDomainMetaDescription(meta))
+      .toSeq
+
+    //hva skjer hvis den nye dataen er udefinert? Vil det en gang skje, siden man bare sender tilbake den samme dataen?
+    val merge = toMergeInto.copy(
+      id = toMergeInto.id,
+      name = subject.name
+        .getOrElse(toMergeInto.name),
+      filters = subject.filters.orElse(toMergeInto.filters),
+      layout = domainLayout.getOrElse(toMergeInto.layout),
+      twitter = subject.twitter.orElse(toMergeInto.twitter),
+      facebook = subject.facebook.orElse(toMergeInto.facebook),
+      bannerImage = domainBannerImage.getOrElse(toMergeInto.bannerImage),
+      about = toMergeInto.about,
+      metaDescription = mergeLanguageFields(toMergeInto.metaDescription, domainMetaDescription),
+      topical = subject.topical.orElse(toMergeInto.topical),
+      mostRead = subject.mostRead.getOrElse(toMergeInto.mostRead),
+      editorsChoices = subject.editorsChoices.getOrElse(toMergeInto.editorsChoices),
+      latestContent = subject.latestContent.orElse(toMergeInto.latestContent),
+      goTo = subject.goTo.getOrElse(toMergeInto.goTo)
+    )
+
+    val aboutSeq = subject.about.map(a => Seq(a))
+    updatedToDomainAboutSubject(aboutSeq.get) match{
+        case Failure(ex) => Failure(ex)
+        case Success(about) => Success(merge.copy(about = mergeLanguageFields(toMergeInto.about, about)))
+    }
+  }
+
   private def toDomainLayout(layout: String): domain.LayoutType.Value = {
     LayoutType.fromString(layout).get
   }
 
-  private def toDomainAboutSubject(aboutSeq: Seq[api.NewOrUpdateAboutSubject]): Try[Seq[domain.AboutSubject]] = {
+  //TODO Tar ikke hensyn til om feltene er tomme, men tror den må være sånn fordi man vil mergeLanguageFields?
+  private def updatedToDomainAboutSubject(aboutSeq: Seq[api.UpdatedAboutSubject]): Try[Seq[domain.AboutSubject]] = {
     val seq = aboutSeq.map(
       about =>
         toDomainVisualElement(about.visualElement)
@@ -140,14 +180,32 @@ object ConverterService {
     Try(seq.map(_.get))
   }
 
-  private def toDomainMetaDescription(metaSeq: Seq[api.NewOrUpdatedMetaDescription]): Seq[domain.MetaDescription] = {
+  private def toDomainAboutSubject(aboutSeq: Seq[api.NewAboutSubject]): Try[Seq[domain.AboutSubject]] = {
+    val seq = aboutSeq.map(
+      about =>
+        toDomainVisualElement(about.visualElement)
+          .map(domain
+            .AboutSubject(about.title, about.description, about.language, _)))
+    Try(seq.map(_.get))
+  }
+
+  private def toDomainMetaDescription(metaSeq: Seq[api.NewMetaDescription]): Seq[domain.MetaDescription] = {
     metaSeq.map(meta => domain.MetaDescription(meta.metaDescription, meta.language))
+  }
+
+  private def toDomainMetaDescription(meta: api.UpdatedMetaDescription): domain.MetaDescription = {
+    domain.MetaDescription(meta.metaDescription, meta.language)
   }
 
   private def toDomainVisualElement(visual: api.NewOrUpdatedVisualElement): Try[domain.VisualElement] =
     VisualElementType
       .fromString(visual.`type`)
       .map(domain.VisualElement(_, visual.id, visual.alt))
+
+  private[service] def mergeLanguageFields[A <: LanguageField](existing: Seq[A], updated: Seq[A]): Seq[A] = {
+    val toKeep = existing.filterNot(item => updated.map(_.language).contains(item.language))
+    (toKeep ++ updated).filterNot(_.isEmpty)
+  }
 
   def toDomainFrontPage(page: api.FrontPageData): domain.FrontPageData =
     domain.FrontPageData(page.topical, page.categories.map(toDomainSubjectCollection))

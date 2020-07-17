@@ -19,14 +19,14 @@ trait WriteService {
 
   class WriteService {
 
-    def newSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[api.SubjectPageData] = {
+    def newSubjectPage(subject: api.NewSubjectFrontPageData): Try[api.SubjectPageData] = {
       for {
         convertedSubject <- ConverterService.toDomainSubjectPage(subject)
         subjectPage <- subjectPageRepository.newSubjectPage(convertedSubject, subject.externalId)
       } yield ConverterService.toApiSubjectPage(subjectPage, "nb")
     }
 
-    def updateSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): Try[api.SubjectPageData] = {
+    def updateSubjectPage(id: Long, subject: api.NewSubjectFrontPageData): Try[api.SubjectPageData] = {
       subjectPageRepository.exists(id) match {
         case Success(exists) if exists =>
           for {
@@ -36,6 +36,24 @@ trait WriteService {
         case Success(_) =>
           Failure(NotFoundException(id))
         case Failure(ex) => Failure(ex)
+      }
+    }
+
+    def updateSubjectPage(id: Long, subject: api.UpdatedSubjectFrontPageData): Try[api.SubjectPageData] = {
+      subjectPageRepository.withId(id) match{
+        case Some(existingSubject) =>
+          for {
+            domainSubject <- ConverterService.toDomainSubjectPage(existingSubject, subject)
+            subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
+          } yield ConverterService.toApiSubjectPage(subjectPage, subject.about.get.language) //get?:(
+        /* TODO hva gjør egentlig denne delen? trenger newsubjectpagedata i den todomainsubjectpage med id...
+        case None if subjectPageRepository.exists(id) =>
+          for {
+            domainSubject <- ConverterService.toDomainSubjectPage(id, subject)
+            subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
+          } yield ConverterService.toApiSubjectPage(subjectPage, "nb")*/
+        case None =>
+          Failure(NotFoundException(404))
       }
     }
 

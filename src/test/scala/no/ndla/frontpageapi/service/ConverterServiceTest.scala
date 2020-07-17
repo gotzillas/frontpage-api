@@ -49,6 +49,13 @@ class ConverterServiceTest extends UnitSuite with TestEnvironment {
     ConverterService.toDomainSubjectPage(page).isSuccess should be(true)
   }
 
+  test("toDomainSubjectPage from patch should return a failure if layout is invalid"){
+    val page = TestData.apiUpdatedSubjectPage.copy(layout = Some("blob"))
+
+    val Failure(res: Errors.ValidationException) = ConverterService.toDomainSubjectPage(TestData.domainSubjectPage, page)
+    res.message should equal("'blob' is an invalid layout")
+  }
+
   test("Should get all languages if nothing is specified") {
     val apiFilmFrontPage = ConverterService.toApiFilmFrontPage(TestData.domainFilmFrontPage, None)
     apiFilmFrontPage.about.length should equal(2)

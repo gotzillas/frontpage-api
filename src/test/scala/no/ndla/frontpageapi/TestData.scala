@@ -38,7 +38,7 @@ object TestData {
   )
   val domainSubjectJson = domainSubjectPage.asJson.noSpaces
 
-  val apiSubjectPage = api.NewOrUpdateSubjectFrontPageData(
+  val apiSubjectPage = api.NewSubjectFrontPageData(
     "Samfunnsfag",
     None,
     "14112",
@@ -47,16 +47,35 @@ object TestData {
     Some("NDLAsamfunnsfag"),
     api.NewOrUpdateBannerImage(29668, 29668),
     Seq(
-      api.NewOrUpdateAboutSubject("Om Samfunnsfag",
+      api.NewAboutSubject("Om Samfunnsfag",
                                   "Dette er samfunnsfag",
                                   "nb",
                                   api.NewOrUpdatedVisualElement("image", "123", Some("alt text")))),
-    Seq(api.NewOrUpdatedMetaDescription("meta", "nb")),
+    Seq(api.NewMetaDescription("meta", "nb")),
     Some("urn:resource:1:170252"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
     Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
     List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation")
+  )
+
+  val apiUpdatedSubjectPage = api.UpdatedSubjectFrontPageData(
+    Some("Samfunnsfag"),
+    None,
+    Some("13112"),
+    Some("single"),
+    Some("ndla_samfunn"),
+    Some("NDLAsamfunnsfag"),
+    Some(api.NewOrUpdateBannerImage(29668, 29668)),
+    Some(
+      api.UpdatedAboutSubject("Om samfunnsfag", "Dette er samfunnsfag", "nb", api.NewOrUpdatedVisualElement("image", "123", Some("alt text"))),
+    ),
+    Some(api.UpdatedMetaDescription("meta", "nb")),
+    Some("urn:resource:1:170252"),
+    Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
+    Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
+    Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
+    Some(List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation"))
   )
 
   val domainFilmFrontPage = domain.FilmFrontPageData(
