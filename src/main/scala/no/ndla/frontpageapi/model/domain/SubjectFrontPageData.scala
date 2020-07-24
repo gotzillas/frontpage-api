@@ -13,6 +13,7 @@ import io.circe.parser._
 import io.circe.{Decoder, Encoder}
 import no.ndla.frontpageapi.FrontpageApiProperties
 import scalikejdbc.{WrappedResultSet, _}
+import no.ndla.frontpageapi.model.domain.Language.getSupportedLanguages
 
 import scala.util.Try
 
@@ -29,7 +30,10 @@ case class SubjectFrontPageData(id: Option[Long],
                                 mostRead: List[String],
                                 editorsChoices: List[String],
                                 latestContent: Option[List[String]],
-                                goTo: List[String])
+                                goTo: List[String]){
+
+  def supportedLanguages = getSupportedLanguages(Seq(about, metaDescription))
+}
 
 object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
   override val tableName = "subjectpage"

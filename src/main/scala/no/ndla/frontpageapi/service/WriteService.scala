@@ -7,7 +7,7 @@
 
 package no.ndla.frontpageapi.service
 
-import no.ndla.frontpageapi.model.domain.Errors.NotFoundException
+import no.ndla.frontpageapi.model.domain.Errors.{NotFoundException, OperationNotAllowedException}
 import no.ndla.frontpageapi.repository.{FilmFrontPageRepository, FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.model.{api, domain}
 
@@ -45,11 +45,10 @@ trait WriteService {
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(existingSubject, subject)
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-          } yield ConverterService.toApiSubjectPage(subjectPage, subject.about.get.language) //get?:(
-        /* TODO hva gjør egentlig denne delen? trenger newsubjectpagedata i den todomainsubjectpage med id...
-        case None if subjectPageRepository.exists(id) =>
+          } yield ConverterService.toApiSubjectPage(subjectPage, subject.about.get.language)
+        /* case None if subjectPageRepository.exists(id) =>
           for {
-            domainSubject <- ConverterService.toDomainSubjectPage(id, subject)
+            domainSubject <- ConverterService.toDomainSubjectPage(id, subject) //trenger NewSubjectFrontPageData i denne metoden
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
           } yield ConverterService.toApiSubjectPage(subjectPage, "nb")*/
         case None =>

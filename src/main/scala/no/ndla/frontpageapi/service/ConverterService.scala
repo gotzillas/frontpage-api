@@ -8,7 +8,9 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, BrightcovePlayer, RawImageApiUrl}
+import no.ndla.frontpageapi.model.domain.Errors.{LanguageNotFoundException}
 import no.ndla.frontpageapi.model.domain.{LanguageField, LayoutType, VisualElement, VisualElementType}
+import no.ndla.frontpageapi.model.domain.Language._
 import no.ndla.frontpageapi.model.{api, domain}
 
 import scala.util.{Failure, Success, Try}
@@ -72,8 +74,37 @@ object ConverterService {
       sub.mostRead,
       sub.editorsChoices,
       sub.latestContent,
-      sub.goTo
+      sub.goTo,
+      sub.supportedLanguages
     )
+  }
+
+  def toApiSubjectPage(sub: domain.SubjectFrontPageData, language: String, fallback: Boolean = false): Try[api.SubjectPageData] = {
+    if (sub.supportedLanguages.contains(language) || fallback) {
+      Success(
+        api.SubjectPageData(
+          sub.id.get,
+          sub.name,
+          sub.filters,
+          sub.layout.toString,
+          sub.twitter,
+          sub.facebook,
+          toApiBannerImage(sub.bannerImage),
+          toApiAboutSubject(findByLanguageOrBestEffort(sub.about, language)),
+          toApiMetaDescription(findByLanguageOrBestEffort(sub.metaDescription, language)),
+          sub.topical,
+          sub.mostRead,
+          sub.editorsChoices,
+          sub.latestContent,
+          sub.goTo,
+          sub.supportedLanguages
+        )
+      )
+    } else {
+      Failure(
+        LanguageNotFoundException(s"The subjectpage with id ${sub.id.get} and language $language was not found", sub.supportedLanguages)
+      )
+    }
   }
 
   private def toApiAboutSubject(aboutSeq: Seq[domain.AboutSubject], language: String): Option[api.AboutSubject] = {
@@ -82,9 +113,19 @@ object ConverterService {
       .map(about => api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement)))
   }
 
+  private def toApiAboutSubject(about: Option[domain.AboutSubject]): Option[api.AboutSubject] = {
+    about
+      .map(about => api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement)))
+  }
+
   private def toApiMetaDescription(metaSeq: Seq[domain.MetaDescription], language: String): Option[String] = {
     metaSeq
       .find(meta => meta.language == language)
+      .map(_.metaDescription)
+  }
+
+  private def toApiMetaDescription(meta: Option[domain.MetaDescription]): Option[String] = {
+    meta
       .map(_.metaDescription)
   }
 
@@ -130,6 +171,8 @@ object ConverterService {
   def toDomainSubjectPage(toMergeInto: domain.SubjectFrontPageData,
                           subject: api.UpdatedSubjectFrontPageData) : Try[domain.SubjectFrontPageData] = {
 
+    val isNewLanguage = subject.about.get.language.exists(lang => !toMergeInto.supportedLanguages.contains(lang))
+
     val domainLayout = subject.layout
       .map(toDomainLayout)
 
@@ -170,7 +213,6 @@ object ConverterService {
     LayoutType.fromString(layout).get
   }
 
-  //TODO Tar ikke hensyn til om feltene er tomme, men tror den må være sånn fordi man vil mergeLanguageFields?
   private def updatedToDomainAboutSubject(aboutSeq: Seq[api.UpdatedAboutSubject]): Try[Seq[domain.AboutSubject]] = {
     val seq = aboutSeq.map(
       about =>
