@@ -79,7 +79,9 @@ object ConverterService {
     )
   }
 
-  def toApiSubjectPage(sub: domain.SubjectFrontPageData, language: String, fallback: Boolean = false): Try[api.SubjectPageData] = {
+  def toApiSubjectPage(sub: domain.SubjectFrontPageData,
+                       language: String,
+                       fallback: Boolean = false): Try[api.SubjectPageData] = {
     if (sub.supportedLanguages.contains(language) || fallback) {
       Success(
         api.SubjectPageData(
@@ -102,7 +104,8 @@ object ConverterService {
       )
     } else {
       Failure(
-        LanguageNotFoundException(s"The subjectpage with id ${sub.id.get} and language $language was not found", sub.supportedLanguages)
+        LanguageNotFoundException(s"The subjectpage with id ${sub.id.get} and language $language was not found",
+                                  sub.supportedLanguages)
       )
     }
   }
@@ -169,7 +172,7 @@ object ConverterService {
   }
 
   def toDomainSubjectPage(toMergeInto: domain.SubjectFrontPageData,
-                          subject: api.UpdatedSubjectFrontPageData) : Try[domain.SubjectFrontPageData] = {
+                          subject: api.UpdatedSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
 
     val isNewLanguage = subject.about.get.language.exists(lang => !toMergeInto.supportedLanguages.contains(lang))
 
@@ -203,9 +206,9 @@ object ConverterService {
     )
 
     val aboutSeq = subject.about.map(a => Seq(a))
-    updatedToDomainAboutSubject(aboutSeq.get) match{
-        case Failure(ex) => Failure(ex)
-        case Success(about) => Success(merge.copy(about = mergeLanguageFields(toMergeInto.about, about)))
+    updatedToDomainAboutSubject(aboutSeq.get) match {
+      case Failure(ex)    => Failure(ex)
+      case Success(about) => Success(merge.copy(about = mergeLanguageFields(toMergeInto.about, about)))
     }
   }
 

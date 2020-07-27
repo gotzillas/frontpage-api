@@ -30,7 +30,7 @@ case class SubjectFrontPageData(id: Option[Long],
                                 mostRead: List[String],
                                 editorsChoices: List[String],
                                 latestContent: Option[List[String]],
-                                goTo: List[String]){
+                                goTo: List[String]) {
 
   def supportedLanguages = getSupportedLanguages(Seq(about, metaDescription))
 }

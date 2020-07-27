@@ -40,7 +40,7 @@ trait WriteService {
     }
 
     def updateSubjectPage(id: Long, subject: api.UpdatedSubjectFrontPageData): Try[api.SubjectPageData] = {
-      subjectPageRepository.withId(id) match{
+      subjectPageRepository.withId(id) match {
         case Some(existingSubject) =>
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(existingSubject, subject)

@@ -31,19 +31,19 @@ trait SubjectPageController {
     import swaggerSyntax._
 
     "Get data to display on a subject page" **
-      GET / pathVar[Long]("subject-id", "The subject id") +? param[String]("language", "nb") & param[Boolean]("fallback", false) |>> {
-      (id: Long, language: String, fallback: Boolean) =>
-        {
-          readService.subjectPage(id, language, fallback) match {
-            case Some(s) => Ok(s)
-            case None    => NotFound(Error.notFound)
-          }
+      GET / pathVar[Long]("subject-id", "The subject id") +? param[String]("language", "nb") & param[Boolean](
+      "fallback",
+      false) |>> { (id: Long, language: String, fallback: Boolean) =>
+      {
+        readService.subjectPage(id, language, fallback) match {
+          case Some(s) => Ok(s)
+          case None    => NotFound(Error.notFound)
         }
+      }
     }
 
     "Create new subject page" **
-      POST ^ NewSubjectFrontPageData.decoder |>> {
-      subjectPage: NewSubjectFrontPageData =>
+      POST ^ NewSubjectFrontPageData.decoder |>> { subjectPage: NewSubjectFrontPageData =>
       {
         writeService.newSubjectPage(subjectPage) match {
           case Success(s)                       => Ok(s)
@@ -56,12 +56,12 @@ trait SubjectPageController {
     "Update subject page" **
       PATCH / pathVar[Long]("subject-id", "The subject id") ^ UpdatedSubjectFrontPageData.decoder |>> {
       (id: Long, subjectPage: UpdatedSubjectFrontPageData) =>
-    {
-      writeService.updateSubjectPage(id, subjectPage) match {
-        case Success(s) => Ok(s.asJson.toString)
-        case Failure(_) => InternalServerError(Error.generic)
+        {
+          writeService.updateSubjectPage(id, subjectPage) match {
+            case Success(s) => Ok(s.asJson.toString)
+            case Failure(_) => InternalServerError(Error.generic)
+          }
         }
-      }
     }
   }
 }

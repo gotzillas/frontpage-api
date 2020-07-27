@@ -37,15 +37,14 @@ trait InternController {
     }
 
     "Create new subject page" **
-      POST / "subjectpage" ^ NewSubjectFrontPageData.decoder |>> {
-      subjectPage: NewSubjectFrontPageData =>
-        {
-          writeService.newSubjectPage(subjectPage) match {
-            case Success(s)                       => Ok(s)
-            case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
-            case Failure(_)                       => InternalServerError(Error.generic)
-          }
+      POST / "subjectpage" ^ NewSubjectFrontPageData.decoder |>> { subjectPage: NewSubjectFrontPageData =>
+      {
+        writeService.newSubjectPage(subjectPage) match {
+          case Success(s)                       => Ok(s)
+          case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
+          case Failure(_)                       => InternalServerError(Error.generic)
         }
+      }
     }
 
     "Update subject page" **
