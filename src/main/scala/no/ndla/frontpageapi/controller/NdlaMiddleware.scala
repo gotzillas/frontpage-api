@@ -49,4 +49,6 @@ object NdlaMiddleware {
 
     resp
   }
+
+  def apply(service: HttpRoutes[IO]): HttpRoutes[IO] = before(service).map(after)
 }
