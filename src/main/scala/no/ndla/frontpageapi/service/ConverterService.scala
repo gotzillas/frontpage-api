@@ -186,7 +186,6 @@ object ConverterService {
       .map(meta => toDomainMetaDescription(meta))
       .toSeq
 
-    //hva skjer hvis den nye dataen er udefinert? Vil det en gang skje, siden man bare sender tilbake den samme dataen?
     val merge = toMergeInto.copy(
       id = toMergeInto.id,
       name = subject.name

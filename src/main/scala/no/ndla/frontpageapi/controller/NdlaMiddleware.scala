@@ -16,6 +16,7 @@ import org.http4s.server.middleware.CORS
 import org.http4s.util.CaseInsensitiveString
 import org.http4s.{Header, HttpRoutes, Request, Response}
 
+//TODO Husk å fjerne cors-greier
 object NdlaMiddleware {
   private val CorrelationIdHeader = CaseInsensitiveString("X-Correlation-ID")
   private val CorrelationIdKey = "correlationID"
@@ -37,7 +38,6 @@ object NdlaMiddleware {
     ApplicationUrl.set(asNdlaHttpRequest(req))
     AuthUser.set(asNdlaHttpRequest(req))
     logger.info(s"${req.method} ${req.uri}${req.queryString}")
-    req.putHeaders(Header("Access-Control-Allow-Origin", "http://localhost:*"))
     service(req)
   }
 
@@ -49,6 +49,4 @@ object NdlaMiddleware {
 
     resp
   }
-
-  def apply(service: HttpRoutes[IO]): HttpRoutes[IO] = before(CORS(service)).map(after)
 }
