@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class NewMetaDescription(metaDescription: String, language: String)
+case class NewOrUpdatedMetaDescription(metaDescription: String, language: String)
