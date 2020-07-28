@@ -23,7 +23,8 @@ trait WriteService {
       for {
         convertedSubject <- ConverterService.toDomainSubjectPage(subject)
         subjectPage <- subjectPageRepository.newSubjectPage(convertedSubject, subject.externalId)
-      } yield ConverterService.toApiSubjectPage(subjectPage, "nb")
+        converted <- ConverterService.toApiSubjectPage(subjectPage, "nb")
+      } yield converted
     }
 
     def updateSubjectPage(id: Long, subject: api.NewSubjectFrontPageData): Try[api.SubjectPageData] = {
@@ -32,7 +33,8 @@ trait WriteService {
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(id, subject)
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-          } yield ConverterService.toApiSubjectPage(subjectPage, "nb")
+            converted <- ConverterService.toApiSubjectPage(subjectPage, "nb")
+          } yield converted
         case Success(_) =>
           Failure(NotFoundException(id))
         case Failure(ex) => Failure(ex)
@@ -45,15 +47,21 @@ trait WriteService {
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(existingSubject, subject)
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-          } yield ConverterService.toApiSubjectPage(subjectPage, subject.about.get.language)
-        /* case None if subjectPageRepository.exists(id) =>
-          for {
-            domainSubject <- ConverterService.toDomainSubjectPage(id, subject) //trenger NewSubjectFrontPageData i denne metoden
-            subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-          } yield ConverterService.toApiSubjectPage(subjectPage, "nb")*/
+            converted <- ConverterService.toApiSubjectPage(subjectPage, subject.about.get.head.language)
+          } yield converted
+        case None if subjectPageRepository.exists(id).getOrElse(false) =>
+          newFromUpdatedSubjectPage(subject) match {
+            case Failure(ex)             => Failure(ex)
+            case Success(newSubjectPage) => updateSubjectPage(id, newSubjectPage)
+          }
         case None =>
           Failure(NotFoundException(404))
       }
+    }
+
+    private def newFromUpdatedSubjectPage(
+        updatedSubjectPage: api.UpdatedSubjectFrontPageData): Try[api.NewSubjectFrontPageData] = {
+      Try(updatedSubjectPage.asInstanceOf[api.NewSubjectFrontPageData])
     }
 
     def updateFrontPage(page: api.FrontPageData): Try[api.FrontPageData] = {

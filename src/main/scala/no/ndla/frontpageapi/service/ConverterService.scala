@@ -8,8 +8,8 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, BrightcovePlayer, RawImageApiUrl}
-import no.ndla.frontpageapi.model.domain.Errors.{LanguageNotFoundException}
-import no.ndla.frontpageapi.model.domain.{LanguageField, LayoutType, VisualElement, VisualElementType}
+import no.ndla.frontpageapi.model.domain.Errors.LanguageNotFoundException
+import no.ndla.frontpageapi.model.domain._
 import no.ndla.frontpageapi.model.domain.Language._
 import no.ndla.frontpageapi.model.{api, domain}
 
@@ -59,26 +59,6 @@ object ConverterService {
     filteredNames.map(name => api.MovieThemeName(name.name, name.language))
   }
 
-  def toApiSubjectPage(sub: domain.SubjectFrontPageData, language: String): api.SubjectPageData = {
-    api.SubjectPageData(
-      sub.id.get,
-      sub.name,
-      sub.filters,
-      sub.layout.toString,
-      sub.twitter,
-      sub.facebook,
-      toApiBannerImage(sub.bannerImage),
-      toApiAboutSubject(sub.about, language),
-      toApiMetaDescription(sub.metaDescription, language),
-      sub.topical,
-      sub.mostRead,
-      sub.editorsChoices,
-      sub.latestContent,
-      sub.goTo,
-      sub.supportedLanguages
-    )
-  }
-
   def toApiSubjectPage(sub: domain.SubjectFrontPageData,
                        language: String,
                        fallback: Boolean = false): Try[api.SubjectPageData] = {
@@ -110,21 +90,9 @@ object ConverterService {
     }
   }
 
-  private def toApiAboutSubject(aboutSeq: Seq[domain.AboutSubject], language: String): Option[api.AboutSubject] = {
-    aboutSeq
-      .find(about => about.language == language)
-      .map(about => api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement)))
-  }
-
   private def toApiAboutSubject(about: Option[domain.AboutSubject]): Option[api.AboutSubject] = {
     about
       .map(about => api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement)))
-  }
-
-  private def toApiMetaDescription(metaSeq: Seq[domain.MetaDescription], language: String): Option[String] = {
-    metaSeq
-      .find(meta => meta.language == language)
-      .map(_.metaDescription)
   }
 
   private def toApiMetaDescription(meta: Option[domain.MetaDescription]): Option[String] = {
@@ -174,48 +142,42 @@ object ConverterService {
   def toDomainSubjectPage(toMergeInto: domain.SubjectFrontPageData,
                           subject: api.UpdatedSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
 
-    val isNewLanguage = subject.about.get.language.exists(lang => !toMergeInto.supportedLanguages.contains(lang))
-
     val domainLayout = subject.layout
       .map(toDomainLayout)
 
     val domainBannerImage = subject.bannerImage
       .map(toDomainBannerImage)
 
-    val domainMetaDescription = subject.metaDescription
-      .map(meta => toDomainMetaDescription(meta))
-      .toSeq
+    val domainMetaDescription = subject.metaDescription.fold(Seq[MetaDescription]())(toDomainMetaDescription)
 
-    val merge = toMergeInto.copy(
-      id = toMergeInto.id,
-      name = subject.name
-        .getOrElse(toMergeInto.name),
-      filters = subject.filters.orElse(toMergeInto.filters),
-      layout = domainLayout.getOrElse(toMergeInto.layout),
-      twitter = subject.twitter.orElse(toMergeInto.twitter),
-      facebook = subject.facebook.orElse(toMergeInto.facebook),
-      bannerImage = domainBannerImage.getOrElse(toMergeInto.bannerImage),
-      about = toMergeInto.about,
-      metaDescription = mergeLanguageFields(toMergeInto.metaDescription, domainMetaDescription),
-      topical = subject.topical.orElse(toMergeInto.topical),
-      mostRead = subject.mostRead.getOrElse(toMergeInto.mostRead),
-      editorsChoices = subject.editorsChoices.getOrElse(toMergeInto.editorsChoices),
-      latestContent = subject.latestContent.orElse(toMergeInto.latestContent),
-      goTo = subject.goTo.getOrElse(toMergeInto.goTo)
-    )
+    val domainAboutSubject =
+      subject.about.fold(Seq[AboutSubject]())(about => toDomainAboutSubject(about).getOrElse(Seq()))
 
-    val aboutSeq = subject.about.map(a => Seq(a))
-    updatedToDomainAboutSubject(aboutSeq.get) match {
-      case Failure(ex)    => Failure(ex)
-      case Success(about) => Success(merge.copy(about = mergeLanguageFields(toMergeInto.about, about)))
-    }
+    Try(
+      toMergeInto.copy(
+        id = toMergeInto.id,
+        name = subject.name
+          .getOrElse(toMergeInto.name),
+        filters = subject.filters.orElse(toMergeInto.filters),
+        layout = domainLayout.getOrElse(toMergeInto.layout),
+        twitter = subject.twitter.orElse(toMergeInto.twitter),
+        facebook = subject.facebook.orElse(toMergeInto.facebook),
+        bannerImage = domainBannerImage.getOrElse(toMergeInto.bannerImage),
+        about = mergeLanguageFields(toMergeInto.about, domainAboutSubject),
+        metaDescription = mergeLanguageFields(toMergeInto.metaDescription, domainMetaDescription),
+        topical = subject.topical.orElse(toMergeInto.topical),
+        mostRead = subject.mostRead.getOrElse(toMergeInto.mostRead),
+        editorsChoices = subject.editorsChoices.getOrElse(toMergeInto.editorsChoices),
+        latestContent = subject.latestContent.orElse(toMergeInto.latestContent),
+        goTo = subject.goTo.getOrElse(toMergeInto.goTo)
+      ))
   }
 
   private def toDomainLayout(layout: String): domain.LayoutType.Value = {
     LayoutType.fromString(layout).get
   }
 
-  private def updatedToDomainAboutSubject(aboutSeq: Seq[api.UpdatedAboutSubject]): Try[Seq[domain.AboutSubject]] = {
+  private def toDomainAboutSubject(aboutSeq: Seq[api.NewOrUpdatedAboutSubject]): Try[Seq[domain.AboutSubject]] = {
     val seq = aboutSeq.map(
       about =>
         toDomainVisualElement(about.visualElement)
@@ -224,21 +186,8 @@ object ConverterService {
     Try(seq.map(_.get))
   }
 
-  private def toDomainAboutSubject(aboutSeq: Seq[api.NewAboutSubject]): Try[Seq[domain.AboutSubject]] = {
-    val seq = aboutSeq.map(
-      about =>
-        toDomainVisualElement(about.visualElement)
-          .map(domain
-            .AboutSubject(about.title, about.description, about.language, _)))
-    Try(seq.map(_.get))
-  }
-
-  private def toDomainMetaDescription(metaSeq: Seq[api.NewMetaDescription]): Seq[domain.MetaDescription] = {
+  private def toDomainMetaDescription(metaSeq: Seq[api.NewOrUpdatedMetaDescription]): Seq[domain.MetaDescription] = {
     metaSeq.map(meta => domain.MetaDescription(meta.metaDescription, meta.language))
-  }
-
-  private def toDomainMetaDescription(meta: api.UpdatedMetaDescription): domain.MetaDescription = {
-    domain.MetaDescription(meta.metaDescription, meta.language)
   }
 
   private def toDomainVisualElement(visual: api.NewOrUpdatedVisualElement): Try[domain.VisualElement] =
