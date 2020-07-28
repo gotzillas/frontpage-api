@@ -29,7 +29,7 @@ object TestData {
                           "Dette er samfunnsfag",
                           "nb",
                           domain.VisualElement(VisualElementType.Image, "123", Some("alt text")))),
-    Seq(),
+    Seq(domain.MetaDescription("meta", "nb")),
     Some("urn:resource:1:170252"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
@@ -38,7 +38,55 @@ object TestData {
   )
   val domainSubjectJson = domainSubjectPage.asJson.noSpaces
 
-  val apiSubjectPage = api.NewSubjectFrontPageData(
+  val domainUpdatedSubjectPage = domain.SubjectFrontPageData(
+    Some(1),
+    "Samfunnsfag",
+    None,
+    LayoutType.Single,
+    Some("@ndla_samfunn"),
+    Some("NDLAsamfunnsfag"),
+    domain.BannerImage(29668, 29668),
+    Seq(
+      domain.AboutSubject("Om Samfunnsfag",
+                          "Dette er oppdatert om samfunnsfag",
+                          "nb",
+                          domain.VisualElement(VisualElementType.Image, "123", Some("alt text")))),
+    Seq(
+      domain.MetaDescription("meta", "nb")
+    ),
+    Some("urn:resource:1:170252"),
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
+    List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation")
+  )
+
+  val apiSubjectPage = api.SubjectPageData(
+    1,
+    "Samfunnsfag",
+    None,
+    "single",
+    Some("@ndla_samfunn"),
+    Some("NDLAsamfunnsfag"),
+    api.BannerImage("http://api-gateway.ndla-local/image-api/raw/id/29668",
+                    29668,
+                    "http://api-gateway.ndla-local/image-api/raw/id/29668",
+                    29668),
+    Some(
+      api.AboutSubject(
+        "Om Samfunnsfag",
+        "Dette er samfunnsfag",
+        api.VisualElement("image", "http://api-gateway.ndla-local/image-api/raw/id/123", Some("alt text")))),
+    Some("meta"),
+    Some("urn:resource:1:170252"),
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
+    Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
+    List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation"),
+    List("nb")
+  )
+
+  val apiNewSubjectPage = api.NewSubjectFrontPageData(
     "Samfunnsfag",
     None,
     "14112",
@@ -47,11 +95,11 @@ object TestData {
     Some("NDLAsamfunnsfag"),
     api.NewOrUpdateBannerImage(29668, 29668),
     Seq(
-      api.NewAboutSubject("Om Samfunnsfag",
-                          "Dette er samfunnsfag",
-                          "nb",
-                          api.NewOrUpdatedVisualElement("image", "123", Some("alt text")))),
-    Seq(api.NewMetaDescription("meta", "nb")),
+      api.NewOrUpdatedAboutSubject("Om Samfunnsfag",
+                                   "Dette er samfunnsfag",
+                                   "nb",
+                                   api.NewOrUpdatedVisualElement("image", "123", Some("alt text")))),
+    Seq(api.NewOrUpdatedMetaDescription("meta", "nb")),
     Some("urn:resource:1:170252"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
     List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
@@ -64,16 +112,17 @@ object TestData {
     None,
     Some("13112"),
     Some("single"),
-    Some("ndla_samfunn"),
+    Some("@ndla_samfunn"),
     Some("NDLAsamfunnsfag"),
     Some(api.NewOrUpdateBannerImage(29668, 29668)),
     Some(
-      api.UpdatedAboutSubject("Om samfunnsfag",
-                              "Dette er samfunnsfag",
-                              "nb",
-                              api.NewOrUpdatedVisualElement("image", "123", Some("alt text"))),
+      List(
+        api.NewOrUpdatedAboutSubject("Om Samfunnsfag",
+                                     "Dette er oppdatert om samfunnsfag",
+                                     "nb",
+                                     api.NewOrUpdatedVisualElement("image", "123", Some("alt text")))),
     ),
-    Some(api.UpdatedMetaDescription("meta", "nb")),
+    Some(List(api.NewOrUpdatedMetaDescription("meta", "nb"))),
     Some("urn:resource:1:170252"),
     Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
     Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
