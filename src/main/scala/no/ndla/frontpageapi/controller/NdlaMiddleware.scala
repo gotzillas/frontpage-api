@@ -16,7 +16,6 @@ import org.http4s.server.middleware.CORS
 import org.http4s.util.CaseInsensitiveString
 import org.http4s.{Header, HttpRoutes, Request, Response}
 
-//TODO Husk å fjerne cors-greier
 object NdlaMiddleware {
   private val CorrelationIdHeader = CaseInsensitiveString("X-Correlation-ID")
   private val CorrelationIdKey = "correlationID"
