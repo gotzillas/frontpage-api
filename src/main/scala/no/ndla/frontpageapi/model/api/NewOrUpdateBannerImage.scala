@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class NewOrUpdateBannerImage(mobileImageId: Long, desktopImageId: Long)
+case class NewOrUpdateBannerImage(mobileImageId: Option[Long], desktopImageId: Long)

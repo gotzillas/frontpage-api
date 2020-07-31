@@ -31,7 +31,7 @@ trait SubjectPageController {
     import swaggerSyntax._
 
     "Get data to display on a subject page" **
-      GET / pathVar[Long]("subject-id", "The subject id") +? param[String]("language", "nb") & param[Boolean](
+      GET / pathVar[Long]("subjectpage-id", "The subjectpage id") +? param[String]("language", "nb") & param[Boolean](
       "fallback",
       false) |>> { (id: Long, language: String, fallback: Boolean) =>
       {
@@ -54,7 +54,7 @@ trait SubjectPageController {
     }
 
     "Update subject page" **
-      PATCH / pathVar[Long]("subject-id", "The subject id") ^ UpdatedSubjectFrontPageData.decoder |>> {
+      PATCH / pathVar[Long]("subjectpage-id", "The subjectpage id") ^ UpdatedSubjectFrontPageData.decoder |>> {
       (id: Long, subjectPage: UpdatedSubjectFrontPageData) =>
         {
           writeService.updateSubjectPage(id, subjectPage) match {
