@@ -9,8 +9,8 @@ package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, BrightcovePlayer, RawImageApiUrl}
 import no.ndla.frontpageapi.model.domain.Errors.LanguageNotFoundException
-import no.ndla.frontpageapi.model.domain._
 import no.ndla.frontpageapi.model.domain.Language._
+import no.ndla.frontpageapi.model.domain._
 import no.ndla.frontpageapi.model.{api, domain}
 
 import scala.util.{Failure, Success, Try}
@@ -24,7 +24,7 @@ object ConverterService {
     api.SubjectCollection(coll.name, coll.subjects.map(sf => api.SubjectFilters(sf.id, sf.filters)))
 
   private def toApiBannerImage(banner: domain.BannerImage): api.BannerImage =
-    api.BannerImage(createImageUrl(banner.mobileImageId),
+    api.BannerImage(banner.mobileImageId.map(createImageUrl),
                     banner.mobileImageId,
                     createImageUrl(banner.desktopImageId),
                     banner.desktopImageId)
@@ -120,7 +120,7 @@ object ConverterService {
       None,
       subject.name,
       subject.filters,
-      toDomainLayout(subject.layout.toString),
+      toDomainLayout(subject.layout),
       subject.twitter,
       subject.facebook,
       toDomainBannerImage(subject.bannerImage),

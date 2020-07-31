@@ -7,4 +7,4 @@
 
 package no.ndla.frontpageapi.model.api
 
-case class BannerImage(mobileUrl: String, mobileId: Long, desktopUrl: String, desktopId: Long)
+case class BannerImage(mobileUrl: Option[String], mobileId: Option[Long], desktopUrl: String, desktopId: Long)
