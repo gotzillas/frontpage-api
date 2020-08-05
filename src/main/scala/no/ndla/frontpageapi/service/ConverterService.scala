@@ -123,7 +123,7 @@ object ConverterService {
       toDomainLayout(subject.layout),
       subject.twitter,
       subject.facebook,
-      toDomainBannerImage(subject.bannerImage),
+      toDomainBannerImage(subject.banner),
       Seq(),
       toDomainMetaDescription(subject.metaDescription),
       subject.topical,
@@ -145,7 +145,7 @@ object ConverterService {
     val domainLayout = subject.layout
       .map(toDomainLayout)
 
-    val domainBannerImage = subject.bannerImage
+    val domainBannerImage = subject.banner
       .map(toDomainBannerImage)
 
     val domainMetaDescription = subject.metaDescription.fold(Seq[MetaDescription]())(toDomainMetaDescription)
