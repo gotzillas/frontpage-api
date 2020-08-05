@@ -51,7 +51,7 @@ trait InternController {
       PUT / "subjectpage" / pathVar[Long]("subject-id", "The subject id") ^ NewSubjectFrontPageData.decoder |>> {
       (id: Long, subjectPage: NewSubjectFrontPageData) =>
         {
-          writeService.updateSubjectPage(id, subjectPage, None) match {
+          writeService.updateSubjectPage(id, subjectPage, "nb") match {
             case Success(s)                       => Ok(s)
             case Failure(_: NotFoundException)    => NotFound(Error.notFound)
             case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))

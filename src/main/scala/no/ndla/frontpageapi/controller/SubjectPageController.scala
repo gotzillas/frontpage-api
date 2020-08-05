@@ -13,7 +13,7 @@ import io.circe.syntax._
 import cats.effect.{Effect, IO}
 import org.log4s.getLogger
 import no.ndla.frontpageapi.model.api._
-import no.ndla.frontpageapi.model.domain.Errors.ValidationException
+import no.ndla.frontpageapi.model.domain.Errors.{NotFoundException, ValidationException}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
 import org.http4s.rho.RhoRoutes
 import org.http4s.rho.swagger.SwaggerSyntax
@@ -58,8 +58,10 @@ trait SubjectPageController {
       (id: Long, language: String, subjectPage: UpdatedSubjectFrontPageData) =>
         {
           writeService.updateSubjectPage(id, subjectPage, language) match {
-            case Success(s) => Ok(s.asJson.toString)
-            case Failure(_) => InternalServerError(Error.generic)
+            case Success(s)                       => Ok(s.asJson.toString)
+            case Failure(_: NotFoundException)    => NotFound(Error.notFound)
+            case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
+            case Failure(_)                       => InternalServerError(Error.generic)
           }
         }
     }

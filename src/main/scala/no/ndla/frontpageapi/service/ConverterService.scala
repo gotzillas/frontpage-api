@@ -8,7 +8,7 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, BrightcovePlayer, RawImageApiUrl}
-import no.ndla.frontpageapi.model.domain.Errors.LanguageNotFoundException
+import no.ndla.frontpageapi.model.domain.Errors.{LanguageNotFoundException, MissingIdException}
 import no.ndla.frontpageapi.model.domain.Language._
 import no.ndla.frontpageapi.model.domain._
 import no.ndla.frontpageapi.model.{api, domain}
@@ -63,25 +63,29 @@ object ConverterService {
                        language: String,
                        fallback: Boolean = false): Try[api.SubjectPageData] = {
     if (sub.supportedLanguages.contains(language) || fallback) {
-      Success(
-        api.SubjectPageData(
-          sub.id.get,
-          sub.name,
-          sub.filters,
-          sub.layout.toString,
-          sub.twitter,
-          sub.facebook,
-          toApiBannerImage(sub.bannerImage),
-          toApiAboutSubject(findByLanguageOrBestEffort(sub.about, language)),
-          toApiMetaDescription(findByLanguageOrBestEffort(sub.metaDescription, language)),
-          sub.topical,
-          sub.mostRead,
-          sub.editorsChoices,
-          sub.latestContent,
-          sub.goTo,
-          sub.supportedLanguages
-        )
-      )
+      sub.id match {
+        case None => Failure(MissingIdException())
+        case Some(subjectPageId) =>
+          Success(
+            api.SubjectPageData(
+              subjectPageId,
+              sub.name,
+              sub.filters,
+              sub.layout.toString,
+              sub.twitter,
+              sub.facebook,
+              toApiBannerImage(sub.bannerImage),
+              toApiAboutSubject(findByLanguageOrBestEffort(sub.about, language)),
+              toApiMetaDescription(findByLanguageOrBestEffort(sub.metaDescription, language)),
+              sub.topical,
+              sub.mostRead,
+              sub.editorsChoices,
+              sub.latestContent,
+              sub.goTo,
+              sub.supportedLanguages
+            )
+          )
+      }
     } else {
       Failure(
         LanguageNotFoundException(s"The subjectpage with id ${sub.id.get} and language $language was not found",
@@ -153,9 +157,8 @@ object ConverterService {
     val domainAboutSubject =
       subject.about.fold(Seq[AboutSubject]())(about => toDomainAboutSubject(about).getOrElse(Seq()))
 
-    Try(
+    Success(
       toMergeInto.copy(
-        id = toMergeInto.id,
         name = subject.name
           .getOrElse(toMergeInto.name),
         filters = subject.filters.orElse(toMergeInto.filters),
