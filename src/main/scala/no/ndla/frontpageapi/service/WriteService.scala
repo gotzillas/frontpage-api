@@ -35,7 +35,7 @@ trait WriteService {
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(id, subject)
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-            converted <- ConverterService.toApiSubjectPage(subjectPage, language.getOrElse("nb"))
+            converted <- ConverterService.toApiSubjectPage(subjectPage, "nb")
           } yield converted
         case Success(_) =>
           Failure(NotFoundException(id))
