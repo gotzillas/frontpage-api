@@ -16,7 +16,7 @@ import io.circe.generic.auto._
 
 case class NewSubjectFrontPageData(name: String,
                                    filters: Option[List[String]],
-                                   externalId: String,
+                                   externalId: Option[String],
                                    layout: String,
                                    twitter: Option[String],
                                    facebook: Option[String],
@@ -24,10 +24,10 @@ case class NewSubjectFrontPageData(name: String,
                                    about: Seq[NewOrUpdatedAboutSubject],
                                    metaDescription: Seq[NewOrUpdatedMetaDescription],
                                    topical: Option[String],
-                                   mostRead: List[String],
-                                   editorsChoices: List[String],
+                                   mostRead: Option[List[String]],
+                                   editorsChoices: Option[List[String]],
                                    latestContent: Option[List[String]],
-                                   goTo: List[String])
+                                   goTo: Option[List[String]])
 
 object NewSubjectFrontPageData {
   implicit def decoder[F[_]: Sync]: EntityDecoder[F, NewSubjectFrontPageData] =

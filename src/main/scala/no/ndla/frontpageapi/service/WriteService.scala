@@ -22,18 +22,20 @@ trait WriteService {
     def newSubjectPage(subject: api.NewSubjectFrontPageData): Try[api.SubjectPageData] = {
       for {
         convertedSubject <- ConverterService.toDomainSubjectPage(subject)
-        subjectPage <- subjectPageRepository.newSubjectPage(convertedSubject, subject.externalId)
+        subjectPage <- subjectPageRepository.newSubjectPage(convertedSubject, subject.externalId.getOrElse(""))
         converted <- ConverterService.toApiSubjectPage(subjectPage, "nb")
       } yield converted
     }
 
-    def updateSubjectPage(id: Long, subject: api.NewSubjectFrontPageData): Try[api.SubjectPageData] = {
+    def updateSubjectPage(id: Long,
+                          subject: api.NewSubjectFrontPageData,
+                          language: Option[String]): Try[api.SubjectPageData] = {
       subjectPageRepository.exists(id) match {
         case Success(exists) if exists =>
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(id, subject)
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-            converted <- ConverterService.toApiSubjectPage(subjectPage, "nb")
+            converted <- ConverterService.toApiSubjectPage(subjectPage, language.getOrElse("nb"))
           } yield converted
         case Success(_) =>
           Failure(NotFoundException(id))
@@ -41,18 +43,20 @@ trait WriteService {
       }
     }
 
-    def updateSubjectPage(id: Long, subject: api.UpdatedSubjectFrontPageData): Try[api.SubjectPageData] = {
+    def updateSubjectPage(id: Long,
+                          subject: api.UpdatedSubjectFrontPageData,
+                          language: String): Try[api.SubjectPageData] = {
       subjectPageRepository.withId(id) match {
         case Some(existingSubject) =>
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(existingSubject, subject)
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-            converted <- ConverterService.toApiSubjectPage(subjectPage, subject.about.get.head.language)
+            converted <- ConverterService.toApiSubjectPage(subjectPage, language)
           } yield converted
         case None if subjectPageRepository.exists(id).getOrElse(false) =>
           newFromUpdatedSubjectPage(subject) match {
             case Failure(ex)             => Failure(ex)
-            case Success(newSubjectPage) => updateSubjectPage(id, newSubjectPage)
+            case Success(newSubjectPage) => updateSubjectPage(id, newSubjectPage, Some(language))
           }
         case None =>
           Failure(NotFoundException(404))

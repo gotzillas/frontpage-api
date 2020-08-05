@@ -57,7 +57,7 @@ trait SubjectPageController {
       PATCH / pathVar[Long]("subjectpage-id", "The subjectpage id") ^ UpdatedSubjectFrontPageData.decoder |>> {
       (id: Long, subjectPage: UpdatedSubjectFrontPageData) =>
         {
-          writeService.updateSubjectPage(id, subjectPage) match {
+          writeService.updateSubjectPage(id, subjectPage, subjectPage.metaDescription.get.head.language) match {
             case Success(s) => Ok(s.asJson.toString)
             case Failure(_) => InternalServerError(Error.generic)
           }

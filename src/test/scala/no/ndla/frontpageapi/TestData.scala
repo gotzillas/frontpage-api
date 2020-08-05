@@ -89,7 +89,7 @@ object TestData {
   val apiNewSubjectPage: NewSubjectFrontPageData = api.NewSubjectFrontPageData(
     "Samfunnsfag",
     None,
-    "14112",
+    Some("14112"),
     "single",
     Some("ndla_samfunn"),
     Some("NDLAsamfunnsfag"),
@@ -101,10 +101,10 @@ object TestData {
                                    api.NewOrUpdatedVisualElement("image", "123", Some("alt text")))),
     Seq(api.NewOrUpdatedMetaDescription("meta", "nb")),
     Some("urn:resource:1:170252"),
-    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
-    List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204"),
     Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
-    List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation")
+    Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
+    Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),
+    Some(List("urn:resourcetype:movieAndClip", "urn:resourcetype:lectureAndPresentation"))
   )
 
   val apiUpdatedSubjectPage: UpdatedSubjectFrontPageData = api.UpdatedSubjectFrontPageData(
@@ -120,8 +120,7 @@ object TestData {
         api.NewOrUpdatedAboutSubject("Om Samfunnsfag",
                                      "Dette er oppdatert om samfunnsfag",
                                      "nb",
-                                     api.NewOrUpdatedVisualElement("image", "123", Some("alt text")))),
-    ),
+                                     api.NewOrUpdatedVisualElement("image", "123", Some("alt text"))))),
     Some(List(api.NewOrUpdatedMetaDescription("meta", "nb"))),
     Some("urn:resource:1:170252"),
     Some(List("urn:resource:1:161411", "urn:resource:1:182176", "urn:resource:1:183636", "urn:resource:1:170204")),

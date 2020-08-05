@@ -123,14 +123,14 @@ object ConverterService {
       toDomainLayout(subject.layout),
       subject.twitter,
       subject.facebook,
-      toDomainBannerImage(subject.bannerImage),
+      toDomainBannerImage(subject.banner),
       Seq(),
       toDomainMetaDescription(subject.metaDescription),
       subject.topical,
-      subject.mostRead,
-      subject.editorsChoices,
+      subject.mostRead.getOrElse(List()),
+      subject.editorsChoices.getOrElse(List()),
       subject.latestContent,
-      subject.goTo
+      subject.goTo.getOrElse(List())
     )
 
     toDomainAboutSubject(subject.about) match {
@@ -145,7 +145,7 @@ object ConverterService {
     val domainLayout = subject.layout
       .map(toDomainLayout)
 
-    val domainBannerImage = subject.bannerImage
+    val domainBannerImage = subject.banner
       .map(toDomainBannerImage)
 
     val domainMetaDescription = subject.metaDescription.fold(Seq[MetaDescription]())(toDomainMetaDescription)
