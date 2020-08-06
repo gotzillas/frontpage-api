@@ -31,6 +31,7 @@ lazy val frontpage_api = (project in file("."))
     scalacOptions := Seq("-target:jvm-1.8", "-unchecked", "-deprecation", "-feature"),
     libraryDependencies ++= Seq(
       "ndla" %% "network" % "0.43",
+      "ndla" %% "mapping" % "0.14",
       "org.http4s" %% "http4s-circe" % Http4sVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
       "io.circe" %% "circe-generic-extras" % CirceVersion,

@@ -29,7 +29,8 @@ case class SubjectPageData(id: Long,
                            mostRead: List[String],
                            editorsChoices: List[String],
                            latestContent: Option[List[String]],
-                           goTo: List[String])
+                           goTo: List[String],
+                           supportedLanguages: Seq[String])
 
 object SubjectPageData {
   val indentDropNull = Printer.spaces2.copy(dropNullValues = true)

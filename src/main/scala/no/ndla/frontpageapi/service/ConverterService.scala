@@ -8,7 +8,9 @@
 package no.ndla.frontpageapi.service
 
 import no.ndla.frontpageapi.FrontpageApiProperties.{BrightcoveAccountId, BrightcovePlayer, RawImageApiUrl}
-import no.ndla.frontpageapi.model.domain.{LayoutType, VisualElementType}
+import no.ndla.frontpageapi.model.domain.Errors.{LanguageNotFoundException, MissingIdException}
+import no.ndla.frontpageapi.model.domain.Language._
+import no.ndla.frontpageapi.model.domain._
 import no.ndla.frontpageapi.model.{api, domain}
 
 import scala.util.{Failure, Success, Try}
@@ -22,7 +24,7 @@ object ConverterService {
     api.SubjectCollection(coll.name, coll.subjects.map(sf => api.SubjectFilters(sf.id, sf.filters)))
 
   private def toApiBannerImage(banner: domain.BannerImage): api.BannerImage =
-    api.BannerImage(createImageUrl(banner.mobileImageId),
+    api.BannerImage(banner.mobileImageId.map(createImageUrl),
                     banner.mobileImageId,
                     createImageUrl(banner.desktopImageId),
                     banner.desktopImageId)
@@ -57,34 +59,48 @@ object ConverterService {
     filteredNames.map(name => api.MovieThemeName(name.name, name.language))
   }
 
-  def toApiSubjectPage(sub: domain.SubjectFrontPageData, language: String): api.SubjectPageData = {
-    api.SubjectPageData(
-      sub.id.get,
-      sub.name,
-      sub.filters,
-      sub.layout.toString,
-      sub.twitter,
-      sub.facebook,
-      toApiBannerImage(sub.bannerImage),
-      toApiAboutSubject(sub.about, language),
-      toApiMetaDescription(sub.metaDescription, language),
-      sub.topical,
-      sub.mostRead,
-      sub.editorsChoices,
-      sub.latestContent,
-      sub.goTo
-    )
+  def toApiSubjectPage(sub: domain.SubjectFrontPageData,
+                       language: String,
+                       fallback: Boolean = false): Try[api.SubjectPageData] = {
+    if (sub.supportedLanguages.contains(language) || fallback) {
+      sub.id match {
+        case None => Failure(MissingIdException())
+        case Some(subjectPageId) =>
+          Success(
+            api.SubjectPageData(
+              subjectPageId,
+              sub.name,
+              sub.filters,
+              sub.layout.toString,
+              sub.twitter,
+              sub.facebook,
+              toApiBannerImage(sub.bannerImage),
+              toApiAboutSubject(findByLanguageOrBestEffort(sub.about, language)),
+              toApiMetaDescription(findByLanguageOrBestEffort(sub.metaDescription, language)),
+              sub.topical,
+              sub.mostRead,
+              sub.editorsChoices,
+              sub.latestContent,
+              sub.goTo,
+              sub.supportedLanguages
+            )
+          )
+      }
+    } else {
+      Failure(
+        LanguageNotFoundException(s"The subjectpage with id ${sub.id.get} and language $language was not found",
+                                  sub.supportedLanguages)
+      )
+    }
   }
 
-  private def toApiAboutSubject(aboutSeq: Seq[domain.AboutSubject], language: String): Option[api.AboutSubject] = {
-    aboutSeq
-      .find(about => about.language == language)
+  private def toApiAboutSubject(about: Option[domain.AboutSubject]): Option[api.AboutSubject] = {
+    about
       .map(about => api.AboutSubject(about.title, about.description, toApiVisualElement(about.visualElement)))
   }
 
-  private def toApiMetaDescription(metaSeq: Seq[domain.MetaDescription], language: String): Option[String] = {
-    metaSeq
-      .find(meta => meta.language == language)
+  private def toApiMetaDescription(meta: Option[domain.MetaDescription]): Option[String] = {
+    meta
       .map(_.metaDescription)
   }
 
@@ -97,28 +113,28 @@ object ConverterService {
     api.VisualElement(visual.`type`.toString, url, visual.alt)
   }
 
-  def toDomainSubjectPage(id: Long, subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] =
+  def toDomainSubjectPage(id: Long, subject: api.NewSubjectFrontPageData): Try[domain.SubjectFrontPageData] =
     toDomainSubjectPage(subject).map(_.copy(id = Some(id)))
 
   private def toDomainBannerImage(banner: api.NewOrUpdateBannerImage): domain.BannerImage =
     domain.BannerImage(banner.mobileImageId, banner.desktopImageId)
 
-  def toDomainSubjectPage(subject: api.NewOrUpdateSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
+  def toDomainSubjectPage(subject: api.NewSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
     val withoutAboutSubject = domain.SubjectFrontPageData(
       None,
       subject.name,
       subject.filters,
-      toDomainLayout(subject.layout.toString),
+      toDomainLayout(subject.layout),
       subject.twitter,
       subject.facebook,
-      toDomainBannerImage(subject.bannerImage),
+      toDomainBannerImage(subject.banner),
       Seq(),
       toDomainMetaDescription(subject.metaDescription),
       subject.topical,
-      subject.mostRead,
-      subject.editorsChoices,
+      subject.mostRead.getOrElse(List()),
+      subject.editorsChoices.getOrElse(List()),
       subject.latestContent,
-      subject.goTo
+      subject.goTo.getOrElse(List())
     )
 
     toDomainAboutSubject(subject.about) match {
@@ -127,11 +143,44 @@ object ConverterService {
     }
   }
 
+  def toDomainSubjectPage(toMergeInto: domain.SubjectFrontPageData,
+                          subject: api.UpdatedSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
+
+    val domainLayout = subject.layout
+      .map(toDomainLayout)
+
+    val domainBannerImage = subject.banner
+      .map(toDomainBannerImage)
+
+    val domainMetaDescription = subject.metaDescription.fold(Seq[MetaDescription]())(toDomainMetaDescription)
+
+    val domainAboutSubject =
+      subject.about.fold(Seq[AboutSubject]())(about => toDomainAboutSubject(about).getOrElse(Seq()))
+
+    Success(
+      toMergeInto.copy(
+        name = subject.name
+          .getOrElse(toMergeInto.name),
+        filters = subject.filters.orElse(toMergeInto.filters),
+        layout = domainLayout.getOrElse(toMergeInto.layout),
+        twitter = subject.twitter.orElse(toMergeInto.twitter),
+        facebook = subject.facebook.orElse(toMergeInto.facebook),
+        bannerImage = domainBannerImage.getOrElse(toMergeInto.bannerImage),
+        about = mergeLanguageFields(toMergeInto.about, domainAboutSubject),
+        metaDescription = mergeLanguageFields(toMergeInto.metaDescription, domainMetaDescription),
+        topical = subject.topical.orElse(toMergeInto.topical),
+        mostRead = subject.mostRead.getOrElse(toMergeInto.mostRead),
+        editorsChoices = subject.editorsChoices.getOrElse(toMergeInto.editorsChoices),
+        latestContent = subject.latestContent.orElse(toMergeInto.latestContent),
+        goTo = subject.goTo.getOrElse(toMergeInto.goTo)
+      ))
+  }
+
   private def toDomainLayout(layout: String): domain.LayoutType.Value = {
     LayoutType.fromString(layout).get
   }
 
-  private def toDomainAboutSubject(aboutSeq: Seq[api.NewOrUpdateAboutSubject]): Try[Seq[domain.AboutSubject]] = {
+  private def toDomainAboutSubject(aboutSeq: Seq[api.NewOrUpdatedAboutSubject]): Try[Seq[domain.AboutSubject]] = {
     val seq = aboutSeq.map(
       about =>
         toDomainVisualElement(about.visualElement)
@@ -148,6 +197,11 @@ object ConverterService {
     VisualElementType
       .fromString(visual.`type`)
       .map(domain.VisualElement(_, visual.id, visual.alt))
+
+  private[service] def mergeLanguageFields[A <: LanguageField](existing: Seq[A], updated: Seq[A]): Seq[A] = {
+    val toKeep = existing.filterNot(item => updated.map(_.language).contains(item.language))
+    (toKeep ++ updated).filterNot(_.isEmpty)
+  }
 
   def toDomainFrontPage(page: api.FrontPageData): domain.FrontPageData =
     domain.FrontPageData(page.topical, page.categories.map(toDomainSubjectCollection))

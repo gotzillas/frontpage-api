@@ -12,8 +12,9 @@ import no.ndla.network.model.NdlaHttpRequest
 import org.log4s.getLogger
 import no.ndla.network.{ApplicationUrl, AuthUser, CorrelationID}
 import org.apache.logging.log4j.ThreadContext
+import org.http4s.server.middleware.CORS
 import org.http4s.util.CaseInsensitiveString
-import org.http4s.{HttpRoutes, Request, Response}
+import org.http4s.{Header, HttpRoutes, Request, Response}
 
 object NdlaMiddleware {
   private val CorrelationIdHeader = CaseInsensitiveString("X-Correlation-ID")
@@ -35,7 +36,6 @@ object NdlaMiddleware {
     ThreadContext.put(CorrelationIdKey, CorrelationID.get.getOrElse(""))
     ApplicationUrl.set(asNdlaHttpRequest(req))
     AuthUser.set(asNdlaHttpRequest(req))
-
     logger.info(s"${req.method} ${req.uri}${req.queryString}")
     service(req)
   }

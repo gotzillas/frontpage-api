@@ -16,7 +16,7 @@ import io.circe.generic.auto._
 import scala.language.higherKinds
 
 case class NewOrUpdatedFilmFrontPageData(name: String,
-                                         about: Seq[NewOrUpdateAboutSubject],
+                                         about: Seq[NewOrUpdatedAboutSubject],
                                          movieThemes: Seq[NewOrUpdatedMovieTheme],
                                          slideShow: Seq[String])
 

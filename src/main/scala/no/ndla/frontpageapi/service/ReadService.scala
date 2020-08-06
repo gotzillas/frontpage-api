@@ -27,8 +27,11 @@ trait ReadService {
         case Failure(ex)       => Failure(ex)
       }
 
-    def subjectPage(id: Long, language: String): Option[api.SubjectPageData] =
-      subjectPageRepository.withId(id).map(sub => ConverterService.toApiSubjectPage(sub, language))
+    def subjectPage(id: Long, language: String, fallback: Boolean = false): Option[api.SubjectPageData] =
+      subjectPageRepository
+        .withId(id)
+        .map(sub => ConverterService.toApiSubjectPage(sub, language, fallback))
+        .collect { case Success(sub) => sub }
 
     def frontPage: Option[api.FrontPageData] = {
       frontPageRepository.get.map(ConverterService.toApiFrontPage)

@@ -7,4 +7,6 @@
 
 package no.ndla.frontpageapi.model.domain
 
-case class MetaDescription(metaDescription: String, language: String)
+case class MetaDescription(metaDescription: String, language: String) extends LanguageField {
+  override def isEmpty: Boolean = metaDescription.isEmpty
+}
