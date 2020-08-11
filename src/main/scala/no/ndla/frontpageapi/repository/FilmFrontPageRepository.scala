@@ -30,7 +30,7 @@ trait FilmFrontPageRepository {
       Try(
         sql"insert into ${FilmFrontPageData.table} (document) values (${dataObject})"
           .updateAndReturnGeneratedKey()
-          .apply
+          .apply()
       ).map(deleteAllBut).map(_ => page)
     }
 
@@ -38,7 +38,7 @@ trait FilmFrontPageRepository {
       Try(
         sql"delete from ${FilmFrontPageData.table} where id<>${id} "
           .update()
-          .apply
+          .apply()
       ).map(_ => id)
     }
 
@@ -48,7 +48,7 @@ trait FilmFrontPageRepository {
       Try(
         sql"select ${fr.result.*} from ${FilmFrontPageData.as(fr)} order by fr.id desc limit 1"
           .map(FilmFrontPageData.fromDb(fr))
-          .single
+          .single()
           .apply()) match {
         case Success(Some(Success(s))) => Some(s)
         case Success(Some(Failure(ex))) =>

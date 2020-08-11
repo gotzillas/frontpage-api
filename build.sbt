@@ -1,16 +1,16 @@
 import java.util.Properties
 
-val Scalaversion = "2.13.1"
-val Log4JVersion = "2.11.1"
-val ScalaTestVersion = "3.1.1"
-val MockitoVersion = "1.11.4"
+val Scalaversion = "2.13.3"
+val Log4JVersion = "2.13.3"
+val ScalaTestVersion = "3.2.1"
+val MockitoVersion = "1.14.8"
 val Http4sVersion = "0.21.1"
-val JacksonVersion = "2.10.2"
+val JacksonVersion = "2.11.2"
 val RhoVersion = "0.20.0"
 val CirceVersion = "0.13.0"
 val ScalikeJDBCVersion = "3.4.0"
 val HikariConnectionPoolVersion = "3.2.0"
-val PostgresVersion = "42.2.5"
+val PostgresVersion = "42.2.14"
 val FlywayVersion = "5.2.0"
 
 val appProperties = settingKey[Properties]("The application properties")
@@ -21,6 +21,11 @@ appProperties := {
   prop
 }
 
+// Sometimes we override transitive dependencies because of vulnerabilities, we put these here
+val vulnerabilityOverrides = Seq(
+  "org.yaml" % "snakeyaml" % "1.26"
+)
+
 lazy val frontpage_api = (project in file("."))
   .settings(
     name := "frontpage-api",
@@ -30,8 +35,8 @@ lazy val frontpage_api = (project in file("."))
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     scalacOptions := Seq("-target:jvm-1.8", "-unchecked", "-deprecation", "-feature"),
     libraryDependencies ++= Seq(
-      "ndla" %% "network" % "0.43",
-      "ndla" %% "mapping" % "0.14",
+      "ndla" %% "network" % "0.44",
+      "ndla" %% "mapping" % "0.15",
       "org.http4s" %% "http4s-circe" % Http4sVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
       "io.circe" %% "circe-generic-extras" % CirceVersion,
@@ -47,13 +52,12 @@ lazy val frontpage_api = (project in file("."))
       "org.apache.logging.log4j" % "log4j-api" % Log4JVersion,
       "org.apache.logging.log4j" % "log4j-core" % Log4JVersion,
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % Log4JVersion,
-      "com.fasterxml.jackson.core" % "jackson-databind" % JacksonVersion,
       "org.flywaydb" % "flyway-core" % FlywayVersion,
       "org.mockito" %% "mockito-scala" % MockitoVersion % "test",
       "org.mockito" %% "mockito-scala-scalatest" % MockitoVersion % "test",
       "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
       "javax.servlet" % "javax.servlet-api" % "4.0.1"
-    )
+    ) ++ vulnerabilityOverrides
   )
   .enablePlugins(DockerPlugin)
 
