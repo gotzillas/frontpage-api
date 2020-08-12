@@ -9,7 +9,7 @@ val JacksonVersion = "2.11.2"
 val RhoVersion = "0.20.0"
 val CirceVersion = "0.13.0"
 val ScalikeJDBCVersion = "3.4.0"
-val HikariConnectionPoolVersion = "3.2.0"
+val HikariConnectionPoolVersion = "3.4.5"
 val PostgresVersion = "42.2.14"
 val FlywayVersion = "5.2.0"
 
