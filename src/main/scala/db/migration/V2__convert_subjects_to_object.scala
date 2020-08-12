@@ -36,8 +36,8 @@ class V2__convert_subjects_to_object extends BaseJavaMigration {
   def frontPageData(implicit session: DBSession): Option[DBFrontPage] = {
     sql"select id, document from mainfrontpage"
       .map(rs => DBFrontPage(rs.long("id"), rs.string("document")))
-      .single
-      .apply
+      .single()
+      .apply()
   }
 
   def convertSubjects(frontPage: DBFrontPage): Option[V2_FrontPageData] = {
