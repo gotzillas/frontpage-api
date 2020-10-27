@@ -23,7 +23,9 @@ appProperties := {
 
 // Sometimes we override transitive dependencies because of vulnerabilities, we put these here
 val vulnerabilityOverrides = Seq(
-  "org.yaml" % "snakeyaml" % "1.26"
+  "org.yaml" % "snakeyaml" % "1.26",
+  "com.google.guava" % "guava" % "30.0-jre",
+  "org.apache.httpcomponents" % "httpclient" % "4.5.13"
 )
 
 lazy val frontpage_api = (project in file("."))
