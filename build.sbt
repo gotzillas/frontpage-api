@@ -11,7 +11,7 @@ val CirceVersion = "0.13.0"
 val ScalikeJDBCVersion = "3.4.0"
 val HikariConnectionPoolVersion = "3.4.5"
 val PostgresVersion = "42.2.14"
-val FlywayVersion = "5.2.0"
+val FlywayVersion = "7.1.1"
 
 val appProperties = settingKey[Properties]("The application properties")
 
