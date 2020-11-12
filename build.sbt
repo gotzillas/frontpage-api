@@ -39,6 +39,7 @@ lazy val frontpage_api = (project in file("."))
     libraryDependencies ++= Seq(
       "ndla" %% "network" % "0.44",
       "ndla" %% "mapping" % "0.15",
+      "ndla" %% "scalatestsuite" % "0.1" % "test",
       "org.http4s" %% "http4s-circe" % Http4sVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
       "io.circe" %% "circe-generic-extras" % CirceVersion,

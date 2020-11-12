@@ -7,33 +7,11 @@
 
 package no.ndla.frontpageapi
 
-import org.scalatest._
-import org.mockito.scalatest.MockitoSugar
-import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.should.Matchers
+import no.ndla.scalatestsuite.UnitTestSuite
 
-abstract class UnitSuite
-    extends AnyFunSuite
-    with Matchers
-    with OptionValues
-    with Inside
-    with Inspectors
-    with MockitoSugar
-    with BeforeAndAfterEach
-    with BeforeAndAfterAll {
-
-  setEnv("NDLA_ENVIRONMENT", "local")
-  setEnv("META_SCHEMA", "test")
-  setEnv("BRIGHTCOVE_ACCOUNT", "123")
-  setEnv("BRIGHTCOVE_PLAYER", "player")
-
-  def setEnv(key: String, value: String) = env.put(key, value)
-
-  def setEnvIfAbsent(key: String, value: String) = env.putIfAbsent(key, value)
-
-  private def env = {
-    val field = System.getenv().getClass.getDeclaredField("m")
-    field.setAccessible(true)
-    field.get(System.getenv()).asInstanceOf[java.util.Map[java.lang.String, java.lang.String]]
-  }
+trait UnitSuite extends UnitTestSuite {
+  setPropEnv("NDLA_ENVIRONMENT", "local")
+  setPropEnv("META_SCHEMA", "test")
+  setPropEnv("BRIGHTCOVE_ACCOUNT", "123")
+  setPropEnv("BRIGHTCOVE_PLAYER", "player")
 }
