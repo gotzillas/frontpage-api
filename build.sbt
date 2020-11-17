@@ -11,7 +11,7 @@ val CirceVersion = "0.13.0"
 val ScalikeJDBCVersion = "3.4.0"
 val HikariConnectionPoolVersion = "3.4.5"
 val PostgresVersion = "42.2.14"
-val FlywayVersion = "5.2.0"
+val FlywayVersion = "7.1.1"
 
 val appProperties = settingKey[Properties]("The application properties")
 
@@ -39,6 +39,7 @@ lazy val frontpage_api = (project in file("."))
     libraryDependencies ++= Seq(
       "ndla" %% "network" % "0.44",
       "ndla" %% "mapping" % "0.15",
+      "ndla" %% "scalatestsuite" % "0.1" % "test",
       "org.http4s" %% "http4s-circe" % Http4sVersion,
       "io.circe" %% "circe-generic" % CirceVersion,
       "io.circe" %% "circe-generic-extras" % CirceVersion,

@@ -16,12 +16,16 @@ import org.http4s.server.blaze.BlazeServerBuilder
 import org.log4s.getLogger
 
 import scala.io.Source
+import scala.jdk.CollectionConverters.MapHasAsScala
 import scala.language.higherKinds
 
 object Main extends IOApp {
   val logger = getLogger
 
   override def run(args: List[String]): IO[ExitCode] = {
+    val envMap = System.getenv()
+    envMap.asScala.foreach { case (k, v) => System.setProperty(k, v) }
+
     logger.info(
       Source
         .fromInputStream(getClass.getResourceAsStream("/log-license.txt"))

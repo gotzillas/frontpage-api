@@ -4,13 +4,15 @@ notifications:
       secure: rizihDzDCJ1oUR4IzjotraGcHAJpd+NF+wHbcKUW0uQaig8RetnWTpXahytGCqXLKJvHH+OoDC1qqZLUd/LCj+85sQ8Xdq3mKGxkesW+zHpfG2liI0nY7TZ9ixX30icoJ+7HuKvjRMMPf7qy88pmIS1dgGzsHPH+oG00XdcScmuMVBj0p/o57qomR98NEsQjri7GbtjG+BNPAIhIhztuRjk4iL6xXNGjMIJOmzzxTSPnpqjDMjRlJmMRT5rKsVlr48soQzSSlXcvze49ffL+cKPCO9wlB+BBgc8KEb+jfDiwMtezjv0Dh30Xtw5xSjNHxy51r/gLaVCeA54PBuMAKqNkXf/59kig2hqFQN+doBKnvV0Wik1/VgRGJrv4BmnpDvbGVnkK9SVeFMq2jKUszjpU428GC2ZbKDw/U24mGbRQHmtczsM6Uzzqe4C2R2RtDc4f7upVnlckoO6HceJvlvVJMSNX31RYMzgltf+bZZEPVT5dzkRtJbLr4lkFqmOt5zIYkXUx//tchNpD78QBmVAgABzP+i7VzowQZU3uZ8AyTIaKv2ddnniCCNciOmuJ0KE8oSaDryY3Gc7GQxhOJxlcPBN9RNrqCx9a4w4wRcuqzdX6aEeqji13+jgDkeeON+x+TQvaFNZh//gVTN9EvLPmk1gz+exQRvX0uT7EkWk=
 matrix:
   fast_finish: true
+  services:
+    - docker
   include:
     - name: "Test"
       language: scala
-      dist: trusty
+      dist: focal
       scala: 2.13.3
       jdk:
-        - oraclejdk8
+        - oraclejdk11
       cache:
         directories:
           - $HOME/.ivy2/cache
@@ -25,8 +27,6 @@ matrix:
       if: branch = master AND type = push
       python: 3.7
       dist: bionic
-      services:
-        - docker
       cache:
         pip: true
         directories:
