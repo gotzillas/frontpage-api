@@ -1,5 +1,5 @@
 # Frontpage API 
-[![Build Status](https://travis-ci.org/NDLANO/frontpage-api.svg?branch=master)](https://travis-ci.org/NDLANO/frontpage-api)
+![CI](https://github.com/NDLANO/frontpage-api/workflows/CI/badge.svg)
 
 Fetches data to display on NDLA frontpages
 
