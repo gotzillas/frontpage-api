@@ -19,8 +19,11 @@ object FrontpageApiProperties {
 
   val ApplicationName = "frontpage-api"
   val ApplicationPort: Int = envOrElse("APPLICATION_PORT", "80").toInt
-  val ContactName = "Sigurd Trageton"
-  val ContactEmail = "support+api@ndla.no"
+  val DefaultLanguage: String = propOrElse("DEFAULT_LANGUAGE", "nb")
+  val ContactName: String = propOrElse("CONTACT_NAME", "NDLA")
+  val ContactUrl: String = propOrElse("CONTACT_URL", "ndla.no")
+  val ContactEmail: String = propOrElse("CONTACT_EMAIL", "support+api@ndla.no")
+  val TermsUrl: String = propOrElse("TERMS_URL", "https://om.ndla.no/tos")
 
   val SecretsFile = "frontpage-api.secrets"
 
@@ -33,7 +36,7 @@ object FrontpageApiProperties {
   val MetaMaxConnections = 10
 
   val Environment: String = propOrElse("NDLA_ENVIRONMENT", "local")
-  val Domain: String = Domains.get(Environment)
+  lazy val Domain: String = propOrElse("BACKEND_API_DOMAIN", Domains.get(Environment))
   val RawImageApiUrl: String = s"$Domain/image-api/raw"
 
   val BrightcoveAccountId: String = prop("BRIGHTCOVE_ACCOUNT")

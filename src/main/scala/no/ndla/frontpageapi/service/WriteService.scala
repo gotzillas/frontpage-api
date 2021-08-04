@@ -7,6 +7,7 @@
 
 package no.ndla.frontpageapi.service
 
+import no.ndla.frontpageapi.FrontpageApiProperties
 import no.ndla.frontpageapi.model.domain.Errors.{NotFoundException, OperationNotAllowedException, ValidationException}
 import no.ndla.frontpageapi.repository.{FilmFrontPageRepository, FrontPageRepository, SubjectPageRepository}
 import no.ndla.frontpageapi.model.{api, domain}
@@ -23,7 +24,7 @@ trait WriteService {
       for {
         convertedSubject <- ConverterService.toDomainSubjectPage(subject)
         subjectPage <- subjectPageRepository.newSubjectPage(convertedSubject, subject.externalId.getOrElse(""))
-        converted <- ConverterService.toApiSubjectPage(subjectPage, "nb")
+        converted <- ConverterService.toApiSubjectPage(subjectPage, FrontpageApiProperties.DefaultLanguage)
       } yield converted
     }
 

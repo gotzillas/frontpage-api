@@ -2,7 +2,7 @@ package no.ndla.frontpageapi
 
 import cats.effect.IO
 import cats.implicits._
-import no.ndla.frontpageapi.FrontpageApiProperties.{ContactEmail, ContactName}
+import no.ndla.frontpageapi.FrontpageApiProperties.{ContactEmail, ContactName, ContactUrl, TermsUrl}
 import no.ndla.frontpageapi.controller.{HealthController, NdlaMiddleware}
 import org.http4s.HttpRoutes
 import org.http4s.rho.{RhoRoute, RhoRoutes}
@@ -55,9 +55,9 @@ object Routes {
     val info = Info(
       title = "frontpage-api",
       version = "1.0",
-      description = "Service for fetching front page data".some,
-      termsOfService = "https://ndla.no".some,
-      contact = Contact(ContactName, email = Some(ContactEmail)).some,
+      description = "Service for fetching frontpage data".some,
+      termsOfService = TermsUrl.some,
+      contact = Contact(ContactName, Some(ContactUrl), Some(ContactEmail)).some,
       license = License("GPL v3.0", "http://www.gnu.org/licenses/gpl-3.0.en.html").some
     )
     val routes = services.map(t => {

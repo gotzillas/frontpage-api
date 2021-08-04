@@ -3,7 +3,6 @@ package no.ndla.frontpageapi.model.domain
 import no.ndla.mapping.ISO639
 
 object Language {
-  val DefaultLanguage = "nb"
   val UnknownLanguage = "unknown"
   val NoLanguage = ""
   val AllLanguages = "all"
