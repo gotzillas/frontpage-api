@@ -32,17 +32,17 @@ case class SubjectFrontPageData(id: Option[Long],
                                 latestContent: Option[List[String]],
                                 goTo: List[String]) {
 
-  def supportedLanguages = getSupportedLanguages(Seq(about, metaDescription))
+  def supportedLanguages: Seq[String] = getSupportedLanguages(Seq(about, metaDescription))
 }
 
 object SubjectFrontPageData extends SQLSyntaxSupport[SubjectFrontPageData] {
   override val tableName = "subjectpage"
-  override val schemaName = FrontpageApiProperties.MetaSchema.some
+  override val schemaName: Option[String] = FrontpageApiProperties.MetaSchema.some
 
-  implicit val elementDecoder = Decoder.decodeEnumeration(VisualElementType)
-  implicit val elementEncoder = Encoder.encodeEnumeration(VisualElementType)
-  implicit val layoutDecoder = Decoder.decodeEnumeration(LayoutType)
-  implicit val layoutEncoder = Encoder.encodeEnumeration(LayoutType)
+  implicit val elementDecoder: Decoder[VisualElementType.Value] = Decoder.decodeEnumeration(VisualElementType)
+  implicit val elementEncoder: Encoder[VisualElementType.Value] = Encoder.encodeEnumeration(VisualElementType)
+  implicit val layoutDecoder: Decoder[LayoutType.Value] = Decoder.decodeEnumeration(LayoutType)
+  implicit val layoutEncoder: Encoder[LayoutType.Value] = Encoder.encodeEnumeration(LayoutType)
 
   private[domain] def decodeJson(json: String, id: Long): Try[SubjectFrontPageData] = {
     parse(json).flatMap(_.as[SubjectFrontPageData]).map(_.copy(id = id.some)).toTry

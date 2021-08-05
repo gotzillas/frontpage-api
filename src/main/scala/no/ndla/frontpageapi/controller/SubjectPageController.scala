@@ -11,6 +11,7 @@ import cats.Monad
 import io.circe.generic.auto._
 import io.circe.syntax._
 import cats.effect.{Effect, IO}
+import no.ndla.frontpageapi.FrontpageApiProperties
 import org.log4s.getLogger
 import no.ndla.frontpageapi.model.api._
 import no.ndla.frontpageapi.model.domain.Errors.{NotFoundException, ValidationException}
@@ -31,15 +32,16 @@ trait SubjectPageController {
     import swaggerSyntax._
 
     "Get data to display on a subject page" **
-      GET / pathVar[Long]("subjectpage-id", "The subjectpage id") +? param[String]("language", "nb") & param[Boolean](
-      "fallback",
-      false) |>> { (id: Long, language: String, fallback: Boolean) =>
-      {
-        readService.subjectPage(id, language, fallback) match {
-          case Some(s) => Ok(s)
-          case None    => NotFound(Error.notFound)
+      GET / pathVar[Long]("subjectpage-id", "The subjectpage id") +? param[String](
+      "language",
+      FrontpageApiProperties.DefaultLanguage) & param[Boolean]("fallback", false) |>> {
+      (id: Long, language: String, fallback: Boolean) =>
+        {
+          readService.subjectPage(id, language, fallback) match {
+            case Some(s) => Ok(s)
+            case None    => NotFound(Error.notFound)
+          }
         }
-      }
     }
 
     "Create new subject page" **
@@ -54,7 +56,9 @@ trait SubjectPageController {
     }
 
     "Update subject page" **
-      PATCH / pathVar[Long]("subjectpage-id", "The subjectpage id") +? param[String]("language", "nb") ^ UpdatedSubjectFrontPageData.decoder |>> {
+      PATCH / pathVar[Long]("subjectpage-id", "The subjectpage id") +? param[String](
+      "language",
+      FrontpageApiProperties.DefaultLanguage) ^ UpdatedSubjectFrontPageData.decoder |>> {
       (id: Long, language: String, subjectPage: UpdatedSubjectFrontPageData) =>
         {
           writeService.updateSubjectPage(id, subjectPage, language) match {
