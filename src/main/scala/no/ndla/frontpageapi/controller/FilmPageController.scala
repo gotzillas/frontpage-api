@@ -7,22 +7,22 @@
 
 package no.ndla.frontpageapi.controller
 import cats.Monad
+import cats.effect.{Effect, IO}
 import io.circe.generic.auto._
 import io.circe.syntax._
-import cats.effect.{Effect, IO}
+import no.ndla.frontpageapi.auth.UserInfo
 import no.ndla.frontpageapi.model.api._
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
-import org.http4s.rho.RhoRoutes
-import org.http4s.rho.swagger.SwaggerSyntax
+import org.http4s.rho.swagger.{SecOps, SwaggerSyntax}
 
-import scala.language.higherKinds
 import scala.util.{Failure, Success}
 
 trait FilmPageController {
   this: ReadService with WriteService =>
   val filmPageController: FilmPageController[IO]
 
-  class FilmPageController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(implicit F: Monad[F]) extends RhoRoutes[F] {
+  class FilmPageController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(implicit F: Monad[F])
+      extends AuthController[F] {
 
     import swaggerSyntax._
 
@@ -36,14 +36,14 @@ trait FilmPageController {
       }
     }
 
-    "Update film front page" **
-      POST ^ NewOrUpdatedFilmFrontPageData.decoder |>> { filmFrontPage: NewOrUpdatedFilmFrontPageData =>
-      {
-        writeService.updateFilmFrontPage(filmFrontPage) match {
-          case Success(s) => Ok(s.asJson.toString)
-          case Failure(_) => InternalServerError(Error.generic)
+    AuthOptions.^^("Update film front page" ** POST) >>> Auth.auth ^ NewOrUpdatedFilmFrontPageData.decoder |>> {
+      (user: Option[UserInfo], filmFrontPage: NewOrUpdatedFilmFrontPageData) =>
+        {
+          doOrAccessDenied(user, writeService.updateFilmFrontPage(filmFrontPage) match {
+            case Success(s) => Ok(s.asJson.toString)
+            case Failure(_) => InternalServerError(Error.generic)
+          })
         }
-      }
     }
 
   }

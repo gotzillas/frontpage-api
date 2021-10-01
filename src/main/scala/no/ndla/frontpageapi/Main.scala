@@ -9,15 +9,16 @@ package no.ndla.frontpageapi
 
 import cats.effect.{ExitCode, IO, IOApp}
 import cats.implicits._
-import no.ndla.frontpageapi.FrontpageApiProperties.ApplicationPort
+import no.ndla.frontpageapi.FrontpageApiProperties.{NumThreads, ApplicationPort}
 import org.http4s.implicits._
 import org.http4s.server.Router
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.log4s.getLogger
 
+import java.util.concurrent.Executors
+import scala.concurrent.ExecutionContext
 import scala.io.Source
 import scala.jdk.CollectionConverters.MapHasAsScala
-import scala.language.higherKinds
 
 object Main extends IOApp {
   val logger = getLogger
@@ -42,7 +43,10 @@ object Main extends IOApp {
       routes.map(r => r.mountPoint -> r.toRoutes): _*
     ).orNotFound
 
-    BlazeServerBuilder[IO]
+    val executorService = Executors.newWorkStealingPool(NumThreads)
+    val executionContext = ExecutionContext.fromExecutor(executorService)
+
+    BlazeServerBuilder[IO](executionContext)
       .withHttpApp(app)
       .bindHttp(ApplicationPort, "0.0.0.0")
       .serve

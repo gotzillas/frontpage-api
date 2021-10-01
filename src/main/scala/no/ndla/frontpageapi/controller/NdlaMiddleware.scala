@@ -7,9 +7,10 @@
 
 package no.ndla.frontpageapi.controller
 
-import cats.effect.IO
+import cats.Monad
+import cats.effect.{Effect, IO}
 import no.ndla.network.model.NdlaHttpRequest
-import no.ndla.network.{ApplicationUrl, AuthUser, CorrelationID}
+import no.ndla.network.{ApplicationUrl, CorrelationID}
 import org.apache.logging.log4j.ThreadContext
 import org.http4s.util.CaseInsensitiveString
 import org.http4s.{HttpRoutes, Request, Response}
@@ -20,7 +21,7 @@ object NdlaMiddleware {
   private val CorrelationIdKey = "correlationID"
   private val logger = getLogger
 
-  private def asNdlaHttpRequest(req: Request[IO]): NdlaHttpRequest = {
+  def asNdlaHttpRequest[F[+ _]: Effect](req: Request[F]): NdlaHttpRequest = {
     new NdlaHttpRequest {
       override def serverPort: Int = req.serverPort
       override def getHeader(name: String): Option[String] = req.headers.get(CaseInsensitiveString(name)).map(_.value)
@@ -34,7 +35,6 @@ object NdlaMiddleware {
     CorrelationID.set(req.headers.get(CorrelationIdHeader).map(_.value))
     ThreadContext.put(CorrelationIdKey, CorrelationID.get.getOrElse(""))
     ApplicationUrl.set(asNdlaHttpRequest(req))
-    AuthUser.set(asNdlaHttpRequest(req))
     logger.info(s"${req.method} ${req.uri}${req.queryString}")
     service(req)
   }
@@ -42,11 +42,12 @@ object NdlaMiddleware {
   private def after(resp: Response[IO]): Response[IO] = {
     CorrelationID.clear()
     ThreadContext.remove(CorrelationIdKey)
-    AuthUser.clear()
     ApplicationUrl.clear()
 
     resp
   }
 
-  def apply(service: HttpRoutes[IO]): HttpRoutes[IO] = before(service).map(after)
+  def apply(service: HttpRoutes[IO]): HttpRoutes[IO] = {
+    before(service).map(after)
+  }
 }

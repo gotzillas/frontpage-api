@@ -8,18 +8,17 @@
 package no.ndla.frontpageapi.controller
 
 import cats.Monad
+import cats.effect.{Effect, IO}
 import io.circe.generic.auto._
 import io.circe.syntax._
-import cats.effect.{Effect, IO}
 import no.ndla.frontpageapi.FrontpageApiProperties
-import org.log4s.getLogger
-import no.ndla.frontpageapi.model.api._
+import no.ndla.frontpageapi.auth.UserInfo
+import no.ndla.frontpageapi.model.api.{Error, NewSubjectFrontPageData, UpdatedSubjectFrontPageData}
 import no.ndla.frontpageapi.model.domain.Errors.{NotFoundException, ValidationException}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
-import org.http4s.rho.RhoRoutes
 import org.http4s.rho.swagger.SwaggerSyntax
+import org.http4s.rho.swagger.SecOps
 
-import scala.language.higherKinds
 import scala.util.{Failure, Success}
 
 trait SubjectPageController {
@@ -27,7 +26,7 @@ trait SubjectPageController {
   val subjectPageController: SubjectPageController[IO]
 
   class SubjectPageController[F[+ _]: Effect](swaggerSyntax: SwaggerSyntax[F])(implicit F: Monad[F])
-      extends RhoRoutes[F] {
+      extends AuthController[F] {
 
     import swaggerSyntax._
 
@@ -44,29 +43,35 @@ trait SubjectPageController {
         }
     }
 
-    "Create new subject page" **
-      POST ^ NewSubjectFrontPageData.decoder |>> { subjectPage: NewSubjectFrontPageData =>
-      {
-        writeService.newSubjectPage(subjectPage) match {
-          case Success(s)                       => Ok(s)
-          case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
-          case Failure(_)                       => InternalServerError(Error.generic)
+    AuthOptions.^^("Create new subject page" ** POST) >>> Auth.auth ^ NewSubjectFrontPageData.decoder |>> {
+      (user: Option[UserInfo], newSubjectFrontPageData: NewSubjectFrontPageData) =>
+        {
+          doOrAccessDenied(
+            user,
+            writeService.newSubjectPage(newSubjectFrontPageData) match {
+              case Success(s)                       => Ok(s)
+              case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
+              case Failure(_)                       => InternalServerError(Error.generic)
+            }
+          )
         }
-      }
     }
 
-    "Update subject page" **
-      PATCH / pathVar[Long]("subjectpage-id", "The subjectpage id") +? param[String](
+    AuthOptions.^^("Update subject page" **
+      PATCH) / pathVar[Long]("subjectpage-id", "The subjectpage id") +? param[String](
       "language",
-      FrontpageApiProperties.DefaultLanguage) ^ UpdatedSubjectFrontPageData.decoder |>> {
-      (id: Long, language: String, subjectPage: UpdatedSubjectFrontPageData) =>
+      FrontpageApiProperties.DefaultLanguage) >>> Auth.auth ^ UpdatedSubjectFrontPageData.decoder |>> {
+      (id: Long, language: String, user: Option[UserInfo], subjectPage: UpdatedSubjectFrontPageData) =>
         {
-          writeService.updateSubjectPage(id, subjectPage, language) match {
-            case Success(s)                       => Ok(s.asJson.toString)
-            case Failure(_: NotFoundException)    => NotFound(Error.notFound)
-            case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
-            case Failure(_)                       => InternalServerError(Error.generic)
-          }
+          doOrAccessDenied(
+            user,
+            writeService.updateSubjectPage(id, subjectPage, language) match {
+              case Success(s)                       => Ok(s.asJson.toString)
+              case Failure(_: NotFoundException)    => NotFound(Error.notFound)
+              case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
+              case Failure(_)                       => InternalServerError(Error.generic)
+            }
+          )
         }
     }
   }
