@@ -14,6 +14,7 @@ import no.ndla.frontpageapi.model.domain._
 import no.ndla.frontpageapi.model.{api, domain}
 
 import scala.util.{Failure, Success, Try}
+import cats.implicits._
 
 object ConverterService {
 
@@ -120,64 +121,56 @@ object ConverterService {
     domain.BannerImage(banner.mobileImageId, banner.desktopImageId)
 
   def toDomainSubjectPage(subject: api.NewSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
-    val withoutAboutSubject = domain.SubjectFrontPageData(
-      None,
-      subject.name,
-      subject.filters,
-      toDomainLayout(subject.layout),
-      subject.twitter,
-      subject.facebook,
-      toDomainBannerImage(subject.banner),
-      Seq(),
-      toDomainMetaDescription(subject.metaDescription),
-      subject.topical,
-      subject.mostRead.getOrElse(List()),
-      subject.editorsChoices.getOrElse(List()),
-      subject.latestContent,
-      subject.goTo.getOrElse(List())
-    )
+    for {
+      layout <- toDomainLayout(subject.layout)
+      about <- toDomainAboutSubject(subject.about)
+      newSubject = domain.SubjectFrontPageData(
+        id = None,
+        name = subject.name,
+        filters = subject.filters,
+        layout = layout,
+        twitter = subject.twitter,
+        facebook = subject.facebook,
+        bannerImage = toDomainBannerImage(subject.banner),
+        about = about,
+        metaDescription = toDomainMetaDescription(subject.metaDescription),
+        topical = subject.topical,
+        mostRead = subject.mostRead.getOrElse(List()),
+        editorsChoices = subject.editorsChoices.getOrElse(List()),
+        latestContent = subject.latestContent,
+        goTo = subject.goTo.getOrElse(List())
+      )
 
-    toDomainAboutSubject(subject.about) match {
-      case Failure(ex)    => Failure(ex)
-      case Success(about) => Success(withoutAboutSubject.copy(about = about))
-    }
+    } yield newSubject
   }
 
   def toDomainSubjectPage(toMergeInto: domain.SubjectFrontPageData,
                           subject: api.UpdatedSubjectFrontPageData): Try[domain.SubjectFrontPageData] = {
+    for {
+      layout <- subject.layout.traverse(toDomainLayout)
+      aboutSubject <- subject.about.traverse(toDomainAboutSubject)
+      metaDescription = subject.metaDescription.map(toDomainMetaDescription)
 
-    val domainLayout = subject.layout
-      .map(toDomainLayout)
-
-    val domainBannerImage = subject.banner
-      .map(toDomainBannerImage)
-
-    val domainMetaDescription = subject.metaDescription.fold(Seq[MetaDescription]())(toDomainMetaDescription)
-
-    val domainAboutSubject =
-      subject.about.fold(Seq[AboutSubject]())(about => toDomainAboutSubject(about).getOrElse(Seq()))
-
-    Success(
-      toMergeInto.copy(
-        name = subject.name
-          .getOrElse(toMergeInto.name),
+      merged = toMergeInto.copy(
+        name = subject.name.getOrElse(toMergeInto.name),
         filters = subject.filters.orElse(toMergeInto.filters),
-        layout = domainLayout.getOrElse(toMergeInto.layout),
+        layout = layout.getOrElse(toMergeInto.layout),
         twitter = subject.twitter.orElse(toMergeInto.twitter),
         facebook = subject.facebook.orElse(toMergeInto.facebook),
-        bannerImage = domainBannerImage.getOrElse(toMergeInto.bannerImage),
-        about = mergeLanguageFields(toMergeInto.about, domainAboutSubject),
-        metaDescription = mergeLanguageFields(toMergeInto.metaDescription, domainMetaDescription),
+        bannerImage = subject.banner.map(toDomainBannerImage).getOrElse(toMergeInto.bannerImage),
+        about = mergeLanguageFields(toMergeInto.about, aboutSubject.toSeq.flatten),
+        metaDescription = mergeLanguageFields(toMergeInto.metaDescription, metaDescription.toSeq.flatten),
         topical = subject.topical.orElse(toMergeInto.topical),
         mostRead = subject.mostRead.getOrElse(toMergeInto.mostRead),
         editorsChoices = subject.editorsChoices.getOrElse(toMergeInto.editorsChoices),
         latestContent = subject.latestContent.orElse(toMergeInto.latestContent),
         goTo = subject.goTo.getOrElse(toMergeInto.goTo)
-      ))
+      )
+    } yield merged
   }
 
-  private def toDomainLayout(layout: String): domain.LayoutType.Value = {
-    LayoutType.fromString(layout).get
+  private def toDomainLayout(layout: String): Try[domain.LayoutType.Value] = {
+    LayoutType.fromString(layout)
   }
 
   private def toDomainAboutSubject(aboutSeq: Seq[api.NewOrUpdatedAboutSubject]): Try[Seq[domain.AboutSubject]] = {
