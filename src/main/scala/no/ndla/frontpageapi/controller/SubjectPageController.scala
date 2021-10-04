@@ -9,17 +9,21 @@ package no.ndla.frontpageapi.controller
 
 import cats.Monad
 import cats.effect.{Effect, IO}
+import io.circe.Encoder
 import io.circe.generic.auto._
+import io.circe.literal.JsonStringContext
 import io.circe.syntax._
 import no.ndla.frontpageapi.FrontpageApiProperties
 import no.ndla.frontpageapi.auth.UserInfo
-import no.ndla.frontpageapi.model.api.{Error, NewSubjectFrontPageData, UpdatedSubjectFrontPageData}
+import no.ndla.frontpageapi.model.api.{Error, NewSubjectFrontPageData, SubjectPageData, UpdatedSubjectFrontPageData}
 import no.ndla.frontpageapi.model.domain.Errors.{NotFoundException, ValidationException}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
+import org.http4s.{EntityEncoder, MediaType}
+import org.http4s.headers.`Content-Type`
 import org.http4s.rho.swagger.SwaggerSyntax
 import org.http4s.rho.swagger.SecOps
 
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 trait SubjectPageController {
   this: ReadService with WriteService =>
@@ -50,7 +54,7 @@ trait SubjectPageController {
             user,
             writeService.newSubjectPage(newSubjectFrontPageData) match {
               case Success(s)                       => Ok(s)
-              case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
+              case Failure(ex: ValidationException) => UnprocessableEntity(Error.unprocessableEntity(ex.getMessage))
               case Failure(_)                       => InternalServerError(Error.generic)
             }
           )
@@ -68,7 +72,7 @@ trait SubjectPageController {
             writeService.updateSubjectPage(id, subjectPage, language) match {
               case Success(s)                       => Ok(s.asJson.toString)
               case Failure(_: NotFoundException)    => NotFound(Error.notFound)
-              case Failure(ex: ValidationException) => BadRequest(Error.badRequest(ex.getMessage))
+              case Failure(ex: ValidationException) => UnprocessableEntity(Error.unprocessableEntity(ex.getMessage))
               case Failure(_)                       => InternalServerError(Error.generic)
             }
           )

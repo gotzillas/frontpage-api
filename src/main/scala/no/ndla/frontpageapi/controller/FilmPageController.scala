@@ -12,6 +12,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import no.ndla.frontpageapi.auth.UserInfo
 import no.ndla.frontpageapi.model.api._
+import no.ndla.frontpageapi.model.domain.Errors.ValidationException
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
 import org.http4s.rho.swagger.{SecOps, SwaggerSyntax}
 
@@ -39,10 +40,14 @@ trait FilmPageController {
     AuthOptions.^^("Update film front page" ** POST) >>> Auth.auth ^ NewOrUpdatedFilmFrontPageData.decoder |>> {
       (user: Option[UserInfo], filmFrontPage: NewOrUpdatedFilmFrontPageData) =>
         {
-          doOrAccessDenied(user, writeService.updateFilmFrontPage(filmFrontPage) match {
-            case Success(s) => Ok(s.asJson.toString)
-            case Failure(_) => InternalServerError(Error.generic)
-          })
+          doOrAccessDenied(
+            user,
+            writeService.updateFilmFrontPage(filmFrontPage) match {
+              case Success(s)                       => Ok(s.asJson.toString)
+              case Failure(ex: ValidationException) => UnprocessableEntity(Error.unprocessableEntity(ex.getMessage))
+              case Failure(_)                       => InternalServerError(Error.generic)
+            }
+          )
         }
     }
 

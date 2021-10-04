@@ -23,6 +23,7 @@ object Error {
   val GENERIC = "GENERIC"
   val NOT_FOUND = "NOT_FOUND"
   val BAD_REQUEST = "BAD_REQUEST"
+  val UNPROCESSABLE_ENTITY = "UNPROCESSABLE_ENTITY"
   val UNAUTHORIZED = "UNAUTHORIZED"
   val FORBIDDEN = "FORBIDDEN"
 
@@ -36,6 +37,7 @@ object Error {
   def generic: Error = Error(GENERIC, GENERIC_DESCRIPTION, LocalDateTime.now)
   def notFound: Error = Error(NOT_FOUND, NOT_FOUND_DESCRIPTION, LocalDateTime.now)
   def badRequest(msg: String): Error = Error(BAD_REQUEST, msg, LocalDateTime.now)
+  def unprocessableEntity(msg: String): Error = Error(UNPROCESSABLE_ENTITY, msg, LocalDateTime.now)
   def unauthorized: Error = Error(UNAUTHORIZED, UNAUTHORIZED_DESCRIPTION, LocalDateTime.now)
   def forbidden: Error = Error(FORBIDDEN, FORBIDDEN_DESCRIPTION, LocalDateTime.now)
 
