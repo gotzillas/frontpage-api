@@ -1,3 +1,10 @@
+/*
+ * Part of NDLA frontpage-api.
+ * Copyright (C) 2021 NDLA
+ *
+ * See LICENSE
+ */
+
 package no.ndla.frontpageapi.controller
 
 import cats.Monad
