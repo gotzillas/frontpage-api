@@ -50,14 +50,16 @@ trait SubjectPageController {
     AuthOptions.^^("Create new subject page" ** POST) >>> Auth.auth ^ NewSubjectFrontPageData.decoder |>> {
       (user: Option[UserInfo], newSubjectFrontPageData: NewSubjectFrontPageData) =>
         {
-          doOrAccessDenied(
-            user,
-            writeService.newSubjectPage(newSubjectFrontPageData) match {
-              case Success(s)                       => Ok(s)
-              case Failure(ex: ValidationException) => UnprocessableEntity(Error.unprocessableEntity(ex.getMessage))
-              case Failure(_)                       => InternalServerError(Error.generic)
-            }
-          )
+          user match {
+            case Some(user) if user.canWrite =>
+              writeService.newSubjectPage(newSubjectFrontPageData) match {
+                case Success(s)                       => Ok(s)
+                case Failure(ex: ValidationException) => UnprocessableEntity(Error.unprocessableEntity(ex.getMessage))
+                case Failure(_)                       => InternalServerError(Error.generic)
+              }
+            case Some(_) => Forbidden(Error.forbidden)
+            case None    => Unauthorized(Error.unauthorized)
+          }
         }
     }
 
@@ -67,15 +69,17 @@ trait SubjectPageController {
       FrontpageApiProperties.DefaultLanguage) >>> Auth.auth ^ UpdatedSubjectFrontPageData.decoder |>> {
       (id: Long, language: String, user: Option[UserInfo], subjectPage: UpdatedSubjectFrontPageData) =>
         {
-          doOrAccessDenied(
-            user,
-            writeService.updateSubjectPage(id, subjectPage, language) match {
-              case Success(s)                       => Ok(s.asJson.toString)
-              case Failure(_: NotFoundException)    => NotFound(Error.notFound)
-              case Failure(ex: ValidationException) => UnprocessableEntity(Error.unprocessableEntity(ex.getMessage))
-              case Failure(_)                       => InternalServerError(Error.generic)
-            }
-          )
+          user match {
+            case Some(user) if user.canWrite =>
+              writeService.updateSubjectPage(id, subjectPage, language) match {
+                case Success(s)                       => Ok(s)
+                case Failure(_: NotFoundException)    => NotFound(Error.notFound)
+                case Failure(ex: ValidationException) => UnprocessableEntity(Error.unprocessableEntity(ex.getMessage))
+                case Failure(_)                       => InternalServerError(Error.generic)
+              }
+            case Some(_) => Forbidden(Error.forbidden)
+            case None    => Unauthorized(Error.unauthorized)
+          }
         }
     }
   }
