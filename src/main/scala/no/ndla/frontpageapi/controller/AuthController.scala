@@ -11,15 +11,10 @@ import cats.Monad
 import cats.data.{Kleisli, OptionT}
 import cats.effect.Effect
 import no.ndla.frontpageapi.auth.{Role, UserInfo}
-import no.ndla.frontpageapi.model.api.Error
 import no.ndla.network.jwt.JWTExtractor
-import org.http4s.rho.{AuthedContext, Result, RhoRoutes}
-import fs2.{Stream, text}
+import org.http4s.rho.{AuthedContext, RhoRoutes}
 import org.http4s.server.AuthMiddleware
 import org.http4s.{AuthedRoutes, Request, Response, Status}
-import io.circe.generic.auto._
-import io.circe.syntax._
-import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 
 abstract class AuthController[F[+ _]: Effect](implicit F: Monad[F]) extends RhoRoutes[F] {
 

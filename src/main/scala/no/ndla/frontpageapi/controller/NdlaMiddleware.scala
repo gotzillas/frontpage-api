@@ -7,7 +7,6 @@
 
 package no.ndla.frontpageapi.controller
 
-import cats.Monad
 import cats.effect.{Effect, IO}
 import no.ndla.network.model.NdlaHttpRequest
 import no.ndla.network.{ApplicationUrl, CorrelationID}

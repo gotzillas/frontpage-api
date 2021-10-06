@@ -9,21 +9,14 @@ package no.ndla.frontpageapi.controller
 
 import cats.Monad
 import cats.effect.{Effect, IO}
-import io.circe.Encoder
-import io.circe.generic.auto._
-import io.circe.literal.JsonStringContext
-import io.circe.syntax._
 import no.ndla.frontpageapi.FrontpageApiProperties
 import no.ndla.frontpageapi.auth.UserInfo
-import no.ndla.frontpageapi.model.api.{Error, NewSubjectFrontPageData, SubjectPageData, UpdatedSubjectFrontPageData}
+import no.ndla.frontpageapi.model.api.{Error, NewSubjectFrontPageData, UpdatedSubjectFrontPageData}
 import no.ndla.frontpageapi.model.domain.Errors.{NotFoundException, ValidationException}
 import no.ndla.frontpageapi.service.{ReadService, WriteService}
-import org.http4s.{EntityEncoder, MediaType}
-import org.http4s.headers.`Content-Type`
-import org.http4s.rho.swagger.SwaggerSyntax
-import org.http4s.rho.swagger.SecOps
+import org.http4s.rho.swagger.{SecOps, SwaggerSyntax}
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 trait SubjectPageController {
   this: ReadService with WriteService =>
