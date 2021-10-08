@@ -24,7 +24,7 @@ trait WriteService {
       for {
         convertedSubject <- ConverterService.toDomainSubjectPage(subject)
         subjectPage <- subjectPageRepository.newSubjectPage(convertedSubject, subject.externalId.getOrElse(""))
-        converted <- ConverterService.toApiSubjectPage(subjectPage, FrontpageApiProperties.DefaultLanguage)
+        converted <- ConverterService.toApiSubjectPage(subjectPage, FrontpageApiProperties.DefaultLanguage, true)
       } yield converted
     }
 
@@ -36,7 +36,7 @@ trait WriteService {
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(id, subject)
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-            converted <- ConverterService.toApiSubjectPage(subjectPage, language)
+            converted <- ConverterService.toApiSubjectPage(subjectPage, language, true)
           } yield converted
         case Success(_) =>
           Failure(NotFoundException(id))
@@ -52,7 +52,7 @@ trait WriteService {
           for {
             domainSubject <- ConverterService.toDomainSubjectPage(existingSubject, subject)
             subjectPage <- subjectPageRepository.updateSubjectPage(domainSubject)
-            converted <- ConverterService.toApiSubjectPage(subjectPage, language)
+            converted <- ConverterService.toApiSubjectPage(subjectPage, language, true)
           } yield converted
         case None =>
           newFromUpdatedSubjectPage(subject) match {

@@ -5,7 +5,7 @@ import scala.util.{Failure, Success, Try}
 
 /**
   * Part of GDL frontpage-api.
-  * Copyright (C) 2018 GDL
+  * Copyright (C) 2018 NDLA
   *
   * See LICENSE
   */
