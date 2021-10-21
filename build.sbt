@@ -8,7 +8,7 @@ val Http4sVersion = "0.21.21"
 val JacksonVersion = "2.12.1"
 val RhoVersion = "0.21.0"
 val CirceVersion = "0.13.0"
-val ScalikeJDBCVersion = "3.4.0"
+val ScalikeJDBCVersion = "4.0.0-RC2"
 val HikariConnectionPoolVersion = "3.4.5"
 val PostgresVersion = "42.2.14"
 val FlywayVersion = "7.1.1"
@@ -37,7 +37,7 @@ lazy val frontpage_api = (project in file("."))
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8"),
     scalacOptions := Seq("-target:jvm-1.8", "-unchecked", "-deprecation", "-feature"),
     libraryDependencies ++= Seq(
-      "ndla" %% "network" % "0.44",
+      "ndla" %% "network" % "0.47",
       "ndla" %% "mapping" % "0.15",
       "ndla" %% "scalatestsuite" % "0.3" % "test",
       "org.http4s" %% "http4s-circe" % Http4sVersion,

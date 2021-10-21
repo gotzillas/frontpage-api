@@ -37,7 +37,6 @@ class V2__convert_subjects_to_object extends BaseJavaMigration {
     sql"select id, document from mainfrontpage"
       .map(rs => DBFrontPage(rs.long("id"), rs.string("document")))
       .single()
-      .apply()
   }
 
   def convertSubjects(frontPage: DBFrontPage): Option[V2_FrontPageData] = {
@@ -59,7 +58,6 @@ class V2__convert_subjects_to_object extends BaseJavaMigration {
 
     sql"update mainfrontpage set document = $dataObject"
       .update()
-      .apply()
   }
 }
 

@@ -30,7 +30,6 @@ trait FrontPageRepository {
       Try(
         sql"insert into ${FrontPageData.table} (document) values (${dataObject})"
           .updateAndReturnGeneratedKey()
-          .apply()
       ).map(deleteAllBut).map(_ => page)
     }
 
@@ -38,7 +37,6 @@ trait FrontPageRepository {
       Try(
         sql"delete from ${FrontPageData.table} where id<>${id} "
           .update()
-          .apply()
       ).map(_ => id)
     }
 
@@ -49,7 +47,7 @@ trait FrontPageRepository {
         sql"select ${fr.result.*} from ${FrontPageData.as(fr)} order by fr.id desc limit 1"
           .map(FrontPageData.fromDb(fr))
           .single()
-          .apply()) match {
+      ) match {
         case Success(Some(Success(s))) => Some(s)
         case Success(Some(Failure(ex))) =>
           ex.printStackTrace()
