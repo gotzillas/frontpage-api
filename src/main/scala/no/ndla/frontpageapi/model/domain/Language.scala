@@ -3,19 +3,62 @@ package no.ndla.frontpageapi.model.domain
 import no.ndla.mapping.ISO639
 
 object Language {
-  val UnknownLanguage = "unknown"
+  val UnknownLanguage = "und"
   val NoLanguage = ""
-  val AllLanguages = "all"
+  val AllLanguages = "*"
+
+  // Same as in other apis, but here we have no search-engine
+  val languages = Seq(
+    "nb",
+    "nn",
+    "sma",
+    "se",
+    "en",
+    "ar",
+    "hy",
+    "eu",
+    "pt-br",
+    "bg",
+    "ca",
+    "ja",
+    "ko",
+    "zh",
+    "cs",
+    "da",
+    "nl",
+    "fi",
+    "fr",
+    "gl",
+    "de",
+    "el",
+    "hi",
+    "hu",
+    "id",
+    "ga",
+    "it",
+    "lt",
+    "lv",
+    "fa",
+    "pt",
+    "ro",
+    "ru",
+    "srb",
+    "es",
+    "sv",
+    "th",
+    "tr",
+    "und"
+  )
 
   def getSupportedLanguages(sequences: Seq[Seq[LanguageField]]): Seq[String] = {
     sequences.flatMap(_.map(_.language)).distinct.sortBy { lang =>
-      ISO639.languagePriority.indexOf(lang)
+      languages.indexOf(lang)
     }
   }
 
   def findByLanguageOrBestEffort[P <: LanguageField](sequence: Seq[P], language: String): Option[P] = {
     sequence
       .find(_.language == language)
-      .orElse(sequence.sortBy(lf => ISO639.languagePriority.reverse.indexOf(lf.language)).lastOption)
+      .orElse(sequence.sortBy(lf => languages.indexOf(lf.language)).lastOption)
   }
 }
