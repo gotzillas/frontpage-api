@@ -38,7 +38,6 @@ class V5__add_meta_description extends BaseJavaMigration {
     sql"select id, document from subjectpage"
       .map(rs => DBSubjectPage(rs.long("id"), rs.string("document")))
       .list()
-      .apply()
   }
 
   def convertSubjectpage(subjectPageData: DBSubjectPage): Option[DBSubjectPage] = {
@@ -72,7 +71,6 @@ class V5__add_meta_description extends BaseJavaMigration {
 
     sql"update subjectpage set document = $dataObject where id = ${subjectPageData.id}"
       .update()
-      .apply()
   }
 }
 

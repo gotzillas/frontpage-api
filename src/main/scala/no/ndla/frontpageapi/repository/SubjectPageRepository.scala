@@ -34,7 +34,6 @@ trait SubjectPageRepository {
       Try(
         sql"insert into ${SubjectFrontPageData.table} (document, external_id) values (${dataObject}, ${externalId})"
           .updateAndReturnGeneratedKey()
-          .apply()
       ).map(id => {
         logger.info(s"Inserted new subject page: $id")
         subj.copy(id = Some(id))
@@ -47,7 +46,7 @@ trait SubjectPageRepository {
       dataObject.setType("jsonb")
       dataObject.setValue(subj.copy(id = None).asJson.noSpacesDropNull)
 
-      Try(sql"update ${SubjectFrontPageData.table} set document=${dataObject} where id=${subj.id}".update().apply())
+      Try(sql"update ${SubjectFrontPageData.table} set document=${dataObject} where id=${subj.id}".update())
         .map(_ => subj)
     }
 
@@ -59,7 +58,7 @@ trait SubjectPageRepository {
         sql"select id from ${SubjectFrontPageData.table} where external_id=${externalId}"
           .map(rs => rs.long("id"))
           .single()
-          .apply())
+      )
     }
 
     def exists(subjectId: Long)(implicit sesstion: DBSession = AutoSession): Try[Boolean] = {
@@ -67,8 +66,7 @@ trait SubjectPageRepository {
         sql"select id from ${SubjectFrontPageData.table} where id=${subjectId}"
           .map(rs => rs.long("id"))
           .single()
-          .apply())
-        .map(_.isDefined)
+      ).map(_.isDefined)
     }
 
     private def subjectPageWhere(whereClause: SQLSyntax)(
@@ -79,7 +77,7 @@ trait SubjectPageRepository {
         sql"select ${su.result.*} from ${SubjectFrontPageData.as(su)} where su.document is not NULL and $whereClause"
           .map(SubjectFrontPageData.fromDb(su))
           .single()
-          .apply()) match {
+      ) match {
         case Success(Some(Success(s))) => Some(s)
         case Success(Some(Failure(ex))) =>
           ex.printStackTrace()

@@ -37,7 +37,6 @@ class V3__introduce_layout extends BaseJavaMigration {
     sql"select id, document from subjectpage"
       .map(rs => DBSubjectPage(rs.long("id"), rs.string("document")))
       .list()
-      .apply()
   }
 
   private def convertSubjectpage(subjectPageData: DBSubjectPage): Option[DBSubjectPage] = {
@@ -70,7 +69,6 @@ class V3__introduce_layout extends BaseJavaMigration {
 
     sql"update subjectpage set document = $dataObject where id = ${subjectPageData.id}"
       .update()
-      .apply()
   }
 }
 
