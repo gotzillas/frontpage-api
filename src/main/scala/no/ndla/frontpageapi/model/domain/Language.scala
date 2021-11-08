@@ -1,6 +1,11 @@
-package no.ndla.frontpageapi.model.domain
+/*
+ * Part of NDLA frontpage-api
+ * Copyright (C) 2020 NDLA
+ *
+ * See LICENSE
+ */
 
-import no.ndla.mapping.ISO639
+package no.ndla.frontpageapi.model.domain
 
 object Language {
   val UnknownLanguage = "und"

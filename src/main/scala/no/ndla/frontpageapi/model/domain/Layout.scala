@@ -1,14 +1,15 @@
+/*
+ * Part of NDLA frontpage-api.
+ * Copyright (C) 2018 NDLA
+ *
+ * See LICENSE
+ */
+
 package no.ndla.frontpageapi.model.domain
 import no.ndla.frontpageapi.model.domain.Errors.ValidationException
 
 import scala.util.{Failure, Success, Try}
 
-/**
-  * Part of GDL frontpage-api.
-  * Copyright (C) 2018 NDLA
-  *
-  * See LICENSE
-  */
 case class Layout(`type`: LayoutType.Value)
 
 object LayoutType extends Enumeration {
