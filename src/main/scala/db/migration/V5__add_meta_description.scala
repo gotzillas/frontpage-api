@@ -1,9 +1,9 @@
-/**
-  * Part of NDLA ndla.
-  * Copyright (C) 2018 NDLA
-  *
-  * See LICENSE
-  */
+/*
+ * Part of NDLA ndla.
+ * Copyright (C) 2018 NDLA
+ *
+ * See LICENSE
+ */
 package db.migration
 
 import java.sql.Connection

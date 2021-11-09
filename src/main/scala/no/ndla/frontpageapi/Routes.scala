@@ -1,3 +1,10 @@
+/*
+ * Part of NDLA frontpage-api
+ * Copyright (C) 2020 NDLA
+ *
+ * See LICENSE
+ */
+
 package no.ndla.frontpageapi
 
 import cats.effect.IO

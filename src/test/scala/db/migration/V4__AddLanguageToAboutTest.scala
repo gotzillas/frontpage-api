@@ -1,9 +1,9 @@
-/**
-  * Part of NDLA frontpage-api.
-  * Copyright (C) 2018 NDLA
-  *
-  * See LICENSE
-  */
+/*
+ * Part of NDLA frontpage-api.
+ * Copyright (C) 2018 NDLA
+ *
+ * See LICENSE
+ */
 
 package db.migration
 import io.circe.syntax._
