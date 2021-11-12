@@ -63,6 +63,20 @@ lazy val frontpage_api = (project in file("."))
     ) ++ vulnerabilityOverrides
   )
   .enablePlugins(DockerPlugin)
+  .enablePlugins(ScalaTsiPlugin)
+  .settings(
+    typescriptGenerationImports := Seq("no.ndla.frontpageapi.model.api._"),
+    typescriptExports := Seq(
+      "FrontPageData",
+      "FilmFrontPageData",
+      "NewOrUpdatedFilmFrontPageData",
+      "SubjectPageData",
+      "NewSubjectFrontPageData",
+      "UpdatedSubjectFrontPageData",
+      "Error"
+    ),
+    typescriptOutputFile := baseDirectory.value / "typescript" / "index.ts"
+  )
 
 val checkfmt = taskKey[Boolean]("Check for code style errors")
 checkfmt := {
