@@ -1,7 +1,7 @@
 import java.util.Properties
 
 val Scalaversion = "2.13.3"
-val Log4JVersion = "2.13.3"
+val Log4JVersion = "2.15.0"
 val ScalaTestVersion = "3.2.1"
 val MockitoVersion = "1.14.8"
 val Http4sVersion = "0.21.21"
