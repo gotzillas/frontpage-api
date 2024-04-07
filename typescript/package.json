@@ -1,5 +1,5 @@
 {
-    "name": "@ndla/types-frontpage-api",
+    "name": "@ndla/types-frontpage-api-tea",
     "description": "Typescript type definitions for NDLA backend api",
     "license": "GPL-3.0",
     "types": "build/index.d.ts",
@@ -9,10 +9,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/NDLANO/frontpage-api.git",
+        "url": "https://github.com/gotzillas/frontpage-api",
         "directory": "typescript"
     },
-    "author": "ndla@knowit.no",
+    "author": "gotzillas",
     "files": [
         "lib",
         "src",
